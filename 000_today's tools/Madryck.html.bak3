@@ -1,0 +1,213 @@
+<!-- Layout Partial: Main wrapper, references other partials -->
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Madryck</title>
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%238b5cf6'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/assets/style.css?v=1765640602515" />
+    <link rel="stylesheet" href="/assets/components.css?v=1765640602515" />
+    <link rel="stylesheet" href="/assets/enhanced-todo.css?v=1765640602515" />
+    <link rel="stylesheet" href="/assets/modal.css?v=1765640602515" />
+    <link rel="stylesheet" href="/assets/landing-pages.css?v=1765640602515" />
+    <script>window.SITE_BASE = "/"</script>
+</head>
+
+<body>
+    <div class="layout">
+        <!-- Header Partial: Top toolbar and navigation -->
+<div class="top">
+    <div class="toolbar">
+        <a class="chip" href="/index.html">Hembränt</a>
+        <a class="chip" href="/graph.html">Graph</a>
+        <a class="chip" href="/tags/index.html">Tags</a>
+        <a class="chip" href="/session.html">Session</a>
+        <button id="btnCreatePage" class="chip" title="Create New Page">+ New</button>
+        <button id="btnEditPage" class="chip" title="Edit This Page">Edit</button>
+    </div>
+    <div class="search"><input id="searchBox" type="search" placeholder="Search titles, headings, #tags (Cmd/Ctrl-K)" />
+    </div>
+    <div id="searchResults" class="hovercard"></div>
+</div>
+
+<!-- Create Page Modal -->
+<div id="createPageModal" class="modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <h2>Create New Page</h2>
+        <form id="createPageForm">
+            <div class="form-group">
+                <label for="pageType">Page Type</label>
+                <select id="pageType" required>
+                    <option value="pc">Character (PC)</option>
+                    <option value="npc">NPC</option>
+                    <option value="location">Location</option>
+                    <option value="arc">Story Arc</option>
+                    <option value="shop">Shop</option>
+                    <option value="session">Session Note</option>
+                    <option value="tool">Tool/Reference</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="pageTitle">Page Title</label>
+                <input type="text" id="pageTitle" placeholder="Enter page title..." required />
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Create Page</button>
+                <button type="button" id="btnCancelCreate" class="btn-secondary">Cancel</button>
+            </div>
+        </form>
+        <div id="createPageStatus" style="display: none;"></div>
+    </div>
+</div>
+
+<!-- Edit Page Modal -->
+<div id="editPageModal" class="modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <h2>Edit Page</h2>
+        <form id="editPageForm">
+            <div class="form-group">
+                <label for="editPageContent">Page Content (HTML)</label>
+                <textarea id="editPageContent" rows="18" style="width:100%" required></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Save Changes</button>
+                <button type="button" id="btnCancelEdit" class="btn-secondary">Cancel</button>
+            </div>
+        </form>
+        <div id="editPageStatus" style="display: none;"></div>
+    </div>
+</div>
+
+<!-- Delete Page Modal -->
+<div id="deletePageModal" class="modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <h2>Delete Page</h2>
+        <p style="margin-bottom: 1em;">⚠️ This action cannot be undone. To confirm deletion, type the page title below:
+        </p>
+        <p style="margin-bottom: 1em;"><strong id="deletePageTitle"></strong></p>
+        <form id="deletePageForm">
+            <div class="form-group">
+                <label for="deletePageConfirm">Type page title to confirm:</label>
+                <input type="text" id="deletePageConfirm" style="width:100%" required autocomplete="off" />
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary" style="background: #c33;">Delete Page</button>
+                <button type="button" id="btnCancelDelete" class="btn-secondary">Cancel</button>
+            </div>
+        </form>
+        <div id="deletePageStatus" style="display: none; margin-top: 1em;"></div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content" style="max-width: 450px;">
+        <h2 id="confirmModalTitle">Confirm</h2>
+        <p id="confirmModalMessage" style="margin: 1em 0;"></p>
+        <div class="form-actions">
+            <button type="button" id="confirmModalYes" class="btn-primary">Yes</button>
+            <button type="button" id="confirmModalNo" class="btn-secondary">No</button>
+        </div>
+    </div>
+</div>
+        <!-- Compact weather strip: mirrors left-panel weather card -->
+        <div id="weatherStrip" class="weather-strip" aria-hidden="false"></div>
+        <aside class="left"><!-- Sidebar Partial: Navigation drawer and sections -->
+<div class="drawer" aria-label="Navigation">
+    <div class="drawer-handle">
+        <button id="leftDrawerToggle" class="chip" aria-expanded="true" aria-controls="leftDrawer">Nav</button>
+        <button id="leftDrawerPin" class="chip" aria-pressed="true">Pin</button>
+        <button id="leftCollapseExpand" class="chip" title="Collapse/Expand All">Collapse all</button>
+    </div>
+    <div id="leftDrawer" class="drawer-content">
+        <aside class="sidebar" role="navigation">
+            <div class="campaign-header">
+                <div class="campaign-title">Feywild Adventures</div>
+            </div>
+            <nav class="nav">
+                <a class="nav-item nav-dashboard" href="/index.html"><span class="nav-icon">🏠</span><span
+                        class="nav-text">Dashboard</span></a>
+                <div class="nav-quick"><input id="navQuick" placeholder="Quick nav..." /></div>
+                <details class="nav-details" open>
+                    <summary class="nav-label"><span class="nav-icon">⭐</span><span>Favorites</span></summary>
+                    <ul id="navFav" class="nav-list"></ul>
+                </details>
+                <ul class="nav-sections"></ul>
+            </nav>
+            <!-- Weather card: DnD dice-driven weather generator -->
+            <div id="weatherCard" class="card weather-card" aria-label="Weather">
+                <div class="weather-header">
+                    <div class="weather-title">Weather</div>
+                    <button id="rollWeather" class="chip" title="Roll weather">Roll</button>
+                </div>
+                <div class="weather-now" aria-live="polite">
+                    <div class="weather-icon">⛅</div>
+                    <div class="weather-desc">
+                        <div class="weather-condition">Unknown</div>
+                        <div class="weather-meta">--</div>
+                    </div>
+                </div>
+                <ul class="weather-forecast" role="list">
+                    <!-- forecast rows populated by JS -->
+                </ul>
+                <div class="weather-effects" aria-hidden="false">
+                    <!-- effects populated by JS -->
+                </div>
+            </div>
+        </aside>
+    </div>
+</div></aside>
+        <main class="main">
+            <div class="breadcrumb-container">
+                <div id="breadcrumbText" class="main-breadcrumb meta"></div>
+                <button id="btnDeletePage" class="delete-page-btn" title="Delete this page"
+                    aria-label="Delete this page">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
+                    </svg>
+                </button>
+            </div><article><div class="page-header" style="--page-header:url('/assets/ph-header.svg')"></div><h1>Madryck</h1><p>In this preamble, an aging warlock named <strong>Madryck Roslof</strong> tells the characters (those not working at the Witchlight Carnival) about a faerie realm called Prismeer, which can be reached only by finding and using a fey crossing in the carnival. Madryck says that his archfey patron, <strong>Zybilna</strong>, rules Prismeer. He begs the characters to journey to this domain and find out what has happened to Zybilna, with whom he has lost contact.</p>
+<p>"I've acquired many treasures and made important contacts during my lengthy adventuring career," says Madryck. "I would like to pass the treasures I possess and the favors I am owed to you. In exchange, I ask that you travel to Prismeer, a domain in the Feywild, and find out what fate has befallen the archfey that rules it. This archfey, Zybilna, is my patron and inspiration—the source of my power.</p>
+<p>"I have been unable to contact Zybilna for the better part of a year, and I fear something terrible has happened. My adventuring days are over, but Zybilna has been good to me, and I would like to know she is well before I take my leave.</p>
+<p>"Every eight years, our world is visited by a traveling extravaganza called the Witchlight Carnival. It recently returned and is camped three days' travel from here. I'm asking you now because this carnival might pack up and leave in a week or two, and it contains your only route to Prismeer—a fey crossing, if you will.</p>
+<p>"Seek out Zybilna of Prismeer, help her if you can, and return with proof that she is alive and well. Upon your return, all the hard-won earnings of my adventuring career shall be yours."</p>
+
+<h2>What Madryck knows</h2><p>If the characters request more information about the Witchlight Carnival, Madryck says that he hasn't visited the carnival in sixty-four years and admits that a lot can change in that time. He advises the characters to explore the carnival thoroughly on their own. He doesn't presume to know what form the fey crossing currently takes or how well hidden and protected it is. He does provide the following reliable information:</p>
+<ul><li>Zybilna is a fairy godmother to mortals. She created the carnival as a means by which mortals could enter her realm and beseech her aid.</li><li>When Madryck last visited the carnival, it was run by a pair of shadar-kai (elves native to the Shadowfell) named <a href="https://5e.tools/bestiary.html#mister%20witch_wbtw">Mister Witch</a> and <a href="https://5e.tools/bestiary.html#mister%20light_wbtw">Mister Light</a>. He assumes they're still in charge.</li><li>Madryck dimly recalls that Witch and Light acquired the carnival more than a hundred years ago from an eladrin (an elf native to the Feywild). The eladrin's name escapes him.</li>
+</ul><p>If the characters request more information about Zybilna and Prismeer, Madryck offers the following descriptions, based on firsthand knowledge that is somewhat out of date:</p>
+<ul><li>Prismeer is a domain of delight ruled by Zybilna, who dwells in the Palace of Heart's Desire, a magnificent structure in the heart of the domain.</li><li>Zybilna can assume many forms and is brilliant, secretive, and wise. (Madryck doesn't know Zybilna's secret identity, as revealed in <a href="https://5e.tools/adventure.html#wbtw,5">chapter 5</a>.)</li><li>When she presents herself to mortals, Zybilna usually assumes the form of a statuesque woman with long white hair and a small tattoo shaped like a chicken's foot below one eye.</li>
+</ul><p>Each character who hears Madryck's description of Zybilna suddenly recalls a forgotten childhood memory of her, which you can determine by having that character's player roll on the Childhood Memories table.</p>
+<p>Childhood Memories</p><p>|d8|Memory|</p><p>|---|---|</p><p>|1|When you were a small child, a woman matching Zybilna's description reunited you with a lost pet.|</p><p>|2|A woman matching Zybilna's description visited you once when you were sick as a child and made you feel better.|</p><p>|3|A woman matching Zybilna's description scared away a bully who antagonized you as a child.|</p><p>|4|You remember an older family member telling you about a woman with long white hair who helped deliver you when you were born.|</p><p>|5|A woman matching Zybilna's description gave money to your family so that you never wanted for anything as a child.|</p><p>|6|You used to have trouble speaking as a child until a woman matching Zybilna's description put her hand on your head.|</p><p>|7|You fell into an icy pond as a child and probably would have died had a woman matching Zybilna's description not fished you out of the cold water and wrapped you in a blanket.|</p><p>|8|You remember sneaking into the Witchlight Carnival as a child and running into a woman matching Zybilna's description. She gave you a cupcake that made you feel special when you ate it.|</p></article>
+        </main>
+        <aside class="right"><!-- Right panel injected by /assets/right-panel-loader.js --></aside>
+        <div class="resizer resizer-left" aria-hidden="true"></div>
+        <div class="resizer resizer-right" aria-hidden="true"></div>
+    </div>
+    <button id="drawerReveal" class="drawer-tab" aria-label="Show tools">Tools</button>
+    <script src="/assets/markdown.js"></script>
+    <script src="/assets/site.js?v=1765640602515"></script>
+    <script src="/assets/favorites.js?v=1765640602515"></script>
+    <script src="/assets/wysiwyg.js?v=1765640602515"></script>
+    <script src="/assets/keyboard-nav.js?v=1765640602515"></script>
+    <script src="/assets/theme.js?v=1765640602515"></script>
+    <script src="/assets/shortcuts-guide.js?v=1765640602515"></script>
+    <script src="/assets/collapsible-sections.js?v=1765640602515"></script>
+    <script src="/assets/weather.js?v=1765640602515"></script>
+    
+    <!-- Footer Partial: Add site-wide footer content here if needed -->
+<footer class="footer">
+    <div class="meta">&copy; 2025 Feywild Adventures</div>
+</footer>
+
+</body>
+
+</html>

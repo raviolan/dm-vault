@@ -1,0 +1,479 @@
+<!-- Layout Partial: Main wrapper, references other partials -->
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Structure</title>
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%238b5cf6'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/assets/style.css?v=1765640602515" />
+    <link rel="stylesheet" href="/assets/components.css?v=1765640602515" />
+    <link rel="stylesheet" href="/assets/enhanced-todo.css?v=1765640602515" />
+    <link rel="stylesheet" href="/assets/modal.css?v=1765640602515" />
+    <link rel="stylesheet" href="/assets/landing-pages.css?v=1765640602515" />
+    <script>window.SITE_BASE = "/"</script>
+</head>
+
+<body>
+    <div class="layout">
+        <!-- Header Partial: Top toolbar and navigation -->
+<div class="top">
+    <div class="toolbar">
+        <a class="chip" href="/index.html">Hembränt</a>
+        <a class="chip" href="/graph.html">Graph</a>
+        <a class="chip" href="/tags/index.html">Tags</a>
+        <a class="chip" href="/session.html">Session</a>
+        <button id="btnCreatePage" class="chip" title="Create New Page">+ New</button>
+        <button id="btnEditPage" class="chip" title="Edit This Page">Edit</button>
+    </div>
+    <div class="search"><input id="searchBox" type="search" placeholder="Search titles, headings, #tags (Cmd/Ctrl-K)" />
+    </div>
+    <div id="searchResults" class="hovercard"></div>
+</div>
+
+<!-- Create Page Modal -->
+<div id="createPageModal" class="modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <h2>Create New Page</h2>
+        <form id="createPageForm">
+            <div class="form-group">
+                <label for="pageType">Page Type</label>
+                <select id="pageType" required>
+                    <option value="pc">Character (PC)</option>
+                    <option value="npc">NPC</option>
+                    <option value="location">Location</option>
+                    <option value="arc">Story Arc</option>
+                    <option value="shop">Shop</option>
+                    <option value="session">Session Note</option>
+                    <option value="tool">Tool/Reference</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="pageTitle">Page Title</label>
+                <input type="text" id="pageTitle" placeholder="Enter page title..." required />
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Create Page</button>
+                <button type="button" id="btnCancelCreate" class="btn-secondary">Cancel</button>
+            </div>
+        </form>
+        <div id="createPageStatus" style="display: none;"></div>
+    </div>
+</div>
+
+<!-- Edit Page Modal -->
+<div id="editPageModal" class="modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <h2>Edit Page</h2>
+        <form id="editPageForm">
+            <div class="form-group">
+                <label for="editPageContent">Page Content (HTML)</label>
+                <textarea id="editPageContent" rows="18" style="width:100%" required></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Save Changes</button>
+                <button type="button" id="btnCancelEdit" class="btn-secondary">Cancel</button>
+            </div>
+        </form>
+        <div id="editPageStatus" style="display: none;"></div>
+    </div>
+</div>
+
+<!-- Delete Page Modal -->
+<div id="deletePageModal" class="modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <h2>Delete Page</h2>
+        <p style="margin-bottom: 1em;">⚠️ This action cannot be undone. To confirm deletion, type the page title below:
+        </p>
+        <p style="margin-bottom: 1em;"><strong id="deletePageTitle"></strong></p>
+        <form id="deletePageForm">
+            <div class="form-group">
+                <label for="deletePageConfirm">Type page title to confirm:</label>
+                <input type="text" id="deletePageConfirm" style="width:100%" required autocomplete="off" />
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary" style="background: #c33;">Delete Page</button>
+                <button type="button" id="btnCancelDelete" class="btn-secondary">Cancel</button>
+            </div>
+        </form>
+        <div id="deletePageStatus" style="display: none; margin-top: 1em;"></div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content" style="max-width: 450px;">
+        <h2 id="confirmModalTitle">Confirm</h2>
+        <p id="confirmModalMessage" style="margin: 1em 0;"></p>
+        <div class="form-actions">
+            <button type="button" id="confirmModalYes" class="btn-primary">Yes</button>
+            <button type="button" id="confirmModalNo" class="btn-secondary">No</button>
+        </div>
+    </div>
+</div>
+        <!-- Compact weather strip: mirrors left-panel weather card -->
+        <div id="weatherStrip" class="weather-strip" aria-hidden="false"></div>
+        <aside class="left"><!-- Sidebar Partial: Navigation drawer and sections -->
+<div class="drawer" aria-label="Navigation">
+    <div class="drawer-handle">
+        <button id="leftDrawerToggle" class="chip" aria-expanded="true" aria-controls="leftDrawer">Nav</button>
+        <button id="leftDrawerPin" class="chip" aria-pressed="true">Pin</button>
+        <button id="leftCollapseExpand" class="chip" title="Collapse/Expand All">Collapse all</button>
+    </div>
+    <div id="leftDrawer" class="drawer-content">
+        <aside class="sidebar" role="navigation">
+            <div class="campaign-header">
+                <div class="campaign-title">Feywild Adventures</div>
+            </div>
+            <nav class="nav">
+                <a class="nav-item nav-dashboard" href="/index.html"><span class="nav-icon">🏠</span><span
+                        class="nav-text">Dashboard</span></a>
+                <div class="nav-quick"><input id="navQuick" placeholder="Quick nav..." /></div>
+                <details class="nav-details" open>
+                    <summary class="nav-label"><span class="nav-icon">⭐</span><span>Favorites</span></summary>
+                    <ul id="navFav" class="nav-list"></ul>
+                </details>
+                <ul class="nav-sections"></ul>
+            </nav>
+            <!-- Weather card: DnD dice-driven weather generator -->
+            <div id="weatherCard" class="card weather-card" aria-label="Weather">
+                <div class="weather-header">
+                    <div class="weather-title">Weather</div>
+                    <button id="rollWeather" class="chip" title="Roll weather">Roll</button>
+                </div>
+                <div class="weather-now" aria-live="polite">
+                    <div class="weather-icon">⛅</div>
+                    <div class="weather-desc">
+                        <div class="weather-condition">Unknown</div>
+                        <div class="weather-meta">--</div>
+                    </div>
+                </div>
+                <ul class="weather-forecast" role="list">
+                    <!-- forecast rows populated by JS -->
+                </ul>
+                <div class="weather-effects" aria-hidden="false">
+                    <!-- effects populated by JS -->
+                </div>
+            </div>
+        </aside>
+    </div>
+</div></aside>
+        <main class="main">
+            <div class="breadcrumb-container">
+                <div id="breadcrumbText" class="main-breadcrumb meta"></div>
+                <button id="btnDeletePage" class="delete-page-btn" title="Delete this page"
+                    aria-label="Delete this page">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
+                    </svg>
+                </button>
+            </div><article><div class="page-header" style="--page-header:url('/assets/ph-header.svg')"></div><h1>Structure</h1>
+<p><strong>Arrival → Brigands → Slanty Tower + Sir Talavar → clear quest to Telemy Hill (next session) → hints of Downfall/Bavlorna.</strong></p>
+
+<h3>What Hither is about:</h3><p><strong>“The world is broken”</strong>  </p><p>    Prismeer used to be whimsical but kind; the hags twisted it. Constantly contrast:</p><ul><li>Old, pretty things half-sunk in muck</li><li>Rules of hospitality/ownership/reciprocity still _technically_ in force, but abused by bullies and brigands.</li>
+<li><strong>“The hags took something from _you_.”</strong>  </li></ul><p>    Even if the Lost-Things mechanics are still simmering, tonight is about:</p><ul><li>Naming Bavlorna as “the one who took what you lost.”</li><li>Showing that their memories, emotions, and _selves_ are currency here (harengon gourd, bargains, o’-wells).</li>
+</ul><p>So Hither isn’t just “we wander a swamp.” It’s:</p><p><strong>Act I of the Feywild arc:</strong></p><p>Meet the consequences of the hags, get a clear quest to oppose them, and get a taste of how the Feywild works.</p>
+
+<h2>Crossing the Threshold</h2>
+<p>Yo<em>u stand at the edge of a raised and broken causeway under a hazy, twilit sky. The causeway, which is built from pale stones that glow faintly from within, towers over the surrounding landscape, but large sections of it have crumbled away. The parts that remain in place are separated by large gaps where portions have collapsed.</em></p>
+<p><em>A fog-shrouded swamp spreads out below you in all directions, and up from its murk wafts the smell of rotting plants. Also rising from the swamp is the music of nature—a discordant symphony of croaking frogs and singing birds.</em></p>
+<p><strong>[Add a reaction to emotion from the table]</strong></p>
+
+<h3>Balloon crash hook</h3><p>someone with high passive Perception spots the balloon spinning out of control and crashing into the fog about a mile away.</p>
+<p>Lean on this as your <strong>big neon quest arrow</strong>:</p>
+<p>> “You’re in a strange, hostile swamp. The _only_ sign of civilization is that balloon—and it just crashed.”</p>
+<p>If your players tend to dither, literally have an NPC say something like:</p>
+<p>> “Whatever that was… it might be our only help out here. We should go.”</p>
+<p>Even if they try to ignore it, “the swamp” keeps sort of funneling them more or less in that direction.</p>
+
+<h3>Scene 2 Harengon Brigands & the Giant Snail</h3>
+<p>Run the brigand encounter almost as written, but treat it as:</p><ul><li><strong>Tone piece</strong> (silly but unsettling), and</li><li><strong>Intro to Fey prices + Agdon + Bavlorna’s influence</strong>.</li>
+</ul><p><strong>Play the brigands big and theatrical:</strong></p><ul><li>They show up singing that song about Agdon; give them a call-and-response feel so the players can join in or mock it.</li><li>Make them _charmingly awful_: they’re trying to rob you, but for _memories_ of joy, not coins.</li>
+</ul><p>For a party that needs a push:</p><ul><li>Have Jebbek actually _explain_ the memory gourd:</li></ul><p>    > “Surrender your happiest gift-memory and everybody walks away smiling! Agdon Longscarf likes to _collect_ such things. Bavlorna gave him this toy.”</p>
+<p>    Now you’ve name-dropped:</p>
+<ul><li><strong>Agdon Longscarf</strong> as brigand prince of Prismeer.</li>
+<li><strong>Bavlorna</strong> as someone who gifts memory-stealing gourds and floods swamps.</li>
+</ul><p><strong>Let the players:</strong></p><ul><li>Bargain (“what if we give you a lesser memory?”),</li><li>Fight, </li><li>Or talk them down (Intimidation group check as written).</li>
+</ul><p><strong>Payoff options from this scene:</strong></p><p>If they win or talk their way through, they can:</p>
+<ul><li>Free the <strong>giant snail</strong> (potential pet/mount).     </li><li>Steal or later recover the <strong>gourd</strong> (hook for stolen memories and future NPC side-quests).    </li><li>Harengons can drop clear leads:</li>
+<li>“Our prince runs the Brigands’ Tollway. Cross him and it’s your ears.”</li>
+<li>“The bullywugs of Downfall answer to Slack-jawed Lorna. You don’t wanna cross _her_.”</li>
+</ul><p>That’s your <strong>roadmap</strong>: Brigands’ Tollway, Downfall, Bavlorna.</p>
+
+<h3>✨Stream of Visions<strong></h3>
+<p>Each PC sees something from Downfall or Bavlorna’s cottage, tying their future goals to now.</p>
+<p>Customize a vision or use the table, but make at least one obviously relevant:</p>
+<p>Bullywug king on a lily crown</p>
+<p>Rows of severed bullywug heads</p>
+<p>The scarecrow with the gourd head (Clapperclaw)</p>
+<p>This foreshadows: Downfall, Clapperclaw, Bavlorna’s cottage.</p>
+<p>Either one is enough. Don’t spam random encounters tonight—use them as prophecy delivery systems.</p>
+<p>Scene 4 – Slanty Tower & Sir Talavar</p>
+<h3>Scene 4 – Slanty Tower & Sir Talavar (45–60+ min)</h3>
+<p>This is your </strong>main quest-giver<strong> and the emotional core of the session.</p>
+<p></strong>Beats:<strong></p>
+<ol><li>They see the leaning tower with the basket dangling.</li>
+<li>Whispered plea from above (Sir Talavar).</li>
+<li>He shushes them and warns about the two sleeping snakes in the brambles.</li>
+<li>They have to:</li>
+</ol><ul><li>Navigate brambles (difficult terrain, maybe creative solutions),</li>
+<li>Avoid/handle the snakes,</li>
+<li>Climb the tower or otherwise get to the basket.</li>
+
+</ul><p>Play Sir Talavar as:</p>
+<ul><li>Tiny, chivalrous, dramatic, with Summer Court vibes.</li>
+<li>He’s _clearly_ out of their league politically but currently helpless.</li>
+
+</ul><p>Once they free him from the basket (cage still locked), drop your </strong>info dump and quest<strong>:</p>
+<p>> - “Prismeer was ruled by Zybilna, now frozen in time.”</p><p>>     </p><p>> - “The hags of the Hourglass Coven – Bavlorna here in Hither, and her sisters in Thither and Yon – carved the domain up.”</p><p>>     </p><p>> - “Your ‘lost things’? She’s been collecting such trophies.”</p><p>>     </p><p>> - “I tried to escape Bavlorna’s clutches to warn the Summer Queen. Wigglewog died rescuing me.”</p><p>>     </p>
+<p>Then:</p>
+<p>> </strong>Quest:<strong> “My cage is magical and locked. The goblin Jingle Jangle on Telemy Hill has the key. Free me properly, and I will…”</p><p>> </p><p>> - Tell them exactly _how_ to find Downfall.</p><p>>     </p><p>> - Speak for them at the Summer Court.</p><p>>     </p><p>> - Help them get their lost things back / undo what Bavlorna stole.</p><p>>     </p>
+<p>Make it explicit for a low-initiative party:</p>
+<p>> “If you want a way to set this right, seek </strong>Telemy Hill<strong> and </strong>Jingle Jangle<strong>. That is your next step.”</p>
+<p>Boom. Clear direction.</p>
+<p>---</p>
+
+<h3>Scene 5 – Start the trek to Telemy Hill (10–20 min, or cliffhanger)</h3>
+<p>Use remaining time to:</p>
+<ul><li>Show a travel montage with Feyweird details (see next section).</li>
+<li>Maybe one tiny scene: they see Telemy Hill in the distance, a big mound with trees like hair and a yawning “mouth.”</li>
+<li>End on a hook:</li>
+<li>The hill _sighs_ in their direction.</li>
+<li>Fireflies spell “WELCOME” in the air and then scramble into nonsense.</li>
+
+</ul><p>Now you’ve set up </strong>next session’s objective<strong> very clearly.</p>
+<p>---</p>
+
+<h2>3. Making the Feywild feel alive (cheat sheet for you)</h2>
+<p>This lines up with your own “Feywild Summary” doc, just condensed for play.</p>
+<p></strong>At all times, try to:<strong></p>
+<ol><li></strong>Add one wrong detail to every scene<strong></li>
+</ol><ul><li>Trees sway, but there is no wind.</li>
+<li>The moon is visible in a puddle but not in the sky.</li>
+<li>Their reflections lag half a second behind them.</li>
+</ul><ol><li></strong>Let emotions shape the environment<strong></li>
+</ol><ul><li>A PC gets angry → water around them ripples and turns slightly red; frogs fall silent.</li>
+<li>Someone makes a heartfelt promise → distant thunder, or a golden acorn drops at their feet.</li>
+<li>Someone is terrified → mangrove roots twist away from or toward them.</li>
+
+</ul><p>    You can literally use the </strong>Domain Transformation<strong> table in the book as a random “emotional reaction generator.”</p>
+<ol><li></strong>Use social first, combat second<strong></li>
+</ol><ul><li>Harengons open with a song and a threat, not a backstab.</li>
+<li>Mud mephits demand they guess their favorite food before attacking.</li>
+<li>Even the snakes at Slanty Tower might be lulled, bribed, or magically charmed.</li>
+</ul><ol><li></strong>Use non-standard prices<strong></li>
+</ol><ul><li>Payment at the Inn: a cherished trinket, a nightly secret, a promise to help Zybilna.</li>
+<li>Brigands want _delight_ memories.</li>
+<li>Will-o’-wisps at an o’-well offer a magical boon in exchange for a sworn vow to topple Bavlorna.</li>
+
+</ul><p>Keep this list in front of you and pick _one_ of these levers each time you describe something or an NPC asks for something.</p>
+<p>---</p>
+
+<h2>4. Pushing your players without railroading</h2>
+<p>The book itself quietly gives you permission to move locations “wherever the PCs go.” Use that.</p>
+<p></strong>Practical tricks:<strong></p>
+<ul><li></strong>Reposition locations.<strong>  </li></ul><p>    No matter which direction they pick, the “path” they find in the fog leads first to:</p>
+<ol><li>Brigands,</li>
+<li>[Optional random encounter],</li>
+<li>Slanty Tower.  </li></ol><p>        The swamp just bends around their choices.</p>
+<ul><li></strong>Give NPCs very clear calls to action.<strong></li>
+<li>Brigands: “Agdon will be much obliged when we bring him your delights.”</li>
+<li>Tsu at the Inn: “If you really want to help us, restore Zybilna.”</li>
+<li>Sir Talavar: “Your next step is Telemy Hill and the goblin Jingle Jangle. From there, to Downfall and Bavlorna.”</li>
+<li></strong>Repeat names like a chorus.<strong>  </li></ul><p>    By the end of the night they should remember:</p>
+<ul><li>Bavlorna, Downfall, Agdon, Telemy Hill / Jingle Jangle, Zybilna.  </li></ul><p>        Have every NPC reinforce at least one of these.</p>
+<ul><li></strong>Tie hooks to PCs personally.**</li>
+<li>Sir Talavar can mention: “Bavlorna crafts magic from stolen smiles, memories, talents. _I sensed something of you in her hoard._”</li>
+<li>Visions in the stream can show _specific_ PC-related imagery in Downfall (lost handwriting, inability to smile, etc.).</li>
+
+</ul><p>That way it’s not “go help random fey nobles,” it’s “this swamp hag stole pieces of _you_ and is using them.”</p>
+<p>---</p>
+<p>If you want, next step I can do is write you:</p>
+<ul><li>A short Sir Talavar monologue tailored to your PCs, and</li>
+<li>A one-page “session script” you can literally read from for each key scene (Arrival, Brigands, Inn/Stream, Slanty Tower).</li></ul></article>
+        </main>
+        <aside class="right"><!-- Right Panel Partial: Drawer with notepad, to-do, and tools -->
+<div class="drawer" aria-label="Tools">
+    <div class="drawer-handle">
+        <button id="drawerToggle" class="chip" aria-expanded="true" aria-controls="drawerContent">Close</button>
+        <button id="drawerPin" class="chip" aria-pressed="true" title="Pin panel"></button>
+        <button id="themeToggle" class="chip" title="Toggle Light/Dark">Theme</button>
+        <button id="colorsToggle" class="chip" title="Open Colors Tool">Colors</button>
+    </div>
+    <div id="drawerContent" class="drawer-content">
+        <div id="drawerTop"></div>
+        <div class="right-split">
+            <div id="paneTop" class="pane">
+                <div class="pane-tabs" aria-hidden="false">
+                    <button class="pane-tab" data-pane="top" data-tool="note">Notepad</button>
+                    <button class="pane-tab" data-pane="top" data-tool="colors">Colors</button>
+                </div>
+                <div class="pane-body" data-pane="top"></div>
+            </div>
+            <div class="pane-resizer-h" aria-hidden="true"></div>
+            <div id="paneBottom" class="pane">
+                <div class="pane-tabs" aria-hidden="false">
+                    <button class="pane-tab" data-pane="bottom" data-tool="todo">To-Do</button>
+                </div>
+                <div class="pane-body" data-pane="bottom"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden tool views rendered into panes by JS -->
+<div id="toolViews" style="display:none">
+    <div id="toolNote">
+        <div class="card">
+            <h3 style="margin:0">Notepad</h3>
+            <textarea id="toolNotepad" placeholder="Quick notes..."
+                style="width:100%;min-height:100px;flex:1;border:none;background:transparent;color:var(--text);resize:none;margin-top:8px;padding:0;outline:none"></textarea>
+        </div>
+    </div>
+    <div id="toolColors">
+        <div class="card">
+            <h3 style="margin:0">Colors</h3>
+            <div id="colorToolContent">
+                <div class="theme-picker">
+                    <h4>Choose a color theme:</h4>
+                    <div class="theme-list">
+                        <div class="theme-card">
+                            <button type="button" class="theme-swatch" data-theme="auburn" title="Auburn">
+                                <div class="swatch-preview">
+                                    <span style="background:#642F37"></span>
+                                    <span style="background:#C0350F"></span>
+                                    <span style="background:#F3904B"></span>
+                                    <span style="background:#F7C767"></span>
+                                    <span style="background:#B89DBB"></span>
+                                </div>
+                                <span class="theme-label">Auburn</span>
+                            </button>
+                        </div>
+                        <div class="theme-card">
+                            <button type="button" class="theme-swatch" data-theme="light" title="Light">
+                                <div class="swatch-preview">
+                                    <span style="background:#ffffff"></span>
+                                    <span style="background:#f6f7f8"></span>
+                                    <span style="background:#0ea5ff"></span>
+                                    <span style="background:#111827"></span>
+                                    <span style="background:#6b7280"></span>
+                                    <span style="background:#d1d5db"></span>
+                                </div>
+                                <span class="theme-label">Light</span>
+                            </button>
+                        </div>
+                        <div class="theme-card">
+                            <button type="button" class="theme-swatch" data-theme="dark" title="Dark">
+                                <div class="swatch-preview">
+                                    <span style="background:#0b1220"></span>
+                                    <span style="background:#0f1724"></span>
+                                    <span style="background:#8b5cf6"></span>
+                                    <span style="background:#e5e7eb"></span>
+                                    <span style="background:#9aa3b2"></span>
+                                    <span style="background:#0b0f16"></span>
+                                </div>
+                                <span class="theme-label">Dark</span>
+                            </button>
+                        </div>
+                        <div class="theme-card">
+                            <button class="theme-swatch" data-theme="desert" title="Desert">
+                                <div class="swatch-preview">
+                                    <span style="background:#ae5433"></span>
+                                    <span style="background:#ecc481"></span>
+                                    <span style="background:#aa462d"></span>
+                                    <span style="background:#9e895f"></span>
+                                    <span style="background:#d5c79f"></span>
+                                    <span style="background:#4a4231"></span>
+                                </div>
+                                <span class="theme-label">Desert</span>
+                            </button>
+                        </div>
+                        <div class="theme-card">
+                            <button class="theme-swatch" data-theme="mother" title="Mother of Dragons">
+                                <div class="swatch-preview">
+                                    <span style="background:#080d22"></span>
+                                    <span style="background:#531f4f"></span>
+                                    <span style="background:#6e234b"></span>
+                                    <span style="background:#932549"></span>
+                                    <span style="background:#fdf3eb"></span>
+                                </div>
+                                <span class="theme-label">Mother of Dragons</span>
+                            </button>
+                        </div>
+                        <div class="theme-card">
+                            <button class="theme-swatch" data-theme="orchid" title="Orchid Whisper">
+                                <div class="swatch-preview">
+                                    <span style="background:#CB438B"></span>
+                                    <span style="background:#BF3556"></span>
+                                    <span style="background:#6C6A43"></span>
+                                    <span style="background:#4D3449"></span>
+                                    <span style="background:#FFF0D2"></span>
+                                </div>
+                                <span class="theme-label">Orchid Whisper</span>
+                            </button>
+                        </div>
+                        <div class="theme-card">
+                            <button class="theme-swatch" data-theme="pearls" title="Chinese Pearls">
+                                <div class="swatch-preview">
+                                    <span style="background:#414B9e"></span>
+                                    <span style="background:#9792CB"></span>
+                                    <span style="background:#AA74A0"></span>
+                                    <span style="background:#E2C99E"></span>
+                                    <span style="background:#8527736"></span>
+                                </div>
+                                <span class="theme-label">Chinese Pearls</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="toolTodo">
+        <div id="todoBox" class="card" aria-label="Session To-Do">
+            <h3 style="margin:0 0 12px 0">To-Do</h3>
+            <form id="todoForm" class="todo-form" autocomplete="off">
+                <label class="sr-only" for="todoInput">Add a task</label>
+                <input id="todoInput" class="todo-input" placeholder="Add a task and press Enter" />
+                <button type="submit" class="todo-add">Add</button>
+            </form>
+            <div class="todo-actions">
+                <button id="todoClearDone" class="chip" title="Hide/Show completed">Hide Completed</button>
+            </div>
+            <div class="todo-list-container">
+                <ul id="todoList" class="todo-list" role="list" aria-live="polite"></ul>
+            </div>
+        </div>
+    </div>
+</div></aside>
+        <div class="resizer resizer-left" aria-hidden="true"></div>
+        <div class="resizer resizer-right" aria-hidden="true"></div>
+    </div>
+    <button id="drawerReveal" class="drawer-tab" aria-label="Show tools">Tools</button>
+    <script src="/assets/markdown.js"></script>
+    <script src="/assets/site.js?v=1765640602515"></script>
+    <script src="/assets/favorites.js?v=1765640602515"></script>
+    <script src="/assets/wysiwyg.js?v=1765640602515"></script>
+    <script src="/assets/right-panel.js?v=1765640602515"></script>
+    <script src="/assets/keyboard-nav.js?v=1765640602515"></script>
+    <script src="/assets/theme.js?v=1765640602515"></script>
+    <script src="/assets/shortcuts-guide.js?v=1765640602515"></script>
+    <script src="/assets/collapsible-sections.js?v=1765640602515"></script>
+    <script src="/assets/weather.js?v=1765640602515"></script>
+    
+    <!-- Footer Partial: Add site-wide footer content here if needed -->
+<footer class="footer">
+    <div class="meta">&copy; 2025 Feywild Adventures</div>
+</footer>
+
+</body>
+
+</html>

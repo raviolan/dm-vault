@@ -1,5 +1,5 @@
 // Right panel tools: tabs, pinning, notepad autosave, default home
-(function () {
+function initRightPanel() {
     // Color theme definitions (each palette provides 6 values used as:
     // 1: --bg, 2: --panel, 3: --accent, 4: --text, 5: --muted, 6: --border)
     // Originals preserved in comments for reference.
@@ -202,4 +202,6 @@
             res.addEventListener('mousedown', onDown);
         })();
     }
-})();
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initRightPanel); else initRightPanel();

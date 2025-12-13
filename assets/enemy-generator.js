@@ -12,6 +12,8 @@ const resultSection = document.getElementById('enemy-result');
 (function () {
     'use strict';
 
+    console.log('[EG] enemy-generator.js loaded');
+
     const NAV_SAVED_ID = 'navEnemySavedList';
 
     function levelToCR(level) {
@@ -243,6 +245,7 @@ const resultSection = document.getElementById('enemy-result');
     async function handleSubmit(e) {
         e.preventDefault();
         const resultSection = document.getElementById('enemy-result');
+        console.log('[EG] handleSubmit called');
         if (!resultSection) return;
         resultSection.innerHTML = '<em>Generating enemy...</em>';
 
@@ -255,17 +258,21 @@ const resultSection = document.getElementById('enemy-result');
         const cr = levelToCR(level);
 
         if (source === 'open5e') {
+            console.log('[EG] source=open5e, fetching Open5e for CR', cr);
             try {
                 const r = await fetch(`https://api.open5e.com/monsters/?challenge_rating=${cr}`);
                 const data = await r.json();
                 if (!data.results || !data.results.length) {
+                    console.log('[EG] open5e returned no results, falling back');
                     resultSection.innerHTML = 'No monsters found for this level in Open5e. Trying homebrew...';
                     await fetchHomebrewAndRender(level, enemyClass);
                     return;
                 }
+                console.log('[EG] open5e returned', data.results.length, 'results');
                 const monster = data.results[Math.floor(Math.random() * data.results.length)];
                 renderEnemyInto(resultSection, monster, level, enemyClass);
             } catch (err) {
+                console.log('[EG] open5e fetch error', err);
                 resultSection.innerHTML = 'Error fetching enemy data from Open5e. Trying homebrew...';
                 await fetchHomebrewAndRender(level, enemyClass);
             }
@@ -276,10 +283,14 @@ const resultSection = document.getElementById('enemy-result');
 
     async function fetchHomebrewAndRender(level, enemyClass) {
         const resultSection = document.getElementById('enemy-result');
+        console.log('[EG] fetchHomebrewAndRender', { level, enemyClass });
         try {
             const r = await fetch('/assets/homebrew-enemies.json');
+            console.log('[EG] fetched homebrew JSON, status', r.status);
             const data = await r.json();
+            console.log('[EG] homebrew entries', (data || []).length);
             const matches = (data || []).filter(e => Number(e.level) === Number(level) && (e.class || '') === enemyClass);
+            console.log('[EG] matches found', matches.length);
             if (!matches.length) {
                 resultSection.innerHTML = 'No homebrew enemies found for this level/class.';
                 return;
@@ -287,14 +298,23 @@ const resultSection = document.getElementById('enemy-result');
             const enemy = matches[Math.floor(Math.random() * matches.length)];
             renderEnemyInto(resultSection, enemy, level, enemyClass);
         } catch (err) {
+            console.log('[EG] fetchHomebrewAndRender error', err);
             resultSection.innerHTML = 'Error loading homebrew enemies.';
         }
     }
 
     // init on DOM ready
     window.addEventListener('DOMContentLoaded', async () => {
+        console.log('[EG] DOMContentLoaded event');
         const form = document.getElementById('enemy-form');
+        console.log('[EG] enemy-form element', !!form);
         if (form) form.addEventListener('submit', handleSubmit);
+        // Also attach to explicit generate button in case form submission is triggered by browser
+        const genBtn = document.getElementById('enemy-generate-btn');
+        if (genBtn) {
+            console.log('[EG] attaching click handler to generate button');
+            genBtn.addEventListener('click', (e) => handleSubmit(e));
+        }
         // populate saved-enemies list if present
         await checkBackend();
         fetchSavedEnemies();

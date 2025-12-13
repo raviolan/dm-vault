@@ -10,6 +10,7 @@ const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const VAULT_ROOT = path.resolve(process.cwd());
 const ROOT = VAULT_ROOT; // Site root is already the cwd
 const port = process.env.PORT || 8080;
+const DATA_DIR = path.join(ROOT, 'data'); // user content (untracked)
 
 const mime = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif', '.svg': 'image/svg+xml', '.webp': 'image/webp'
@@ -72,64 +73,63 @@ function generateDynamicSidebar() {
     tools: 'M21 14l-5-5 2-2 3 3 2-2-3-3 1-1-2-2-3 3-2-2-2 2 2 2-9 9v4h4l9-9 2 2z'
   };
 
-  let html = `<!-- Sidebar Navigation -->
-<div class="sidebar">
-    <nav class="nav" aria-label="Main navigation">
-        <div class="nav-header">
-            <div class="nav-search">
-                <input type="search" id="navSearch" placeholder="Filter..." />
-            </div>
-            <div id="navFav" class="nav-favorites">
-                <details class="nav-details">
-                    <summary class="nav-label"><span class="nav-icon">⭐</span><span>Favorites</span></summary>
-                    <ul id="favList" class="nav-list"></ul>
-                </details>
-            </div>
-            <ul class="nav-sections">`;
+  // Build only the inner sections HTML (list of <li class="nav-group">...)
+  let sectionsHtml = '';
 
   sections.forEach(section => {
-    const folderPath = path.join(ROOT, section.folder);
-    if (!fs.existsSync(folderPath)) return;
+    const repoFolder = path.join(ROOT, section.folder);
+    const dataFolder = path.join(ROOT, 'data', section.folder);
 
     // Define landing page filenames to exclude from navigation
     const landingPages = ['Characters.html', 'NPCs.html', 'Locations.html', 'Arcs.html', '03_Sessions.html', 'Tools.html'];
 
-    const files = fs.readdirSync(folderPath)
-      .filter(f => f.endsWith('.html') && !landingPages.includes(f))
-      .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    // Collect files from repo and data/, prefer data/ (user overrides)
+    const fileMap = new Map(); // filename -> {name, isData}
+    if (fs.existsSync(repoFolder)) {
+      for (const f of fs.readdirSync(repoFolder)) {
+        if (!f.endsWith('.html')) continue;
+        if (landingPages.includes(f)) continue;
+        fileMap.set(f, { name: f, isData: false });
+      }
+    }
+    if (fs.existsSync(dataFolder)) {
+      for (const f of fs.readdirSync(dataFolder)) {
+        if (!f.endsWith('.html')) continue;
+        if (landingPages.includes(f)) continue;
+        // data/ overrides repo copy
+        fileMap.set(f, { name: f, isData: true });
+      }
+    }
 
+    const files = Array.from(fileMap.keys()).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
     if (files.length === 0) return;
 
     const icon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${svgIcons[section.icon]}"/></svg>`;
 
-    html += `
-                    <li class="nav-group">
-                        <details class="nav-details ${section.class}" open>
-                            <summary class="nav-label"><span class="nav-icon">${icon}</span><span>${section.name}</span></summary>
-                            <ul class="nav-list">`;
+    let groupHtml = `
+      <li class="nav-group">
+        <details class="nav-details ${section.class}" open>
+          <summary class="nav-label"><span class="nav-icon">${icon}</span><span>${section.name}</span></summary>
+          <ul class="nav-list">`;
 
     files.forEach(file => {
       const title = file.replace('.html', '');
       const encodedFile = encodeURIComponent(file);
-      html += `
-                                <li><a class="nav-item" href="/${section.folder}/${encodedFile}"><span class="nav-icon">•</span><span class="nav-text">${title}</span></a></li>`;
+      const isData = fileMap.get(file).isData;
+      const hrefPrefix = isData ? '/data/' + section.folder : '/' + section.folder;
+      groupHtml += `
+            <li><a class="nav-item" href="${hrefPrefix}/${encodedFile}"><span class="nav-icon">•</span><span class="nav-text">${title}</span></a></li>`;
     });
 
-    html += `
-                            </ul>`;
+    groupHtml += `
+          </ul>
+        </details>
+      </li>`;
 
-    html += `
-                        </details>
-                    </li>`;
+    sectionsHtml += groupHtml;
   });
 
-  html += `
-                </ul>
-        </div>
-    </nav>
-</div>`;
-
-  return html;
+  return sectionsHtml;
 }
 
 function wrapInMinimalHTML(title, mainContent) {
@@ -456,7 +456,8 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 400, { error: 'Invalid title - must contain letters or numbers' });
     }
     const filename = sanitized + '.html';
-    const filepath = path.join(ROOT, folder, filename);
+    // Write user-created pages into the untracked `data/` directory to avoid overwriting repo files
+    const filepath = path.join(DATA_DIR, folder, filename);
 
     // Check if exists
     if (fs.existsSync(filepath)) {
@@ -557,13 +558,18 @@ const server = http.createServer(async (req, res) => {
     let { url, html } = body || {};
     if (typeof url !== 'string' || typeof html !== 'string') return sendJson(res, 400, { error: 'Invalid payload' });
     // Map URL to file path
-    let rel = decodeURIComponent(url).replace(/^\//, '');
+    let rel = decodeURIComponent(url).replace(/^\/+/, '');
     if (!isSafeRel(rel, true)) return sendJson(res, 400, { error: 'Invalid HTML file' });
-    const abs = path.join(VAULT_ROOT, rel);
-    // Read the file, replace <main class="main">...</main> or <body>...</body>
+
+    const absData = path.join(VAULT_ROOT, 'data', rel);
+    const absRepo = path.join(VAULT_ROOT, rel);
+    // Read from data/ first (user content). If missing, fall back to repo copy and copy it into data/ before editing.
     try {
-      let orig = fs.readFileSync(abs, 'utf8');
-      let updated = orig;
+      let origPath = null;
+      if (fs.existsSync(absData)) origPath = absData;
+      else if (fs.existsSync(absRepo)) origPath = absRepo;
+      let orig = origPath ? fs.readFileSync(origPath, 'utf8') : null;
+      let updated = orig || null;
 
       // Also update entity-header and entity-avatar if present in the new HTML
       const headerMatch = html.match(/entity-header[^>]*style="([^"]*)"/);
@@ -571,10 +577,7 @@ const server = http.createServer(async (req, res) => {
 
       if (headerMatch) {
         // Update header image URL in the original file
-        updated = updated.replace(
-          /(entity-header[^>]*style=")([^"]*)(">)/,
-          `$1${headerMatch[1]}$3`
-        );
+        updated = updated.replace(/(entity-header[^>]*style=")([^"]*)(">)/, `$1${headerMatch[1]}$3`);
       }
 
       if (avatarMatch) {
@@ -585,14 +588,24 @@ const server = http.createServer(async (req, res) => {
         );
       }
 
-      if (/<main[^>]*class=["']main["'][^>]*>/.test(updated)) {
-        updated = updated.replace(/(<main[^>]*class=["']main["'][^>]*>)[\s\S]*?(<\/main>)/i, `$1\n${html}\n$2`);
-      } else if (/<body[^>]*>/.test(updated)) {
-        updated = updated.replace(/(<body[^>]*>)[\s\S]*?(<\/body>)/i, `$1\n${html}\n$2`);
+      if (updated) {
+        if (/<main[^>]*class=["']main["'][^>]*>/.test(updated)) {
+          updated = updated.replace(/(<main[^>]*class=["']main["'][^>]*>)[\s\S]*?(<\/main>)/i, `$1\n${html}\n$2`);
+        } else if (/<body[^>]*>/.test(updated)) {
+          updated = updated.replace(/(<body[^>]*>)[\s\S]*?(<\/body>)/i, `$1\n${html}\n$2`);
+        } else {
+          return sendJson(res, 400, { error: 'No editable region found' });
+        }
       } else {
-        return sendJson(res, 400, { error: 'No editable region found' });
+        // No original template found; create a minimal page wrapping the provided HTML
+        const title = path.basename(rel).replace(/\.html$/, '').replace(/[-_]/g, ' ');
+        updated = wrapInMinimalHTML(title, html);
       }
-      fs.writeFileSync(abs, updated, 'utf8');
+
+      // Ensure data/ destination exists and write updated content there (do not overwrite repo files)
+      const dest = absData;
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      fs.writeFileSync(dest, updated, 'utf8');
 
       // Auto-sync landing page images after saving
       try {
@@ -615,15 +628,14 @@ const server = http.createServer(async (req, res) => {
     // Map URL to file path
     let rel = decodeURIComponent(url).replace(/^\//, '');
     if (!isSafeRel(rel, true)) return sendJson(res, 400, { error: 'Invalid HTML file' });
-    const abs = path.join(VAULT_ROOT, rel);
+    const absData = path.join(VAULT_ROOT, 'data', rel);
     try {
-      // Check if file exists
-      if (!fs.existsSync(abs)) {
-        return sendJson(res, 404, { error: 'File not found' });
+      // Prefer deleting user copy in data/
+      if (!fs.existsSync(absData)) {
+        return sendJson(res, 404, { error: 'File not found in data/. Use repo to delete tracked files.' });
       }
-      // Delete the file
-      fs.unlinkSync(abs);
-      console.log('[delete-page] Deleted:', abs);
+      fs.unlinkSync(absData);
+      console.log('[delete-page] Deleted (data/):', absData);
 
       // Remove from sidebar navigation
       removeSidebarNavigation(rel);
@@ -643,15 +655,31 @@ const server = http.createServer(async (req, res) => {
       const list = [];
 
       for (const folder of folders) {
-        const folderPath = path.join(ROOT, folder);
-        if (!fs.existsSync(folderPath)) continue;
-        const files = fs.readdirSync(folderPath).filter(f => f.endsWith('.html') && !landingExcludes.includes(f));
-        files.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-        files.forEach(f => {
-          // Build a web-safe href
-          const href = '/' + folder + '/' + encodeURIComponent(f);
+        const repoFolder = path.join(ROOT, folder);
+        const dataFolder = path.join(ROOT, 'data', folder);
+
+        // Collect files from repo and data/, prefer data/ versions
+        const fileSet = new Set();
+        if (fs.existsSync(repoFolder)) {
+          for (const f of fs.readdirSync(repoFolder)) {
+            if (!f.endsWith('.html')) continue;
+            if (landingExcludes.includes(f)) continue;
+            fileSet.add(f);
+          }
+        }
+        if (fs.existsSync(dataFolder)) {
+          for (const f of fs.readdirSync(dataFolder)) {
+            if (!f.endsWith('.html')) continue;
+            if (landingExcludes.includes(f)) continue;
+            fileSet.add(f);
+          }
+        }
+
+        const files = Array.from(fileSet).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+        for (const f of files) {
+          const href = fs.existsSync(path.join(ROOT, 'data', folder, f)) ? ('/data/' + folder + '/' + encodeURIComponent(f)) : ('/' + folder + '/' + encodeURIComponent(f));
           list.push({ name: f.replace('.html', ''), href });
-        });
+        }
       }
 
       sendJson(res, 200, list);
@@ -674,8 +702,17 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Static files from ./site
-  let p = path.join(ROOT, pathname);
+  // Static files from ./site — prefer user `data/` override when present
+  const relPath = pathname.replace(/^\/+/, '');
+  const rel = relPath || 'index.html';
+  let dataPath = path.join(ROOT, 'data', rel);
+  if (pathname.endsWith('/')) dataPath = path.join(ROOT, 'data', rel, 'index.html');
+  let p = null;
+  if (fs.existsSync(dataPath) && fs.statSync(dataPath).isFile()) {
+    p = dataPath;
+  } else {
+    p = path.join(ROOT, rel);
+  }
   if (p.endsWith('/')) p = path.join(p, 'index.html');
   fs.stat(p, (err, st) => {
     if (err || !st.isFile()) { res.writeHead(404); res.end('Not found'); return; }

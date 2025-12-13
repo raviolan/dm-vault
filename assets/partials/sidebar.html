@@ -14,11 +14,23 @@
                 <a class="nav-item nav-dashboard" href="/index.html"><span class="nav-icon">🏠</span><span
                         class="nav-text">Dashboard</span></a>
                 <div class="nav-quick"><input id="navQuick" placeholder="Quick nav..." /></div>
+                <details class="nav-details nav-tools-quick" open>
+                    <summary class="nav-label"><span class="nav-icon">🛠️</span><span>Tools</span></summary>
+                    <ul class="nav-list">
+                        <li><a class="nav-item" href="/data/05_Tools%20%26%20Tables/Enemy%20Generator.html"><span
+                                    class="nav-icon">•</span><span class="nav-text">Enemy Generator</span></a></li>
+                        <li><a class="nav-item"
+                                href="/data/05_Tools%20%26%20Tables/Random%20Encounter%20Generator.html"><span
+                                    class="nav-icon">•</span><span class="nav-text">Random Encounter
+                                    Generator</span></a></li>
+                    </ul>
+                </details>
                 <details class="nav-details" open>
                     <summary class="nav-label"><span class="nav-icon">⭐</span><span>Favorites</span></summary>
                     <ul id="navFav" class="nav-list"></ul>
                 </details>
-                <ul class="nav-sections">{{SECTIONS}}</ul>
+                <ul id="navSections" class="nav-sections">{{SECTIONS}}</ul>
+                <script src="/assets/nav-loader.js"></script>
             </nav>
             <!-- Weather card: DnD dice-driven weather generator -->
             <div id="weatherCard" class="card weather-card" aria-label="Weather">

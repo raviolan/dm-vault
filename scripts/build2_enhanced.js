@@ -4,13 +4,14 @@ import path from 'path';
 import { ensureDir, sha1, readText, writeFile, copyFile, copyDir, loadCache, saveCache } from './lib/io.js';
 
 const args = process.argv.slice(2);
-const FLAGS = { concurrency: 1, dryRun: false, debug: false, force: false, noCache: false };
+const FLAGS = { concurrency: 1, dryRun: false, debug: false, force: false, noCache: false, public: false };
 for (let i = 0; i < args.length; i++) {
     const a = args[i];
     if (a === '--dry-run' || a === '--dryrun') FLAGS.dryRun = true;
     else if (a === '--debug') FLAGS.debug = true;
     else if (a === '--force') FLAGS.force = true;
     else if (a === '--no-cache') FLAGS.noCache = true;
+    else if (a === '--public') FLAGS.public = true;
     else if (a.startsWith('--concurrency=')) FLAGS.concurrency = Math.max(1, parseInt(a.split('=')[1], 10) || 1);
     else if (a === '--concurrency' && args[i + 1]) { FLAGS.concurrency = Math.max(1, parseInt(args[i + 1], 10) || 1); i++; }
 }
@@ -93,18 +94,21 @@ function svgIcon(name, size = 16) {
 const headerPartial = fs.readFileSync(path.join(PARTIALS_DIR, 'header.html'), 'utf8');
 const sidebarPartialRaw = fs.readFileSync(path.join(PARTIALS_DIR, 'sidebar.html'), 'utf8');
 const footerPartial = fs.readFileSync(path.join(PARTIALS_DIR, 'footer.html'), 'utf8');
+const rightPartialRaw = fs.readFileSync(path.join(PARTIALS_DIR, 'right-panel.html'), 'utf8');
 const layoutPartial = fs.readFileSync(path.join(PARTIALS_DIR, 'layout.html'), 'utf8');
 
 function assembleLayout({ title, content, sidebarSections, rightHtml = '', extraScripts = '' }) {
     // Replace placeholders in sidebar partial
     const sidebarPartial = sidebarPartialRaw.replace('{{SECTIONS}}', sidebarSections);
+    // Inject right-panel partial, placing provided rightHtml into its RIGHT_TOP placeholder
+    const rightPanel = rightPartialRaw.replace('{{RIGHT_TOP}}', rightHtml || '');
     return layoutPartial
         .replace(/{{HEADER}}/g, headerPartial)
         .replace(/{{SIDEBAR}}/g, sidebarPartial)
         .replace(/{{FOOTER}}/g, footerPartial)
         .replace(/{{CONTENT}}/g, content)
         .replace(/{{TITLE}}/g, title)
-        .replace(/{{RIGHT}}/g, rightHtml)
+        .replace(/{{RIGHT}}/g, rightPanel)
         .replace(/{{EXTRA_SCRIPTS}}/g, extraScripts)
         .replace(/{{VERSION}}/g, VERSION);
 }
@@ -156,6 +160,15 @@ async function buildOnce() {
         return null;
     };
 
+    const allNoteKeys = [...notes.keys()];
+    // In public mode, only render/include specific tool pages (tools folder). Keep section headings.
+    if (FLAGS.public) {
+        // include notes from tools folder (may live under data/05_Tools & Tables or similar)
+        const publicMap = new Map([...notes].filter(([rel]) => rel.includes('05_Tools & Tables')));
+        notes.clear();
+        for (const [k, v] of publicMap) notes.set(k, v);
+    }
+
     const edges = [];
     const backlinks = new Map();
     for (const [rel, note] of notes) {
@@ -171,10 +184,49 @@ async function buildOnce() {
 
     ensureDir(OUT_DIR);
     // copy assets with concurrency
-    if (typeof copyDirAsync === 'function') {
-        await copyDirAsync(ASSET_SRC, path.join(OUT_DIR, 'assets'), cache, newCache, { concurrency: FLAGS.concurrency, dryRun: FLAGS.dryRun });
+    if (FLAGS.public) {
+        // In public mode, only copy a small whitelist of shared assets (avoid personal photos/avatars).
+        const whitelist = new Set([
+            'site.js', 'enemy-generator.js', 'weather.js', 'right-panel.js', 'favorites.js', 'search.js', 'utils.js', 'site-note.js', 'graph.js', 'session.js',
+            'components.css', 'style.css', 'layout.css', 'home.css', 'landing-pages.css', 'enhanced-features.css', 'enhanced-todo.css', 'theme.css', 'modal.css', 'sidebar.css',
+            'landing-pages.js', 'site-tags.js', 'site-note.js', 'home.css'
+        ]);
+        // ensure our nav loader is available to all pages
+        whitelist.add('nav-loader.js');
+        const destAssets = path.join(OUT_DIR, 'assets');
+        await ensureDir(destAssets);
+        // Remove any existing non-whitelisted files in output assets (cleanup personal images)
+        try {
+            const existing = fs.readdirSync(destAssets, { withFileTypes: true });
+            for (const ent of existing) {
+                if (ent.name === 'partials') continue;
+                if (!whitelist.has(ent.name)) {
+                    const p = path.join(destAssets, ent.name);
+                    try { fs.rmSync(p, { recursive: true, force: true }); } catch (e) { /* ignore */ }
+                }
+            }
+        } catch (e) { /* ignore if folder missing */ }
+
+        for (const fname of Array.from(whitelist)) {
+            const src = path.join(ASSET_SRC, fname);
+            if (!fs.existsSync(src)) continue;
+            const dst = path.join(destAssets, fname);
+            if (typeof copyFileAsync === 'function') await copyFileAsync(src, dst, path.relative(VAULT_ROOT, src), cache, newCache, { dryRun: FLAGS.dryRun });
+            else copyFile(src, dst, path.relative(VAULT_ROOT, src), cache, newCache);
+            // count copied
+        }
+        // copy partials (templates) so layout can be built
+        const partialsSrc = path.join(ASSET_SRC, 'partials');
+        if (fs.existsSync(partialsSrc)) {
+            if (typeof copyDirAsync === 'function') await copyDirAsync(partialsSrc, path.join(destAssets, 'partials'), cache, newCache, { concurrency: FLAGS.concurrency, dryRun: FLAGS.dryRun });
+            else copyDir(partialsSrc, path.join(destAssets, 'partials'), cache, newCache);
+        }
     } else {
-        copyDir(ASSET_SRC, path.join(OUT_DIR, 'assets'), cache, newCache);
+        if (typeof copyDirAsync === 'function') {
+            await copyDirAsync(ASSET_SRC, path.join(OUT_DIR, 'assets'), cache, newCache, { concurrency: FLAGS.concurrency, dryRun: FLAGS.dryRun });
+        } else {
+            copyDir(ASSET_SRC, path.join(OUT_DIR, 'assets'), cache, newCache);
+        }
     }
 
     const nodesArr = [...notes.values()].map(n => ({ id: n.rel, title: n.title, tags: n.tags }));
@@ -241,14 +293,21 @@ async function buildOnce() {
         }
         const files = (node._files || []).slice().sort((a, b) => a.localeCompare(b));
         for (const f of files) {
+            // In public mode do not render individual file links
+            if (FLAGS.public) continue;
             const n = notes.get(f);
             html += '<li><a class="nav-item" href="' + urlFor(f) + '"><span class="nav-icon">•</span><span class="nav-text">' + (n?.title || f) + '</span></a></li>';
         }
         return html;
     }
     // Top-level sections
-    const treeRoot = buildTree([...notes.keys()]);
+    // Build the full tree from all notes to preserve top-level section headings even in public builds
+    const treeRoot = buildTree(allNoteKeys);
     let sections = Object.keys(treeRoot._dirs || {});
+    if (FLAGS.public) {
+        const ensure = ['03_PCs', '04_NPCs', '02_World', '01_Arcs', '00_Campaign', '05_Tools & Tables'];
+        for (const s of ensure) if (!sections.includes(s)) sections.push(s);
+    }
     const desiredOrder = ['03_PCs', '04_NPCs', '02_World', '01_Arcs', '00_Campaign', '05_Tools & Tables'];
     sections.sort((a, b) => {
         const ia = desiredOrder.findIndex(x => a.startsWith(x));
@@ -260,14 +319,46 @@ async function buildOnce() {
     const sectionsHtml = sections.map(sec => {
         const label = friendlyName(sec);
         const secCls = folderClass(sec);
+        let filesHtml = '';
+        // In normal builds render full nested files; in public builds, hide most file listings
+        if (!FLAGS.public) {
+            filesHtml = '<ul class="nav-list">' + renderNavTree(treeRoot._dirs[sec], sec) + '</ul>';
+        } else {
+            // For public builds, expose select tool links under the Tools section so users can reach tools
+            if (sec.startsWith('05_')) {
+                // For public builds find any notes whose path includes this section name (handles 'data/' prefix)
+                const files = allNoteKeys.filter(k => k.includes(sec) && notes.has(k)).slice().sort((a, b) => a.localeCompare(b));
+                const list = files.map(f => {
+                    const n = notes.get(f);
+                    const title = (n && n.title) ? n.title : path.basename(f).replace(/\.md$/i, '');
+                    return '<li><a class="nav-item" href="' + urlFor(f) + '"><span class="nav-icon">•</span><span class="nav-text">' + title + '</span></a></li>';
+                }).join('');
+                if (list) filesHtml = '<ul class="nav-list">' + list + '</ul>';
+            }
+        }
         return ('<li class="nav-group">'
             + '<details class="nav-details ' + secCls + '" open>'
             + '<summary class="nav-label"><span class="nav-icon">' + iconForSection(sec) + '</span><span>' + label + '</span></summary>'
             + '<div class="nav-mini"><button class="chip nav-only" data-section="' + label + '" title="Show only this section">Only</button><input class="nav-mini-input" data-section="' + label + '" placeholder="Filter section..." /></div>'
-            + '<ul class="nav-list">' + renderNavTree(treeRoot._dirs[sec], sec) + '</ul>'
+            + filesHtml
             + '</details>'
             + '</li>');
     }).join('');
+
+    // Build a single-source nav data structure to be consumed by client-side loader
+    try {
+        const navSections = sections.map(sec => {
+            const label = friendlyName(sec);
+            const cls = folderClass(sec);
+            // Collect file links for this section (only those present in notes)
+            const files = allNoteKeys.filter(k => k.includes(sec) && notes.has(k)).slice().sort((a,b)=>a.localeCompare(b));
+            const items = files.map(f => ({ title: (notes.get(f)?.title) || path.basename(f).replace(/\.md$/i,''), href: urlFor(f) }));
+            return { label, cls, icon: '', items };
+        });
+        const navOutDir = path.join(OUT_DIR, 'assets');
+        try { ensureDir(navOutDir); } catch (e) {}
+        writeFile(path.join(navOutDir, 'nav.json'), JSON.stringify({ sections: navSections }, null, 2));
+    } catch (e) { /* non-fatal */ }
 
     function iconForSection(name) {
         if (/^00_/.test(name)) return svgIcon('flag');
@@ -287,6 +378,8 @@ async function buildOnce() {
             const attRel = path.join(ATTACHMENTS_DIR_NAME, target).replace(/\\/g, '/');
             return '<img alt="' + target + '" src="' + assetUrl(attRel) + '" />';
         });
+
+        
         md = md.replace(/\[\[([^\]]+)\]\]/g, function (_m, inside) {
             const parts = inside.split('|'); const target = parts[0].trim(); const display = parts[1]?.trim();
             const resolved = resolveWikiTarget(fromRel, target);
@@ -421,6 +514,14 @@ async function buildOnce() {
     for (const f of otherFiles) {
         const rel = path.relative(VAULT_ROOT, f).replace(/\\/g, '/');
         const ext = path.extname(rel).toLowerCase();
+        // In public mode, only copy shared tool pages and avoid user attachments
+        if (FLAGS.public) {
+            // skip any user attachments wherever they live (e.g. data/99_Attachments/...)
+            if (rel.split('/').includes(ATTACHMENTS_DIR_NAME)) continue;
+            // allow tool pages living under any folder that includes '05_Tools & Tables'
+            const isToolPath = rel.includes('05_Tools & Tables');
+            if (!isToolPath && !rel.startsWith('web/') && !rel.startsWith('assets/') && rel !== 'README.md') continue;
+        }
         if (SUPPORTED_IMG_EXT.has(ext) || !ODD_EXT.has(ext)) {
             const dst = path.join(OUT_DIR, rel);
             copyTasks.push(async () => { await (typeof copyFileAsync === 'function' ? copyFileAsync(f, dst, rel, cache, newCache, { dryRun: FLAGS.dryRun }) : copyFile(f, dst, rel, cache, newCache)); copied++; });
@@ -464,6 +565,13 @@ async function buildOnce() {
     );
     writeFile(path.join(OUT_DIR, 'session.html'), baseTemplate('Session', sessionHtml, sessionToolbar, '<script src="/assets/session.js?v=' + VERSION + '"></script>'));
 
+    // In public mode, ensure any exported attachments are removed from the output
+    if (FLAGS.public) {
+        try {
+            const outAtt = path.join(OUT_DIR, 'data', ATTACHMENTS_DIR_NAME);
+            if (fs.existsSync(outAtt)) fs.rmSync(outAtt, { recursive: true, force: true });
+        } catch (e) { /* ignore */ }
+    }
     saveCacheWrapper(newCache);
     if (FLAGS.debug) log('stats rendered/skipped/copied/assetSkipped:', rendered, skipped, copied, skippedAssets);
     log('Built', notes.size, 'notes ->', OUT_DIR, '(rendered:', rendered, 'skipped:', skipped, 'copied:', copied, 'asset-skipped:', skippedAssets, ')');

@@ -5,20 +5,20 @@ function initRightPanel() {
     // For backward compatibility we also set --theme-color1..6 (mapped to bg, surface, primary, text, muted, border).
     const COLOR_THEMES = {
         auburn: {
-            '--bg': '#201216',
-            '--surface': '#2A1A1E',
-            '--surface-2': '#332126',
-            '--border': '#4A2E35',
+            '--bg': '#FBF5F0',
+            '--surface': '#FFFFFF',
+            '--surface-2': '#F6EDEA',
+            '--border': '#E7D4D0',
 
-            '--text': '#F8F5F2',
-            '--muted': '#D7CFCB',
+            '--text': '#1E1416',
+            '--muted': '#5C4B4F',
 
-            '--primary': '#B63A1B',
-            '--primary-hover': '#C2472B',
+            '--primary': '#8F2D1B',
+            '--primary-hover': '#A63621',
             '--on-primary': '#FFFFFF',
 
-            '--accent': '#B89DBB',
-            '--highlight': '#F7C767'
+            '--accent': '#6C4A78',
+            '--highlight': '#F2D2A5'
         },
         desert: {
             '--bg': '#1E1A13',
@@ -52,20 +52,20 @@ function initRightPanel() {
             '--accent': '#932549'
         },
         orchid: {
-            '--bg': '#1A1017',
-            '--surface': '#22161F',
-            '--surface-2': '#2B1C28',
-            '--border': '#473042',
+            '--bg': '#FFF7FB',
+            '--surface': '#FFFFFF',
+            '--surface-2': '#F3EAF2',
+            '--border': '#E6D3E2',
 
-            '--text': '#FFF7EC',
-            '--muted': '#E3D7CB',
+            '--text': '#1B1218',
+            '--muted': '#5A4B55',
 
-            '--primary': '#B63E7D',
-            '--primary-hover': '#C54A88',
+            '--primary': '#7E2A62',
+            '--primary-hover': '#8E3270',
             '--on-primary': '#FFFFFF',
 
-            '--accent': '#FFF0D2',
-            '--olive': '#6C6A43'
+            '--accent': '#C34A8A',
+            '--highlight': '#FFE3F1'
         },
         pearls: {
             '--bg': '#111424',

@@ -1,51 +1,133 @@
 // Right panel tools: tabs, pinning, notepad autosave, default home
 function initRightPanel() {
-    // Color theme definitions (each palette provides 6 values used as:
-    // 1: --bg, 2: --panel, 3: --accent, 4: --text, 5: --muted, 6: --border)
-    // Originals preserved in comments for reference.
+    // Color theme definitions as token maps. Each theme provides semantic tokens:
+    // --bg, --surface, --surface-2, --border, --text, --muted, --primary, --primary-hover, --on-primary, --accent
+    // For backward compatibility we also set --theme-color1..6 (mapped to bg, surface, primary, text, muted, border).
     const COLOR_THEMES = {
-        // auburn: ['#642F37', '#C0350F', '#F3904B', '#F7C767', '#B89DBB']
-        auburn: ['#3E1F21', '#642F2F', '#D97729', '#F6E6B3', '#A68298', '#2B1415'],
+        auburn: {
+            '--bg': '#201216',
+            '--surface': '#2A1A1E',
+            '--surface-2': '#332126',
+            '--border': '#4A2E35',
 
-        // desert: ['#ae5433', '#ecc481', '#aa462d', '#9e895f', '#d5c79f', '#4a4231']
-        // nudge the muted tone toward a greener, more visible shade
-        desert: ['#4a3728', '#aa6b45', '#ecc481', '#f4e9d0', '#A7B06A', '#3f372e'],
+            '--text': '#F8F5F2',
+            '--muted': '#D7CFCB',
 
-        // mother: ['#080d22', '#531f4f', '#6e234b', '#932549', '#fdf3eb']
-        mother: ['#080d22', '#24102a', '#932549', '#fdf3eb', '#6e234b', '#0b0d14'],
+            '--primary': '#B63A1B',
+            '--primary-hover': '#C2472B',
+            '--on-primary': '#FFFFFF',
 
-        // orchid: ['#CB438B', '#BF3556', '#6C6A43', '#4D3449', '#FFF0D2']
-        // make the muted/nature green brighter for better visibility against panels
-        orchid: ['#2b1023', '#4D3449', '#CB438B', '#FFF0D2', '#9CB575', '#21121b'],
+            '--accent': '#B89DBB',
+            '--highlight': '#F7C767'
+        },
+        desert: {
+            '--bg': '#1E1A13',
+            '--surface': '#272116',
+            '--surface-2': '#312A1C',
+            '--border': '#433825',
 
-        // pearls: ['#414B9e', '#9792CB', '#AA74A0', '#E2C99E', '#8527736'] (fixed)
-        pearls: ['#2b2f73', '#414B9E', '#7B6ED9', '#E6DCC4', '#9792CB', '#2a254f'],
+            '--text': '#FBF6EE',
+            '--muted': '#D9D0C4',
 
-        // light (kept original ordering)
-        light: ['#ffffff', '#f6f7f8', '#0ea5ff', '#111827', '#6b7280', '#d1d5db'],
+            '--primary': '#A24D31',
+            '--primary-hover': '#B35A3B',
+            '--on-primary': '#FFFFFF',
 
-        // dark (kept original ordering)
-        dark: ['#0b1220', '#0f1724', '#8b5cf6', '#e5e7eb', '#9aa3b2', '#0b0f16']
+            '--accent': '#ECC481',
+            '--highlight': '#9E895F'
+        },
+        mother: {
+            '--bg': '#070A14',
+            '--surface': '#0E1326',
+            '--surface-2': '#141B33',
+            '--border': '#242E55',
+
+            '--text': '#FDF3EB',
+            '--muted': '#D3C9C6',
+
+            '--primary': '#5B2A63',
+            '--primary-hover': '#6B3475',
+            '--on-primary': '#FFFFFF',
+
+            '--accent': '#932549'
+        },
+        orchid: {
+            '--bg': '#1A1017',
+            '--surface': '#22161F',
+            '--surface-2': '#2B1C28',
+            '--border': '#473042',
+
+            '--text': '#FFF7EC',
+            '--muted': '#E3D7CB',
+
+            '--primary': '#B63E7D',
+            '--primary-hover': '#C54A88',
+            '--on-primary': '#FFFFFF',
+
+            '--accent': '#FFF0D2',
+            '--olive': '#6C6A43'
+        },
+        pearls: {
+            '--bg': '#111424',
+            '--surface': '#171A2F',
+            '--surface-2': '#1D2140',
+            '--border': '#2E3470',
+
+            '--text': '#F6F3FF',
+            '--muted': '#D8D4E8',
+
+            '--primary': '#4A55B3',
+            '--primary-hover': '#5A64C4',
+            '--on-primary': '#FFFFFF',
+
+            '--accent': '#AA74A0',
+            '--highlight': '#E2C99E'
+        },
+        light: {
+            '--bg': '#ffffff',
+            '--surface': '#f6f7f8',
+            '--surface-2': '#ffffff',
+            '--border': '#d1d5db',
+            '--text': '#111827',
+            '--muted': '#6b7280',
+            '--primary': '#0ea5ff',
+            '--primary-hover': '#0b8ad6',
+            '--on-primary': '#ffffff',
+            '--accent': '#2563eb'
+        },
+        dark: {
+            '--bg': '#0b1220',
+            '--surface': '#0f1724',
+            '--surface-2': '#111827',
+            '--border': '#0b0f16',
+            '--text': '#e5e7eb',
+            '--muted': '#9aa3b2',
+            '--primary': '#8b5cf6',
+            '--primary-hover': '#6f3ee8',
+            '--on-primary': '#ffffff',
+            '--accent': '#8b5cf6'
+        }
     };
 
     function applyColorTheme(theme) {
-        const colors = COLOR_THEMES[theme];
-        if (!colors) return;
+        const def = COLOR_THEMES[theme];
+        if (!def) return;
         try { console.info('Applying theme:', theme); } catch (e) { }
-        // Ensure we always set up to 6 theme variables (fill missing values by repeating last)
-        const normalized = colors.slice();
-        while (normalized.length < 6) normalized.push(normalized[normalized.length - 1] || '#000000');
         document.body.setAttribute('data-color-theme', theme);
-        // Set CSS variables for theme colors
-        for (let i = 0; i < 6; i++) {
-            document.documentElement.style.setProperty(`--theme-color${i + 1}`, normalized[i]);
+        // Apply semantic token variables
+        Object.entries(def).forEach(([k, v]) => {
+            try { document.documentElement.style.setProperty(k, v); } catch (e) { }
+        });
+        // Backwards compatibility: set --theme-color1..6 to a sensible mapping
+        const legacyMap = ['--bg', '--surface', '--primary', '--text', '--muted', '--border'];
+        for (let i = 0; i < legacyMap.length; i++) {
+            const val = def[legacyMap[i]] || '#000000';
+            document.documentElement.style.setProperty(`--theme-color${i + 1}`, val);
         }
-        // If the selected theme is the semantic 'light' or 'dark', also toggle the legacy `data-theme`
-        // attribute used by other parts of the CSS for light/dark overrides.
+        // Maintain legacy `data-theme` for light/dark CSS overrides
         if (theme === 'light' || theme === 'dark') {
             document.body.setAttribute('data-theme', theme);
         } else {
-            // Remove any legacy data-theme so it doesn't interfere with custom palettes
             document.body.removeAttribute('data-theme');
         }
         localStorage.setItem('colorTheme', theme);

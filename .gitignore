@@ -1,0 +1,5 @@
+# Ignore runtime data and user content
+data/
+data-*/
+node_modules/
+.env

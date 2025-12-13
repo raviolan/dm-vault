@@ -1,0 +1,801 @@
+<!-- Layout Partial: Main wrapper, references other partials -->
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Wild Beyond the Witchlight</title>
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%238b5cf6'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/assets/style.css?v=1765632019273" />
+    <link rel="stylesheet" href="/assets/components.css?v=1765632019273" />
+    <link rel="stylesheet" href="/assets/enhanced-todo.css?v=1765632019273" />
+    <link rel="stylesheet" href="/assets/modal.css?v=1765632019273" />
+    <link rel="stylesheet" href="/assets/landing-pages.css?v=1765632019273" />
+    <script>window.SITE_BASE = "/"</script>
+</head>
+
+<body>
+    <div class="layout">
+        <!-- Header Partial: Top toolbar and navigation -->
+<div class="top">
+    <div class="toolbar">
+        <a class="chip" href="/index.html">Hembränt</a>
+        <a class="chip" href="/graph.html">Graph</a>
+        <a class="chip" href="/tags/index.html">Tags</a>
+        <a class="chip" href="/session.html">Session</a>
+        <button id="btnCreatePage" class="chip" title="Create New Page">+ New</button>
+        <button id="btnEditPage" class="chip" title="Edit This Page">Edit</button>
+    </div>
+    <div class="search"><input id="searchBox" type="search" placeholder="Search titles, headings, #tags (Cmd/Ctrl-K)" />
+    </div>
+    <div id="searchResults" class="hovercard"></div>
+</div>
+
+<!-- Create Page Modal -->
+<div id="createPageModal" class="modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <h2>Create New Page</h2>
+        <form id="createPageForm">
+            <div class="form-group">
+                <label for="pageType">Page Type</label>
+                <select id="pageType" required>
+                    <option value="pc">Character (PC)</option>
+                    <option value="npc">NPC</option>
+                    <option value="location">Location</option>
+                    <option value="arc">Story Arc</option>
+                    <option value="shop">Shop</option>
+                    <option value="session">Session Note</option>
+                    <option value="tool">Tool/Reference</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="pageTitle">Page Title</label>
+                <input type="text" id="pageTitle" placeholder="Enter page title..." required />
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Create Page</button>
+                <button type="button" id="btnCancelCreate" class="btn-secondary">Cancel</button>
+            </div>
+        </form>
+        <div id="createPageStatus" style="display: none;"></div>
+    </div>
+</div>
+
+<!-- Edit Page Modal -->
+<div id="editPageModal" class="modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <h2>Edit Page</h2>
+        <form id="editPageForm">
+            <div class="form-group">
+                <label for="editPageContent">Page Content (HTML)</label>
+                <textarea id="editPageContent" rows="18" style="width:100%" required></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Save Changes</button>
+                <button type="button" id="btnCancelEdit" class="btn-secondary">Cancel</button>
+            </div>
+        </form>
+        <div id="editPageStatus" style="display: none;"></div>
+    </div>
+</div>
+
+<!-- Delete Page Modal -->
+<div id="deletePageModal" class="modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <h2>Delete Page</h2>
+        <p style="margin-bottom: 1em;">⚠️ This action cannot be undone. To confirm deletion, type the page title below:
+        </p>
+        <p style="margin-bottom: 1em;"><strong id="deletePageTitle"></strong></p>
+        <form id="deletePageForm">
+            <div class="form-group">
+                <label for="deletePageConfirm">Type page title to confirm:</label>
+                <input type="text" id="deletePageConfirm" style="width:100%" required autocomplete="off" />
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary" style="background: #c33;">Delete Page</button>
+                <button type="button" id="btnCancelDelete" class="btn-secondary">Cancel</button>
+            </div>
+        </form>
+        <div id="deletePageStatus" style="display: none; margin-top: 1em;"></div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content" style="max-width: 450px;">
+        <h2 id="confirmModalTitle">Confirm</h2>
+        <p id="confirmModalMessage" style="margin: 1em 0;"></p>
+        <div class="form-actions">
+            <button type="button" id="confirmModalYes" class="btn-primary">Yes</button>
+            <button type="button" id="confirmModalNo" class="btn-secondary">No</button>
+        </div>
+    </div>
+</div>
+        <!-- Compact weather strip: mirrors left-panel weather card -->
+        <div id="weatherStrip" class="weather-strip" aria-hidden="false"></div>
+        <aside class="left"><!-- Sidebar Partial: Navigation drawer and sections -->
+<div class="drawer" aria-label="Navigation">
+    <div class="drawer-handle">
+        <button id="leftDrawerToggle" class="chip" aria-expanded="true" aria-controls="leftDrawer">Nav</button>
+        <button id="leftDrawerPin" class="chip" aria-pressed="true">Pin</button>
+        <button id="leftCollapseExpand" class="chip" title="Collapse/Expand All">Collapse all</button>
+    </div>
+    <div id="leftDrawer" class="drawer-content">
+        <aside class="sidebar" role="navigation">
+            <div class="campaign-header">
+                <div class="campaign-title">Feywild Adventures</div>
+            </div>
+            <nav class="nav">
+                <a class="nav-item nav-dashboard" href="/index.html"><span class="nav-icon">🏠</span><span
+                        class="nav-text">Dashboard</span></a>
+                <div class="nav-quick"><input id="navQuick" placeholder="Quick nav..." /></div>
+                <details class="nav-details" open>
+                    <summary class="nav-label"><span class="nav-icon">⭐</span><span>Favorites</span></summary>
+                    <ul id="navFav" class="nav-list"></ul>
+                </details>
+                <ul class="nav-sections"><li class="nav-group">
+                <details class="nav-details f-pc" open>
+                    <summary class="nav-label"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a3 3 0 110-6 3 3 0 010 6z"/></svg></span><span>Characters</span></summary>
+                    <ul class="nav-list">
+                    <li><a class="nav-item" href="/03_PCs/Extras%20and%20quirks.html"><span class="nav-icon">•</span><span class="nav-text">Extras and quirks</span></a></li>
+                    <li><a class="nav-item" href="/03_PCs/Nyx.html"><span class="nav-icon">•</span><span class="nav-text">Nyx</span></a></li>
+                    <li><a class="nav-item" href="/03_PCs/Oceanus.html"><span class="nav-icon">•</span><span class="nav-text">Oceanus</span></a></li>
+                    <li><a class="nav-item" href="/03_PCs/Odo%20Kneecapper.html"><span class="nav-icon">•</span><span class="nav-text">Odo Kneecapper</span></a></li>
+                    <li><a class="nav-item" href="/03_PCs/Tenebris.html"><span class="nav-icon">•</span><span class="nav-text">Tenebris</span></a></li>
+                    <li><a class="nav-item" href="/03_PCs/Tihildur.html"><span class="nav-icon">•</span><span class="nav-text">Tihildur</span></a></li>
+                    <li><a class="nav-item" href="/03_PCs/Val'krath.html"><span class="nav-icon">•</span><span class="nav-text">Val'krath</span></a></li>
+                    </ul>
+                </details>
+            </li>
+            <li class="nav-group">
+                <details class="nav-details f-npc" open>
+                    <summary class="nav-label"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a3 3 0 110-6 3 3 0 010 6z"/></svg></span><span>NPCs</span></summary>
+                    <ul class="nav-list">
+                    <li><a class="nav-item" href="/04_NPCs/Accursed%20Spirit%20Naga.html"><span class="nav-icon">•</span><span class="nav-text">Accursed Spirit Naga</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Adult%20Cave%20Dragon.html"><span class="nav-icon">•</span><span class="nav-text">Adult Cave Dragon</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Adult%20Cave%20Monk.html"><span class="nav-icon">•</span><span class="nav-text">Adult Cave Monk</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Adult%20Earth%20Dragon.html"><span class="nav-icon">•</span><span class="nav-text">Adult Earth Dragon</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Adult%20Gold%20Dragon.html"><span class="nav-icon">•</span><span class="nav-text">Adult Gold Dragon</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Agile%20Hand.html"><span class="nav-icon">•</span><span class="nav-text">Agile Hand</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/API%20Created%20Enemy%20E2.html"><span class="nav-icon">•</span><span class="nav-text">API Created Enemy E2</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/API%20Port8080%20Test.html"><span class="nav-icon">•</span><span class="nav-text">API Port8080 Test</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Captain%20Xendros.html"><span class="nav-icon">•</span><span class="nav-text">Captain Xendros</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Cyrieth%20Nerolien.html"><span class="nav-icon">•</span><span class="nav-text">Cyrieth Nerolien</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Daddy%20Salabaster.html"><span class="nav-icon">•</span><span class="nav-text">Daddy Salabaster</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Dusk.html"><span class="nav-icon">•</span><span class="nav-text">Dusk</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Gellan%20Primewater.html"><span class="nav-icon">•</span><span class="nav-text">Gellan Primewater</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Kedjou.html"><span class="nav-icon">•</span><span class="nav-text">Kedjou</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Lysa%20_Ledger_%20Feld.html"><span class="nav-icon">•</span><span class="nav-text">Lysa _Ledger_ Feld</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Raven%20Queen.html"><span class="nav-icon">•</span><span class="nav-text">Raven Queen</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Salabaster%20Shipping.html"><span class="nav-icon">•</span><span class="nav-text">Salabaster Shipping</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Saltmarsh%20Council.html"><span class="nav-icon">•</span><span class="nav-text">Saltmarsh Council</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Sanbalet.html"><span class="nav-icon">•</span><span class="nav-text">Sanbalet</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Scarlet%20Brotherhood.html"><span class="nav-icon">•</span><span class="nav-text">Scarlet Brotherhood</span></a></li>
+                    <li><a class="nav-item" href="/04_NPCs/Test%20Enemy%20From%20E2.html"><span class="nav-icon">•</span><span class="nav-text">Test Enemy From E2</span></a></li>
+                    </ul>
+                </details>
+            </li>
+            <li class="nav-group">
+                <details class="nav-details f-location" open>
+                    <summary class="nav-label"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a3 3 0 110-6 3 3 0 010 6z"/></svg></span><span>World</span></summary>
+                    <ul class="nav-list">
+                    <li><a class="nav-item" href="/02_World/Locations/Bent%20Willow%20Tavern.html"><span class="nav-icon">•</span><span class="nav-text">Bent Willow Tavern</span></a></li>
+                    <li><a class="nav-item" href="/02_World/Locations/Old%20King's%20Road.html"><span class="nav-icon">•</span><span class="nav-text">Old King's Road</span></a></li>
+                    <li><a class="nav-item" href="/02_World/Locations/Road%20Through%20the%20Feywild%20Leak.html"><span class="nav-icon">•</span><span class="nav-text">Road Through the Feywild Leak</span></a></li>
+                    <li><a class="nav-item" href="/02_World/Locations/Salabaster%20Shipping%20HQ.html"><span class="nav-icon">•</span><span class="nav-text">Salabaster Shipping HQ</span></a></li>
+                    <li><a class="nav-item" href="/02_World/Locations/Saltmarsh.html"><span class="nav-icon">•</span><span class="nav-text">Saltmarsh</span></a></li>
+                    <li><a class="nav-item" href="/02_World/Locations/Stormwreck%20Island.html"><span class="nav-icon">•</span><span class="nav-text">Stormwreck Island</span></a></li>
+                    <li><a class="nav-item" href="/02_World/Locations/The%20Inn%20at%20the%20End%20of%20the%20Road.html"><span class="nav-icon">•</span><span class="nav-text">The Inn at the End of the Road</span></a></li>
+                    </ul>
+                </details>
+            </li>
+            <li class="nav-group">
+                <details class="nav-details f-arc" open>
+                    <summary class="nav-label"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a3 3 0 110-6 3 3 0 010 6z"/></svg></span><span>Arcs</span></summary>
+                    <ul class="nav-list">
+                    <li><a class="nav-item" href="/01_Arcs/01_Arcs%20Overview.html"><span class="nav-icon">•</span><span class="nav-text">01_Arcs Overview</span></a></li>
+                    <li><a class="nav-item" href="/01_Arcs/Arc%20-%20Cyrieth's%20Web.html"><span class="nav-icon">•</span><span class="nav-text">Arc - Cyrieth's Web</span></a></li>
+                    <li class="nav-section">
+                        <details class="nav-details f-arc" open>
+                            <summary class="nav-label"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a3 3 0 110-6 3 3 0 010 6z"/></svg></span><span>GoSM</span></summary>
+                            <ul class="nav-list">
+                                <li><a class="nav-item" href="/01_Arcs/GoSM/Factions%20and%20Politics.html"><span class="nav-icon">•</span><span class="nav-text">Factions and Politics</span></a></li>
+                                <li><a class="nav-item" href="/01_Arcs/GoSM/Generally%2C%20GoSM.html"><span class="nav-icon">•</span><span class="nav-text">Generally, GoSM</span></a></li>
+                                <li><a class="nav-item" href="/01_Arcs/GoSM/Masterpiece%20Imbroglio.html"><span class="nav-icon">•</span><span class="nav-text">Masterpiece Imbroglio</span></a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-section">
+                        <details class="nav-details f-arc" open>
+                            <summary class="nav-label"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a3 3 0 110-6 3 3 0 010 6z"/></svg></span><span>The Feywild</span></summary>
+                            <ul class="nav-list">
+                                <li><a class="nav-item" href="/01_Arcs/The%20Feywild/Feywild%20Summary.html"><span class="nav-icon">•</span><span class="nav-text">Feywild Summary</span></a></li>
+                                <li><a class="nav-item" href="/01_Arcs/The%20Feywild/the%20trek.html"><span class="nav-icon">•</span><span class="nav-text">the trek</span></a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    </ul>
+                </details>
+            </li>
+            <li class="nav-group">
+                <details class="nav-details f-other" open>
+                    <summary class="nav-label"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a3 3 0 110-6 3 3 0 010 6z"/></svg></span><span>03_Sessions</span></summary>
+                    <ul class="nav-list">
+                    <li><a class="nav-item" href="/00_Campaign/03_Sessions/01%20Finishing%20up%20in%20Saltmarsh.html"><span class="nav-icon">•</span><span class="nav-text">01 Finishing up in Saltmarsh</span></a></li>
+                    </ul>
+                </details>
+            </li>
+            <li class="nav-group">
+                <details class="nav-details f-other" open>
+                    <summary class="nav-label"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a3 3 0 110-6 3 3 0 010 6z"/></svg></span><span>Tools</span></summary>
+                    <ul class="nav-list">
+                    <li><a class="nav-item" href="/05_Tools & Tables/Enemy%20Generator.html"><span class="nav-icon">•</span><span class="nav-text">Enemy Generator</span></a></li>
+                    <li><a class="nav-item" href="/05_Tools & Tables/Random%20Encounter%20Generator.html"><span class="nav-icon">•</span><span class="nav-text">Random Encounter Generator</span></a></li>
+                    <li class="nav-section">
+                        <details class="nav-details f-other" open>
+                            <summary class="nav-label"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a3 3 0 110-6 3 3 0 010 6z"/></svg></span><span>DM References</span></summary>
+                            <ul class="nav-list">
+                                <li><a class="nav-item" href="/05_Tools & Tables/DM%20References/02_Campaign%20Overview%20and%20Key%20points.html"><span class="nav-icon">•</span><span class="nav-text">02_Campaign Overview and Key points</span></a></li>
+                                <li><a class="nav-item" href="/05_Tools & Tables/DM%20References/House%20Rules.html"><span class="nav-icon">•</span><span class="nav-text">House Rules</span></a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-section">
+                        <details class="nav-details f-other" open>
+                            <summary class="nav-label"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a3 3 0 110-6 3 3 0 010 6z"/></svg></span><span>Items & More</span></summary>
+                            <ul class="nav-list">
+                                <li><a class="nav-item" href="/05_Tools & Tables/Items%20%26%20More/Aurumvorax.html"><span class="nav-icon">•</span><span class="nav-text">Aurumvorax</span></a></li>
+                                <li><a class="nav-item" href="/05_Tools & Tables/Items%20%26%20More/Bloodwell%20Vial.html"><span class="nav-icon">•</span><span class="nav-text">Bloodwell Vial</span></a></li>
+                                <li><a class="nav-item" href="/05_Tools & Tables/Items%20%26%20More/Call%20Lightning.html"><span class="nav-icon">•</span><span class="nav-text">Call Lightning</span></a></li>
+                                <li><a class="nav-item" href="/05_Tools & Tables/Items%20%26%20More/Dao.html"><span class="nav-icon">•</span><span class="nav-text">Dao</span></a></li>
+                                <li><a class="nav-item" href="/05_Tools & Tables/Items%20%26%20More/Dawn%20Incarnate.html"><span class="nav-icon">•</span><span class="nav-text">Dawn Incarnate</span></a></li>
+                                <li><a class="nav-item" href="/05_Tools & Tables/Items%20%26%20More/Lost-Items.html"><span class="nav-icon">•</span><span class="nav-text">Lost-Items</span></a></li>
+                                <li><a class="nav-item" href="/05_Tools & Tables/Items%20%26%20More/Sahuagin.html"><span class="nav-icon">•</span><span class="nav-text">Sahuagin</span></a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-section">
+                        <details class="nav-details f-other" open>
+                            <summary class="nav-label"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a3 3 0 110-6 3 3 0 010 6z"/></svg></span><span>Shops</span></summary>
+                            <ul class="nav-list">
+                                <li><a class="nav-item" href="/05_Tools & Tables/Shops/Clothes%20and%20Accessories.html"><span class="nav-icon">•</span><span class="nav-text">Clothes and Accessories</span></a></li>
+                                <li><a class="nav-item" href="/05_Tools & Tables/Shops/Fireworks%20and%20Explosives.html"><span class="nav-icon">•</span><span class="nav-text">Fireworks and Explosives</span></a></li>
+                                <li><a class="nav-item" href="/05_Tools & Tables/Shops/Potions.html"><span class="nav-icon">•</span><span class="nav-text">Potions</span></a></li>
+                                <li><a class="nav-item" href="/05_Tools & Tables/Shops/Shops%20Index.html"><span class="nav-icon">•</span><span class="nav-text">Shops Index</span></a></li>
+                                <li><a class="nav-item" href="/05_Tools & Tables/Shops/Weapons%20and%20Shields.html"><span class="nav-icon">•</span><span class="nav-text">Weapons and Shields</span></a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    </ul>
+                </details>
+            </li></ul>
+            </nav>
+            <!-- Weather card: DnD dice-driven weather generator -->
+            <div id="weatherCard" class="card weather-card" aria-label="Weather">
+                <div class="weather-header">
+                    <div class="weather-title">Weather</div>
+                    <button id="rollWeather" class="chip" title="Roll weather">Roll</button>
+                </div>
+                <div class="weather-now" aria-live="polite">
+                    <div class="weather-icon">⛅</div>
+                    <div class="weather-desc">
+                        <div class="weather-condition">Unknown</div>
+                        <div class="weather-meta">--</div>
+                    </div>
+                </div>
+                <ul class="weather-forecast" role="list">
+                    <!-- forecast rows populated by JS -->
+                </ul>
+                <div class="weather-effects" aria-hidden="false">
+                    <!-- effects populated by JS -->
+                </div>
+            </div>
+        </aside>
+    </div>
+</div></aside>
+        <main class="main">
+            <div class="breadcrumb-container">
+                <div id="breadcrumbText" class="main-breadcrumb meta"></div>
+                <button id="btnDeletePage" class="delete-page-btn" title="Delete this page"
+                    aria-label="Delete this page">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
+                    </svg>
+                </button>
+            </div><article><div class="page-header" style="--page-header:url('/assets/ph-header.svg')"></div><h1>The Wild Beyond the Witchlight</h1>
+
+<h2>Hither – Session 1: The Swamp Opens</h2>
+<p>> <strong>Intended Flow:</strong>  </p><p>> Arrival on the Queen’s Way → Balloon Crash → Harengon Brigands → (Optional: Inn or Stream of Visions) → Slanty Tower & Sir Talavar → Begin journey toward Telemy Hill.</p>
+<p>---</p>
+
+<h2>Session Overview</h2>
+<p><strong>Session Goals</strong></p>
+<ul><li>Make the Feywild (Hither) feel weird, alive, and reactive.</li>
+<li>Clearly establish: <strong>Bavlorna</strong>, <strong>Downfall</strong>, <strong>Telemy Hill</strong>, <strong>Sir Talavar</strong>, <strong>Agdon Longscarf</strong>, <strong>Zybilna</strong>.</li>
+<li>Give the party a very clear <strong>next step</strong>: go to <strong>Telemy Hill</strong> to find <strong>Jingle Jangle</strong> and the key to Sir Talavar’s cage.</li>
+
+</ul><p><strong>Themes</strong></p>
+<ul><li><strong>The world is broken.</strong> Prismeer was once lovely; now it’s a flooded ruin.</li>
+<li><strong>The hags stole pieces of _you_.</strong> Lost things / memories / selves are currency here.</li>
+<li><strong>There is a way to fix it.</strong> Sir Talavar’s quest points the way to Bavlorna (and beyond).</li>
+
+</ul><p>---</p>
+
+<h2>Cast of Important NPCs</h2>
+
+<h3><a href="#" class="wikilink" data-target="Sir Talavar">Sir Talavar</a></h3>
+<ul><li><strong>Type:</strong> Violet faerie dragon knight, emissary of the Summer Queen.</li>
+<li><strong>Vibe:</strong> Noble, dramatic, charmingly fussy; tiny body, huge voice.</li>
+<li><strong>Wants:</strong></li>
+<li>To be freed from his magical cage.</li>
+<li>To warn the Summer Queen about Prismeer’s fall.</li>
+<li>To see Bavlorna overthrown and Zybilna freed.</li>
+<li><strong>Knows (at this point):</strong></li>
+<li>Prismeer was once ruled by <strong>Zybilna</strong>, an archfey, now frozen in time.</li>
+<li>The <strong>Hourglass Coven</strong> shattered the realm: Hither (Bavlorna), Thither (Skabatha), Yon (Endelyn).</li>
+<li>Bavlorna lairs in <strong>Downfall</strong>, a bullywug settlement built around an old well.</li>
+<li>His cage’s key is in the hands of <strong>Jingle Jangle</strong>, a key-obsessed goblin who lives at <strong>Telemy Hill</strong>.</li>
+<li><strong>Promises if freed properly (with key):</strong></li>
+<li>Guidance and political support with the Summer Court.</li>
+<li>Concrete directions toward <strong>Downfall</strong> and Bavlorna.</li>
+<li>Personal investment in helping the characters reclaim their stolen things.</li>
+
+</ul><p>---</p>
+
+<h3><a href="#" class="wikilink" data-target="Jebbek & the Harengon Brigands">Jebbek & the Harengon Brigands</a></h3>
+<ul><li><strong>Type:</strong> 6 harengon brigands; Jebbek is their mouthpiece.</li>
+<li><strong>Vibe:</strong> Musical highway-robbers; mean but not murderous; love swagger and performance.</li>
+<li><strong>Goal:</strong> Rob travelers not of gold, but of <strong>delightful memories</strong> using a special gourd.</li>
+<li><strong>Important item:</strong> A stoppered gourd that can steal and store memories of joy.</li>
+<li>Gifted to <strong>Agdon Longscarf</strong> by <strong>Bavlorna</strong>, entrusted to Jebbek.</li>
+<li><strong>Knows:</strong></li>
+<li><strong>Agdon Longscarf</strong> is their prince, runs the <strong>Brigands’ Tollway</strong>.</li>
+<li>Agdon works out of a wooden causeway/boardwalk over the swamp.</li>
+<li>Bavlorna floods the land via her corruption of the ancient wells.</li>
+<li><strong>Attitude:</strong></li>
+<li>If the party complies, they’re smug and satisfied.</li>
+<li>If resisted, they threaten a nonlethal beating and may flee if things go badly.</li>
+
+</ul><p>---</p>
+
+<h3><a href="#" class="wikilink" data-target="Tsu Harabax">Tsu Harabax</a> (Optional for this session: Inn at the End of the Road)</h3>
+<ul><li><strong>Type:</strong> Elderly human druid, innkeeper.</li>
+<li><strong>Vibe:</strong> World-weary, kind, nostalgic for “Zybilna’s time.”</li>
+<li><strong>Wants:</strong> Zybilna restored, Bavlorna gone, and to leave Hither someday.</li>
+<li><strong>Knows:</strong></li>
+<li>General shape of Prismeer’s history (Zybilna → Hags).</li>
+<li>Bavlorna turned Hither into a swamp by corrupting the wells.</li>
+<li>The <strong>rules of conduct</strong> in Prismeer (hospitality, ownership, reciprocity).</li>
+<li><strong>Offer:</strong></li>
+<li>Free room, food, and plum pie—_but_ expects repayment via trinket, promise, or vow.</li>
+
+</ul><p>---</p>
+
+<h2>Running the Feywild</h2>
+<p>Use these continually as you describe scenes:</p>
+<ul><li><strong>One detail is always “off”:</strong></li>
+<li>Reflections lag behind by a heartbeat.</li>
+<li>A distant tree laughs softly when someone stumbles.</li>
+<li>The sun seems to be _under_ the swamp, not above the sky.</li>
+<li><strong>Emotions affect the world:</strong></li>
+<li>Joy → fireflies gather; faint music; flowers bloom.</li>
+<li>Anger → water ripples red; frogs fall silent; wood creaks.</li>
+<li>Fear → fog thickens; roots curl like fingers; a raven mocks them.</li>
+<li><strong>Prices are not gold:</strong></li>
+<li>People ask for secrets, memories, promises, trinkets, and gestures of reciprocity—not coin.</li>
+
+</ul><p>---</p>
+
+<h2>Scene 0 – Crossing into Hither (Queen’s Way)</h2>
+<p><strong>Purpose:</strong>  </p><p>Drop the party into a strange, vivid Feywild; make the Queen’s Way and the swamp feel _vast_ and _wrong_; quickly segue to the balloon hook.</p>
+
+<h3>Read-Aloud</h3>
+<p>> You step through the mirror and the world tilts.</p><p>> </p><p>> A broken stone roadway hangs in the air above a vast swamp, its pale blocks faintly glowing from within like old moonlight. Whole sections of the causeway are simply gone, leaving yawning gaps that stare down into fog.</p><p>> </p><p>> Below, a blanket of mist hides the ground, but you can smell it—wet rot and sour water. The air rings with sound: croaking frogs, unseen birds, something splashing just out of sight. For a moment it feels like the swamp itself is holding its breath, waiting to see what you’ll do.</p>
+<p><strong>GM Notes</strong></p>
+<ul><li>The Queen’s Way is ~20 ft wide and ~100 ft above the swamp.</li>
+<li>Let them take in the view for a beat, ask a couple of “what do you do?” questions, then move to the balloon.</li>
+
+</ul>
+<h3>Feywild Flourishes (use 1–2)</h3>
+<ul><li>When someone swears or shouts, a gust of wind blows _against_ the direction of their voice.</li>
+<li>Positive emotion: a nearby stone develops a faint smile-like crack.</li>
+<li>Negative emotion: creepers on a distant pillar shrivel.</li>
+
+</ul><p>---</p>
+
+<h2>Scene 1 – The Plummeting Balloon</h2>
+<p><strong>Purpose:</strong>  </p><p>Give a loud, visible hook to Slanty Tower and Sir Talavar.</p>
+
+<h3>Read-Aloud</h3>
+<p>> As you look out over the swamp, something catches your eye in the dim sky—</p><p>> </p><p>> A great, patchwork balloon spins wildly, its mottled gasbag flapping like a torn cloak. The wicker basket beneath it swings and lurches as the whole contraption drops.</p><p>> </p><p>> You watch it tumble down into the fog about a mile away. There’s no sound of impact—just the balloon vanishing into the mists, leaving the sky strangely empty.</p>
+<p><strong>GM Notes</strong></p>
+<ul><li>If no one says anything, nudge with an NPC or passive Insight:</li>
+<li>“That might be the only sign of life out here. If anyone needs help—or knows what’s going on—it’s probably in that balloon.”</li>
+<li>Make it very clear: <strong>this is your strongest lead</strong> in a hostile unknown domain.</li>
+<li>If they decide to ignore it, the terrain “shifts” such that most easy routes eventually angle toward the crash site anyway.</li>
+
+</ul><p>---</p>
+
+<h2>Scene 2 – Descent & Harengon Brigands</h2>
+
+<h3>Getting Down</h3>
+<p>Let them climb down via carved handholds / mushrooms / magic as they like. Only call for a check if they do it recklessly.</p>
+<p>As the last PC touches ground:</p>
+<p>> Wet earth sucks at your boots. Knotted mangrove roots twist like ribs up out of the muck. Purplish mushrooms cling to rotting stumps, and pale crickets glow like fireflies as they chirp—until tongues snap them out of the air.</p><p>> </p><p>> Something large stirs in the fog—a crane the size of a horse bursts upward, wings beating as it takes flight and vanishes into the mist. The swamp feels louder for a moment, then quieter…</p><p>> </p><p>> …and from somewhere in the fog, you hear singing.</p>
+
+<h3>Brigands Entrance</h3>
+<p>The harengons appear through the fog, pulling a giant snail.</p>
+<p>> Six rabbitfolk stride into view, marching in time with their own loud song. Two tug on reins wrapped around the shell of a huge snail, while the others brandish slings and clubs. Their patchwork coats and scarves drip mud, but they look entirely too pleased with themselves.</p><p>> </p><p>> “With sticks and stones we’ll break your nose,” they chant in unison, “we’ll beat you blind and steal your clothes…”</p>
+<p>Let them finish or interrupt.</p>
+
+<h3>Jebbek’s Opening</h3>
+<p><strong>Jebbek</strong> steps forward, ears adorned with little stolen ribbons.</p>
+<p><strong>In Character – Jebbek</strong></p>
+<p>> “That’s close enough,” says the lead hare. She raises a paw and the song dies.</p><p>> </p><p>> “Name’s Jebbek. This is a robbery. You stand there, you listen politely, and nobody has to get beaten half into the mud. Deal?”</p>
+<p>Let the party respond. If they’re at least listening:</p>
+<p>> “See, we’re not after your coins. Coins are boring. We collect _delights_. Each of you is going to hand over one very particular joy: the feeling you had when you got the best gift anyone ever gave you.”</p><p>> </p><p>> She pulls out a squat gourd stoppered with a golden knob. The gourd glimmers faintly from within.</p><p>> </p><p>> “All it takes is a touch of the stopper while I’m holding it. The memory slips inside, safe and sound. You won’t miss it. Much. And our prince, Agdon Longscarf, will be _most_ obliged.”</p>
+
+<h4>Mechanically</h4>
+<ul><li>If a PC voluntarily touches the knob: they lose the _emotion_ associated with that best-gift memory. They remember facts, but it feels hollow.</li>
+<li>Note the memory somewhere; this can be traded back later (if they recover the gourd) or fuel scenes with Agdon.</li>
+
+</ul>
+<h4>Choice Point</h4>
+<p><strong>If everyone complies</strong></p>
+<ul><li>Jebbek beams, bows dramatically.</li>
+
+</ul><p>> “See? Civilized folk. Agdon’ll be thrilled. He likes the good ones.”  </p><p>> She taps the gourd fondly. “If you’re planning on wandering about, word of advice: don’t cross the <strong>Brigands’ Tollway</strong> without a scarf around your neck. Our prince notices such things.”</p>
+<ul><li>They leave, dragging the snail (unless the party intervenes on its behalf).</li>
+
+</ul><p><strong>If someone refuses</strong></p>
+<p>Jebbek’s smile fades into a sharp grin:</p>
+<p>> “Ah, the stubborn type. I respect it. Unfortunately, I still have to do my job.”</p><p>> </p><p>> She nods to her brigands. “Last chance. Give up the gift-feeling… or we knock you down, empty your hands, and see what’s worth bringing to Agdon.”</p>
+<ul><li>Offer a <strong>group Intimidation / Persuasion</strong> check (DC ~13) to make them back off.</li>
+<li>On success: they mutter and retreat into the fog, vowing that “Agdon won’t forget this.”</li>
+<li>On failure or if combat starts:</li>
+<li>They fight to <strong>knock out</strong>, not kill. Have them focus on clubs and slings, retreating if 2 are dropped or badly hurt.</li>
+
+</ul>
+<h3>The Giant Snail</h3>
+<ul><li>Hostile to brigands, neutral to PCs.</li>
+<li>If the party frees or comforts it (especially if anyone raced snails at the carnival), allow a simple Animal Handling or RP moment.</li>
+<li>A successfully befriended snail can:</li>
+<li>Serve as an amusing mount / slow pack animal.</li>
+<li>Be a recurring ally; the swamp “remembers” kindness.</li>
+
+</ul>
+<h3>Brigands’ Lore Drops (use if you want to seed info)</h3>
+<p>If any brigand is questioned or bargained with (instead of simply fought):</p>
+<ul><li>On Bavlorna:</li>
+
+</ul><p>> “Slack-jawed Lorna? She’s the big frog at the center of the swamp. Her house squats over the water at <strong>Downfall</strong>. Everything here’s hers. Or so she says.”</p>
+<ul><li>On Agdon:</li>
+
+</ul><p>> “Agdon Longscarf, brigand prince of Prismeer. Fastest legs in Hither. His scarf’s longer than your patience. He’s turned the old paths into the <strong>Brigands’ Tollway</strong>.”</p>
+<p>---</p>
+
+<h2>Scene 3 – Optional Encounter (Choose One)</h2>
+<p>Pick <strong>one</strong> to reinforce theme and give more hooks. Don’t run both unless you know the session will be long.</p>
+
+<h3>Option A: <a href="#" class="wikilink" data-target="Inn at the End of the Road">Inn at the End of the Road</a></h3>
+<p><strong>Purpose:</strong>  </p><p>Show Rule of Hospitality/Reciprocity, and give them a friendly face & Zybilna context.</p>
+
+<h4>Arrival</h4>
+<p>> As you trudge through the muck, a new smell cuts through the rot: onion, herbs, and something rich and savory. Ahead, a three-story inn stands on thick, fleshy legs, striding slowly through the swamp. Tiny lights buzz around it like fireflies.</p><p>> </p><p>> The inn halts as it nears you and lowers itself with a creak, the front door settling just above the ground. Warm light spills from its windows.</p>
+<p>Inside is cozy inn-vibes; up to you how detailed.</p>
+
+<h4>Tsu Harabax</h4>
+<p>An elderly human woman with braided gray hair and ink-stained fingers greets them.</p>
+<p>> “Guests! In Hither, no less. Come in, come in. I’m Tsu. This is the <strong>Inn at the End of the Road</strong>. You look like you need dry socks and hot stew.”</p>
+<p>She offers:</p>
+<ul><li>Free meal, free beds, plum pie.</li>
+
+</ul><p>At some point, she’ll mention <strong>reciprocity</strong> if they don’t bring it up:</p>
+<p>> “Now, don’t fret. The rules are… gentler these days. But this is still Prismeer. Hospitality given, hospitality returned. A trinket, a story, a promise—whatever you can spare.”</p>
+<p>If they mention <strong>Bavlorna</strong> or the <strong>Hourglass Coven</strong>:</p>
+<p>> At the name, Tsu spits into the fire.  </p><p>> “Hags. Parasites. When <strong>Zybilna</strong> ruled, this inn saw travelers from all corners of the Fey. Now? I walk circles in a swamp that wasn’t meant to be a swamp.”</p>
+<p>> “If you’re the sort to set things right… then that’s payment enough for me.”</p>
+<p>Use Tsu to:</p>
+<ul><li>Explain the <strong>three rules</strong> (hospitality, ownership, reciprocity).</li>
+<li>Reinforce Zybilna as a benevolent former ruler.</li>
+<li>Confirm that Prismeer is <strong>shattered</strong> and Hither is only one piece.</li>
+
+</ul><p>---</p>
+
+<h3>Option B: <a href="#" class="wikilink" data-target="Stream of Visions">Stream of Visions</a></h3>
+<p><strong>Purpose:</strong>  </p><p>Give each PC a “vision trailer” for Downfall / Bavlorna / later chapters.</p>
+
+<h4>Discovery</h4>
+<p>> You come upon a narrow stream cutting through the mud, its surface dark and mirror-smooth. The water’s so still that it reflects the hazy sky perfectly, like a strip of glass laid across the earth.</p>
+<p>First PC to look in:</p>
+<p>> “As you see your reflection, it blurs… and another scene swims into view, like you’re peering through a window somewhere far away.”</p>
+<p>Roll or pick visions, but tailor them to your campaign. Examples:</p>
+<ul><li><strong>Bullywug King:</strong>  </li></ul><p>    A rotund frog-king on a throne of rotting reeds, adjusting a crown of lily blossoms while flipping through a heavy tome.</p>
+<ul><li><strong>Bavlorna Bathing:</strong>  </li></ul><p>    A wart-covered hag with toadlike features reclining in a vast tub, tiny homunculi ladling foul water over her shoulders.</p>
+<ul><li><strong>Clapperclaw:</strong>  </li></ul><p>    A child-sized scarecrow trying on different heads (bucket, cabbage) before settling on a big gourd.</p>
+<ul><li><strong>Severed Heads:</strong>  </li></ul><p>    Rows of bullywug heads impaled on spikes, bickering and gossiping.</p>
+
+<p>Let each PC who looks see one distinct vision—either random or chosen to tug at a personal hook.</p>
+<p>You can hint:</p>
+<ul><li>“One of the heads looks like it’s trying to say _your name_.”</li>
+<li>“The scarecrow’s gourd-head shifts, and for a moment you see your favorite toy in the reflection of its eyes.”</li>
+
+</ul><p>---</p>
+
+<h2>Scene 4 – Slanty Tower & Sir Talavar</h2>
+<p><strong>Purpose:</strong>  </p><p>Deliver the main plot info and the <strong>Telemy Hill → Jingle Jangle → Downfall/Bavlorna</strong> quest.</p>
+
+<h3>Approaching the Tower</h3>
+<p>As they eventually head in the balloon’s direction, the tower emerges from the fog:</p>
+<p>> The swamp opens up around a listing stone tower that leans at a drunken angle. A thick tangle of black brambles wraps around its base, clutching at the stone.</p><p>> </p><p>> From the crenellations at the top, a shredded mess of ropes and patchwork fabric hangs down, ending in a basket that sways gently above the murky water.</p>
+<p>Inside, a spiral staircase leads to the roof. Outside, brambles make the ground <a href="#" class="wikilink" data-target="Difficult Terrain">Difficult Terrain</a> and conceal two giant constrictor snakes (or similar).</p>
+
+<h3>Sir Talavar’s Whisper</h3>
+<p>As they near the brambles:</p>
+<p>> You hear a tiny voice, thin but imperious, drifting down from the hanging basket:</p><p>> </p><p>> “Psst! You there—yes, _you_. Kindly attend, and _please_ keep your voice down.”</p>
+<p>If a character responds loudly:</p>
+<p>> “Shh! Softly, I beg you. There are serpents below who would be delighted to squeeze the breath out of you—and I, most inconveniently, am still inside their reach.”</p>
+
+<h3>Sir Talavar’s Introduction</h3>
+<p>Once they’re listening:</p>
+<p><strong>In Character – Sir Talavar</strong></p>
+<p>> “Allow me to introduce myself properly. I am <strong>Sir Talavar</strong>, knight of the Summer Court and loyal servant of Her Radiance, the Summer Queen. I was in the midst of a daring escape from the clutches of the vile hag <strong>Bavlorna Blightstraw</strong> when an ill wind dashed our balloon here. My brave pilot, Wigglewog, has fallen… and I have been _stuck_.”</p><p>> </p><p>> “I must reach my queen with news of what has become of this realm. I require your assistance.”</p>
+<p>Make him pompous but kind; he’ll thank them profusely for any help.</p>
+
+<h3>Getting to Talavar</h3>
+<p>Let the party tackle the problem however they like:</p>
+<ul><li>Climb through the tower interior to the roof and haul the basket up.</li>
+<li>Cut the brambles, deal with the snakes, create a safer route.</li>
+<li>Use magic (fly, misty step, etc.).</li>
+
+</ul><p><strong>Snakes</strong></p>
+<ul><li>Two large serpents sleeping in the brambles near the base of the tower.</li>
+<li>They awaken if:</li>
+<li>PCs stomp through the brambles loudly,</li>
+<li>Someone shouts,</li>
+<li>Or you want to add spice.</li>
+<li>They’re more “hazard” than plot—don’t drag the fight on.</li>
+
+</ul>
+<h3>The Basket</h3>
+<p>On the roof, looking down:</p>
+<p>> The basket is a ruin of broken wicker and tangled ropes. A bullywug’s body lies crumpled inside, eyes staring at nothing. Nestled beside it is a small silver birdcage on its side, and inside the cage—a tiny violet dragon with iridescent wings and a very serious expression.</p>
+<p>Once they get the cage up and accessible, Talavar will bow as best he can in his cramped prison.</p>
+<p>---</p>
+
+<h3>Sir Talavar’s Exposition (Use as Dialogue)</h3>
+<p>After they rescue the basket / cage from danger:</p>
+<p><strong>In Character – Sir Talavar (choose/trim as needed)</strong></p>
+<ol><li><strong>On Prismeer’s State</strong></li>
+
+</ol><p>> “This land is called <strong>Prismeer</strong>. Once, it was a single, radiant domain ruled by the archfey <strong>Zybilna</strong>—wise, whimsical, just. Now it lies broken.”</p><p>> </p><p>> “Three hags of the <strong>Hourglass Coven</strong> usurped her. They shattered Prismeer into splinter-realms: this drowned mire of <strong>Hither</strong>, the murmuring forests of <strong>Thither</strong>, and the storm-lashed peaks of <strong>Yon</strong>.”</p>
+<ol><li><strong>On Bavlorna</strong></li>
+
+</ol><p>> “Here in Hither, the hag <strong>Bavlorna Blightstraw</strong>—Slack-jawed Lorna, as some call her—squats in her lair at <strong>Downfall</strong>, surrounded by fawning bullywugs. She fouled the ancient wells and flooded the land, turning a vibrant countryside into this… bog.”</p>
+<ol><li><strong>On the Characters’ Lost Things</strong> (if using that hook)</li>
+
+</ol><p>> Talavar peers at each of them in turn.  </p><p>> “You bear the scent of the <strong>Witchlight Carnival</strong>. Interesting. If something precious was taken from you there… I suspect Bavlorna or her sisters have made trophies of such things. She hoards memories and mementos—pieces of people. She binds them into her magic.”</p>
+<ol><li><strong>On His Cage & Jingle Jangle</strong></li>
+
+</ol><p>> Talavar rattles the bars in frustration.  </p><p>> “My confinement is an enchantment woven by Bavlorna herself. I cannot force these bars open by strength or spell. But there is a <strong>key</strong>.”</p><p>> </p><p>> “A goblin named <strong>Jingle Jangle</strong> dwells at <strong>Telemy Hill</strong>—a peculiar creature with an obsession for keys of every kind. One of them, I am certain, will fit this cage.”</p><p>> </p><p>> “Take me there, help secure the key, and free me properly… and I swear on my honor, I will guide you to <strong>Downfall</strong>, and use what influence I still possess to aid you against Bavlorna.”</p>
+<ol><li><strong>On Zybilna / The Bigger Picture</strong></li>
+
+</ol><p>> “If Zybilna is freed from whatever stasis binds her, she could undo much of this damage. Restore Prismeer. Restore what has been lost. The hags fear that day, though they’ll never speak of it.”</p><p>> </p><p>> “If your hearts are set on righting things—on reclaiming what was stolen from you—then know this: defeating Bavlorna is but the first step.”</p>
+
+<h3>Clear Quest Hook</h3>
+<p>Summarize his ask very clearly:</p>
+<p>> “Your path is clear if you choose it:</p><p>> </p><p>> 1. Travel to <strong>Telemy Hill</strong> and seek out <strong>Jingle Jangle</strong>.</p><p>>     </p><p>> 2. Acquire the key to my cage.</p><p>>     </p><p>> 3. Free me, that I may stand as your ally and guide.</p><p>>     </p><p>> 4. Then, together, we make for <strong>Downfall</strong>… and Bavlorna.”</p><p>>     </p>
+<p>If your group needs explicit direction, ask Talavar to end with:</p>
+<p>> “If you desire a way home, or a way to reclaim what was taken from you, Bavlorna and her sisters stand in your path. Help me, and I will help you reach her.”</p>
+<p>---</p>
+
+<h2>Scene 5 – Toward Telemy Hill (Closing Beat)</h2>
+<p><strong>Purpose:</strong>  </p><p>End with a clear sense of “next time on Witchlight.”</p>
+<p>Once the deal with Sir Talavar is struck:</p>
+<p>> As you make your plans, the swamp seems to listen. A faint breeze stirs the mist, and for a moment it parts, revealing a distant hill that rises above the murk—a hunched shape crowned with trees that look almost like wild hair.</p><p>> </p><p>> The “hill” shifts slightly, as though sighing, then settles again. A cluster of fireflies drifts into the air before you, forming the word <strong>WELCOME</strong> for a heartbeat before the letters collapse into chaotic flickers.</p>
+<p>Let the session end with:</p>
+<ul><li>The party setting out in that direction, or</li>
+<li>A small travel montage: roots, frogs, weird noises, domain transformations flaring in response to their emotions.</li>
+
+</ul><p><strong>Last Line (if you want one):</strong></p>
+<p>> Somewhere ahead, a goblin who collects keys waits on a living hill, and a hag in a sinking cottage feels a tiny prickle at the back of her neck—as if someone, somewhere, just decided to come for what she stole.</p>
+<p>---</p>
+
+<h2>Quick Reference: Names to Repeat</h2>
+<ul><li><strong>Bavlorna Blightstraw</strong> – hag ruler of Hither, “Slack-jawed Lorna”, lairs at <strong>Downfall</strong>.</li>
+<li><strong>Downfall</strong> – bullywug settlement; Bavlorna’s cottage looms there.</li>
+<li><strong>Sir Talavar</strong> – faerie dragon knight, your would-be ally.</li>
+<li><strong>Telemy Hill</strong> – destination; home of Jingle Jangle and the key.</li>
+<li><strong>Jingle Jangle</strong> – goblin key-hoarder.</li>
+<li><strong>Agdon Longscarf</strong> – brigand prince, harengon leader, runs Brigands’ Tollway.</li>
+<li><strong>Zybilna</strong> – frozen archfey, rightful ruler of Prismeer.</li>
+<li><strong>Prismeer</strong> – shattered domain: Hither, Thither, Yon, Palace of Heart’s Desire.</li>
+
+</ul><p>Use these names again and again in NPC mouths so they stick.</p>
+<p>---</p></article>
+        </main>
+        <aside class="right"><!-- Right Panel Partial: Drawer with notepad, to-do, and tools -->
+<div class="drawer" aria-label="Tools">
+    <div class="drawer-handle">
+        <button id="drawerToggle" class="chip" aria-expanded="true" aria-controls="drawerContent">Close</button>
+        <button id="drawerPin" class="chip" aria-pressed="true" title="Pin panel"></button>
+        <button id="themeToggle" class="chip" title="Toggle Light/Dark">Theme</button>
+        <button id="colorsToggle" class="chip" title="Open Colors Tool">Colors</button>
+    </div>
+    <div id="drawerContent" class="drawer-content">
+        <div id="drawerTop"></div>
+        <div class="right-split">
+            <div id="paneTop" class="pane">
+                <div class="pane-tabs" aria-hidden="false">
+                    <button class="pane-tab" data-pane="top" data-tool="note">Notepad</button>
+                    <button class="pane-tab" data-pane="top" data-tool="colors">Colors</button>
+                </div>
+                <div class="pane-body" data-pane="top"></div>
+            </div>
+            <div class="pane-resizer-h" aria-hidden="true"></div>
+            <div id="paneBottom" class="pane">
+                <div class="pane-tabs" aria-hidden="false">
+                    <button class="pane-tab" data-pane="bottom" data-tool="todo">To-Do</button>
+                </div>
+                <div class="pane-body" data-pane="bottom"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden tool views rendered into panes by JS -->
+<div id="toolViews" style="display:none">
+    <div id="toolNote">
+        <div class="card">
+            <h3 style="margin:0">Notepad</h3>
+            <textarea id="toolNotepad" placeholder="Quick notes..."
+                style="width:100%;min-height:100px;flex:1;border:none;background:transparent;color:var(--text);resize:none;margin-top:8px;padding:0;outline:none"></textarea>
+        </div>
+    </div>
+    <div id="toolColors">
+        <div class="card">
+            <h3 style="margin:0">Colors</h3>
+            <div id="colorToolContent">
+                <div class="theme-picker">
+                    <h4>Choose a color theme:</h4>
+                    <div class="theme-list">
+                        <div class="theme-card">
+                            <button type="button" class="theme-swatch" data-theme="auburn" title="Auburn">
+                                <div class="swatch-preview">
+                                    <span style="background:#642F37"></span>
+                                    <span style="background:#C0350F"></span>
+                                    <span style="background:#F3904B"></span>
+                                    <span style="background:#F7C767"></span>
+                                    <span style="background:#B89DBB"></span>
+                                </div>
+                                <span class="theme-label">Auburn</span>
+                            </button>
+                        </div>
+                        <div class="theme-card">
+                            <button type="button" class="theme-swatch" data-theme="light" title="Light">
+                                <div class="swatch-preview">
+                                    <span style="background:#ffffff"></span>
+                                    <span style="background:#f6f7f8"></span>
+                                    <span style="background:#0ea5ff"></span>
+                                    <span style="background:#111827"></span>
+                                    <span style="background:#6b7280"></span>
+                                    <span style="background:#d1d5db"></span>
+                                </div>
+                                <span class="theme-label">Light</span>
+                            </button>
+                        </div>
+                        <div class="theme-card">
+                            <button type="button" class="theme-swatch" data-theme="dark" title="Dark">
+                                <div class="swatch-preview">
+                                    <span style="background:#0b1220"></span>
+                                    <span style="background:#0f1724"></span>
+                                    <span style="background:#8b5cf6"></span>
+                                    <span style="background:#e5e7eb"></span>
+                                    <span style="background:#9aa3b2"></span>
+                                    <span style="background:#0b0f16"></span>
+                                </div>
+                                <span class="theme-label">Dark</span>
+                            </button>
+                        </div>
+                        <div class="theme-card">
+                            <button class="theme-swatch" data-theme="desert" title="Desert">
+                                <div class="swatch-preview">
+                                    <span style="background:#ae5433"></span>
+                                    <span style="background:#ecc481"></span>
+                                    <span style="background:#aa462d"></span>
+                                    <span style="background:#9e895f"></span>
+                                    <span style="background:#d5c79f"></span>
+                                    <span style="background:#4a4231"></span>
+                                </div>
+                                <span class="theme-label">Desert</span>
+                            </button>
+                        </div>
+                        <div class="theme-card">
+                            <button class="theme-swatch" data-theme="mother" title="Mother of Dragons">
+                                <div class="swatch-preview">
+                                    <span style="background:#080d22"></span>
+                                    <span style="background:#531f4f"></span>
+                                    <span style="background:#6e234b"></span>
+                                    <span style="background:#932549"></span>
+                                    <span style="background:#fdf3eb"></span>
+                                </div>
+                                <span class="theme-label">Mother of Dragons</span>
+                            </button>
+                        </div>
+                        <div class="theme-card">
+                            <button class="theme-swatch" data-theme="orchid" title="Orchid Whisper">
+                                <div class="swatch-preview">
+                                    <span style="background:#CB438B"></span>
+                                    <span style="background:#BF3556"></span>
+                                    <span style="background:#6C6A43"></span>
+                                    <span style="background:#4D3449"></span>
+                                    <span style="background:#FFF0D2"></span>
+                                </div>
+                                <span class="theme-label">Orchid Whisper</span>
+                            </button>
+                        </div>
+                        <div class="theme-card">
+                            <button class="theme-swatch" data-theme="pearls" title="Chinese Pearls">
+                                <div class="swatch-preview">
+                                    <span style="background:#414B9e"></span>
+                                    <span style="background:#9792CB"></span>
+                                    <span style="background:#AA74A0"></span>
+                                    <span style="background:#E2C99E"></span>
+                                    <span style="background:#8527736"></span>
+                                </div>
+                                <span class="theme-label">Chinese Pearls</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="toolTodo">
+        <div id="todoBox" class="card" aria-label="Session To-Do">
+            <h3 style="margin:0 0 12px 0">To-Do</h3>
+            <form id="todoForm" class="todo-form" autocomplete="off">
+                <label class="sr-only" for="todoInput">Add a task</label>
+                <input id="todoInput" class="todo-input" placeholder="Add a task and press Enter" />
+                <button type="submit" class="todo-add">Add</button>
+            </form>
+            <div class="todo-actions">
+                <button id="todoClearDone" class="chip" title="Hide/Show completed">Hide Completed</button>
+            </div>
+            <div class="todo-list-container">
+                <ul id="todoList" class="todo-list" role="list" aria-live="polite"></ul>
+            </div>
+        </div>
+    </div>
+</div></aside>
+        <div class="resizer resizer-left" aria-hidden="true"></div>
+        <div class="resizer resizer-right" aria-hidden="true"></div>
+    </div>
+    <button id="drawerReveal" class="drawer-tab" aria-label="Show tools">Tools</button>
+    <script src="/assets/markdown.js"></script>
+    <script src="/assets/site.js?v=1765632019273"></script>
+    <script src="/assets/favorites.js?v=1765632019273"></script>
+    <script src="/assets/wysiwyg.js?v=1765632019273"></script>
+    <script src="/assets/right-panel.js?v=1765632019273"></script>
+    <script src="/assets/keyboard-nav.js?v=1765632019273"></script>
+    <script src="/assets/theme.js?v=1765632019273"></script>
+    <script src="/assets/shortcuts-guide.js?v=1765632019273"></script>
+    <script src="/assets/collapsible-sections.js?v=1765632019273"></script>
+    <script src="/assets/weather.js?v=1765632019273"></script>
+    
+    <!-- Footer Partial: Add site-wide footer content here if needed -->
+<footer class="footer">
+    <div class="meta">&copy; 2025 Feywild Adventures</div>
+</footer>
+
+</body>
+
+</html>

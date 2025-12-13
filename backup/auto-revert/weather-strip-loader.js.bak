@@ -1,0 +1,18 @@
+// weather-strip-loader.js
+(function () {
+    async function render() {
+        try {
+            const root = document.getElementById('weatherStrip');
+            if (!root) return;
+            // If already populated, do nothing
+            if (root.children.length) return;
+            const res = await fetch('/assets/partials/weather-strip.html', { cache: 'no-store' });
+            if (!res.ok) return;
+            const html = await res.text();
+            root.innerHTML = html;
+        } catch (e) {
+            console.debug('weather-strip-loader: failed to load partial', e);
+        }
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render); else render();
+})();

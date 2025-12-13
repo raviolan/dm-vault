@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Hither</title>
+    <title>Enemy Generator</title>
     <link rel="icon"
         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%238b5cf6'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="/assets/style.css?v=1765648242029" />
@@ -187,24 +187,65 @@
                             d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
                     </svg>
                 </button>
-            </div><article><div class="page-header" style="--page-header:url('/assets/ph-header.svg')"></div><h1>Hither</h1><p>Hither is ruled by a hag named <a href="https://5e.tools/bestiary.html#bavlorna%20blightstraw_wbtw">Bavlorna Blightstraw</a>, also known as Slack-jawed Lorna.</p>
-<h3>Stolen items</h3><p>When the characters enter Hither, anyone who had something  by Bavlorna gets the nagging sensation that it is somewhere in this realm, though the character doesn't know where. The feeling fades when the character either regains what was lost or leaves Hither without recovering it. The hag keeps stolen goodies in the mouth of a bronze frog statue in her cottage</p><p><strong>Stolen by Bavlorna:</strong> </p><p>Nyx:  Ability to Smile.</p><p>Odo: Handwriting</p><p>https://5e.tools/adventure.html#wbtw,2,lost%20things%20in%20hither,0</p>
-
-<h3>Landmarks</h3><p>Using the map of Hither as a reference, describe nearby landmarks that the characters can see and allow the players to choose their own destinations. Named locations on the map are described later in the chapter.</p>
-
-<h3>Friendly guides</h3><p>In each of Prismeer's splinter-realms, the characters can find a guide—a disloyal minion of the Hourglass Coven—who is willing and able to lead them from one splinter-realm to another. While in the company of one or more of these guides, the characters can move through the mist separating Prismeer's splinter-realms without being turned back. </p><p>https://5e.tools/adventure.html#wbtw,2,friendly%20guides,0</p>
-
-<h3>Rules of Conduct</h3><p>Although Zybilna is indisposed, three of the rules she put into place when she created her Feywild domain continue to hold weight: the rule of hospitality, the rule of ownership, and the rule of reciprocity. These three rules are common knowledge in Prismeer, and both natives and visitors would do well to abide by them:</p>
-<ul><li>Rule of Hospitality. When a friend, an enemy, or a stranger enters your home, you are expected to be gracious and accommodating to them until such time as they prove, by their words or actions, undeserving of such hospitality.</li>
-<li>Rule of Ownership. You must not steal from a friend, an enemy, or a stranger. To take something that doesn't belong to you without the rightful owner's permission is a crime and an unforgivable breach of etiquette.</li>
-<li>Rule of Reciprocity. When a friend, an enemy, or a stranger offers you a gift, you are obliged to accept it and offer something of comparable value (be it a gift or a service) in return. Such reciprocation need not happen immediately.For example, flowers might wilt in the presence of a goblin who is terribly unhappy. Similarly, a satyr's laughter might cause a smile to appear on the trunk of an inanimate tree nearby. A more powerful creature, such as a hag, can reshape a larger portion of the domain to reflect their emotional state. An archfey is so attuned to the Feywild that their emotions can suffuse an entire domain, overriding the emotional influence of all other creatures in it. From that standpoint, Zybilna's dormancy enables other creatures to affect Prismeer more than they could if she were still active.</li>
-</ul><p>As the characters make their way across the splintered realms of Prismeer, any emotional outburst or change in mood they exhibit might be accompanied by a minor reaction in the environment, which you can determine by choosing an entry that you like from the Domain Transformation table or by rolling on the table to determine a random result. Not every emotion felt in Prismeer is worthy of a roll on the table; you can save these effects for occasions when emotions are running high, to remind your players that the Feywild is not like the Material Plane. Because these effects have no impact on the story, you can forgo using the table if you want.</p>
-<p>If Zybilna is released from her temporal stasis, the ability of other creatures to alter her domain is suppressed until she is <a href="https://5e.tools/conditionsdiseases.html#incapacitated_phb">incapacitated</a>, killed, or no longer in Prismeer.</p><p>https://5e.tools/adventure.html#wbtw,2,transforming%20the%20domain,0</p>
-<p>| positive emotion | negative emotion |</p><p>| ---------------- | ---------------- |</p><p>|                  |                  |</p>
-
-<h3>Death in Prismeer</h3><p>Whenever a creature—including a player character—dies in Prismeer, its death has a chance of triggering one of several magical effects put in place by Zybilna. The effect is determined by rolling a d8 and referring to the Death Effects table.</p><p>https://5e.tools/adventure.html#wbtw,2,death%20in%20prismeer,0</p>
-
-</article>
+            </div><div class="page-header"><button class="bookmark-btn" data-rel="05_Tools & Tables/Enemy Generator.md"
+                    title="Toggle favorite"></button></div>
+            <article>
+                <section id="section-1">
+                    <h1 tabindex="0" role="button" aria-expanded="true" style="cursor: pointer;">Enemy/Boss Generator
+                    </h1>
+                    <div class="section-content">
+                        <p class="meta">#tools <a class="tag" href="/tags/index.html#combat">#combat</a></p>
+                        <details class="card" style="max-width: 600px; margin: 2rem auto;" open>
+                            <summary style="font-size:1.2em; font-weight:600;">Enemy Generator</summary>
+                            <form id="enemy-form"
+                                style="display: flex; flex-direction: column; gap: 1.2rem; margin-top:1em;">
+                                <label for="enemy-level"
+                                    style="font-weight: 600; font-size: 1.1em; color: var(--text);">Enemy Level
+                                    (PC-style):</label>
+                                <input type="number" id="enemy-level" name="enemy-level" min="1" max="20" required
+                                    aria-required="true"
+                                    style="padding: 0.5em; font-size: 1.1em; border-radius: 6px; border: 1.5px solid var(--border); background: var(--panel); color: var(--text);">
+                                <label for="enemy-class"
+                                    style="font-weight: 600; font-size: 1.1em; color: var(--text);">Enemy Class:</label>
+                                <select id="enemy-class" name="enemy-class" required aria-required="true"
+                                    style="padding: 0.5em; font-size: 1.1em; border-radius: 6px; border: 1.5px solid var(--border); background: var(--panel); color: var(--text);">
+                                    <option value="">Select class</option>
+                                    <option value="barbarian">Barbarian</option>
+                                    <option value="bard">Bard</option>
+                                    <option value="cleric">Cleric</option>
+                                    <option value="druid">Druid</option>
+                                    <option value="fighter">Fighter</option>
+                                    <option value="monk">Monk</option>
+                                    <option value="paladin">Paladin</option>
+                                    <option value="ranger">Ranger</option>
+                                    <option value="rogue">Rogue</option>
+                                    <option value="sorcerer">Sorcerer</option>
+                                    <option value="warlock">Warlock</option>
+                                    <option value="wizard">Wizard</option>
+                                </select>
+                                <label for="enemy-source"
+                                    style="font-weight: 600; font-size: 1.1em; color: var(--text);">Source:</label>
+                                <select id="enemy-source" name="enemy-source" required aria-required="true"
+                                    style="padding: 0.5em; font-size: 1.1em; border-radius: 6px; border: 1.5px solid var(--border); background: var(--panel); color: var(--text);">
+                                    <option value="open5e">Open5e API</option>
+                                    <option value="homebrew">Homebrew</option>
+                                </select>
+                                <button type="submit" class="btn-primary"
+                                    style="font-size: 1.1em; font-weight: 600; padding: 0.7em 0; border-radius: 6px; background: var(--accent); color: #fff; border: none; cursor: pointer;">Generate
+                                    Enemy</button>
+                            </form>
+                        </details>
+                    </div>
+                </section>
+                <section id="section-2">
+                    <h2 tabindex="0" role="button" aria-expanded="true" style="cursor: pointer;">Generated Enemy</h2>
+                    <div class="section-content">
+                        <section id="enemy-result" class="enemy-result card" aria-live="polite"
+                            style="max-width: 600px; margin: 2rem auto 0 auto; background: var(--panel); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); padding: 1.5em; color: var(--text); font-size: 1.08em;">
+                        </section>
+                    </div>
+                </section>
+            </article>
         </main>
         <aside class="right"><!-- Right Panel Partial: Drawer with notepad, to-do, and tools -->
 <div class="drawer" aria-label="Tools">

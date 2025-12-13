@@ -57,7 +57,14 @@ function extractEntityName(htmlContent) {
  * Scan entity directory and build image map
  */
 function buildImageMap(entityDir, excludeFiles, siteRoot = SITE_ROOT) {
-    const fullPath = path.join(siteRoot, entityDir);
+    // Prefer user data/ locations when present
+    let fullPath = path.join(siteRoot, entityDir);
+    if (!fs.existsSync(fullPath)) {
+        const alt = path.join(siteRoot, 'data', entityDir);
+        if (fs.existsSync(alt)) fullPath = alt;
+    }
+    if (!fs.existsSync(fullPath)) return {};
+
     const files = fs.readdirSync(fullPath).filter(f =>
         f.endsWith('.html') && !excludeFiles.includes(f)
     );
@@ -82,7 +89,16 @@ function buildImageMap(entityDir, excludeFiles, siteRoot = SITE_ROOT) {
  * Update landing page with new images
  */
 function updateLandingPage(landingPagePath, imageMap, siteRoot = SITE_ROOT, silent = false) {
-    const fullPath = path.join(siteRoot, landingPagePath);
+    let fullPath = path.join(siteRoot, landingPagePath);
+    if (!fs.existsSync(fullPath)) {
+        const alt = path.join(siteRoot, 'data', landingPagePath);
+        if (fs.existsSync(alt)) {
+            fullPath = alt;
+        } else {
+            if (!silent) console.log(`  ⚠️ landing page not found: ${landingPagePath}`);
+            return false;
+        }
+    }
     let content = fs.readFileSync(fullPath, 'utf8');
 
     let updated = false;

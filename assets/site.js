@@ -10,36 +10,41 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- Split-Click Navigation for Category Landing Pages ---
 function initializeSplitClickNavigation() {
   const categoryMapping = {
-    'Characters': '/03_PCs/Characters.html',
-    'NPCs': '/04_NPCs/NPCs.html',
-    'Locations': '/02_World/Locations/Locations.html',
-    'Arcs': '/01_Arcs/Arcs.html',
-    '03_Sessions': '/00_Campaign/03_Sessions/03_Sessions.html',
-    'Tools': '/05_Tools & Tables/Tools.html'
+    'Characters': '/Characters.html',
+    'NPCs': '/NPCs.html',
+    'Locations': '/Locations.html',
+    // support nav label 'World' (some nav.json uses 'World' instead of 'Locations')
+    'World': '/Locations.html',
+    'Arcs': '/Arcs.html',
+    '03_Sessions': '/03_Sessions.html',
+    'Campaign': '/03_Sessions.html',
+    'Tools': '/Tools.html'
   };
 
-  // Find all main category summaries (not nested ones)
-  const mainCategories = document.querySelectorAll('.nav-group > .nav-details > summary.nav-label');
+  // Use event delegation so listeners work even if nav is injected later
+  const container = document.getElementById('navSections') || document.querySelector('.nav');
+  if (!container) return;
 
-  mainCategories.forEach(summary => {
-    const labelText = summary.querySelector('span:last-child')?.textContent.trim();
+  container.addEventListener('click', (e) => {
+    const summary = e.target.closest && e.target.closest('summary.nav-label');
+    if (!summary) return;
+
+    const labelSpan = summary.querySelector('span:last-child');
+    const labelText = labelSpan ? labelSpan.textContent.trim() : '';
     const landingPage = categoryMapping[labelText];
-
     if (!landingPage) return;
 
-    summary.addEventListener('click', (e) => {
-      const rect = summary.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const width = rect.width;
-      const clickedRightHalf = clickX > width / 2;
+    const rect = summary.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const width = rect.width || 1;
+    const clickedRightHalf = clickX > width / 2;
 
-      if (clickedRightHalf) {
-        e.preventDefault();
-        e.stopPropagation();
-        window.location.href = landingPage;
-      }
-      // If left half, let the default toggle behavior happen
-    });
+    if (clickedRightHalf) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.location.href = landingPage;
+    }
+    // left half: allow default toggle behavior
   });
 }
 
@@ -324,6 +329,32 @@ window.saveSessionSnapshot = async function () {
   });
 })();
 
+// Integrated Edit (inplace) — use createInplaceEditor when available
+(function () {
+  const btnOpen = document.getElementById('btnEditPage');
+  if (!btnOpen) return;
+
+  btnOpen.addEventListener('click', () => {
+    // If an editor is already open, focus it
+    const existing = document.querySelector('.inplace-wysiwyg-editor');
+    if (existing) { existing.focus(); return; }
+
+    const main = document.querySelector('main.main') || document.querySelector('article') || document.body;
+    if (!main) return;
+
+    if (window.createInplaceEditor) {
+      window.createInplaceEditor(main, { noReload: false });
+      return;
+    }
+
+    // Fallback: open modal-based editor if WYSIWYG not available
+    const modal = document.getElementById('editPageModal');
+    const ta = document.getElementById('editPageContent');
+    if (!modal || !ta) return;
+    ta.value = main.innerHTML;
+    modal.style.display = 'flex';
+  });
+})();
 // Resizable side panels (drag to adjust --left-w and --right-w)
 (function () {
   const left = document.querySelector('.resizer-left');

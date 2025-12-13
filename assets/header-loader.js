@@ -50,6 +50,40 @@
             if (!html || !html.trim()) return;
             // Insert header at the top of the layout
             layout.insertAdjacentHTML('afterbegin', html);
+
+            // After inserting the header, ensure the search UI is wired up.
+            (function attachSearchBindings() {
+                try {
+                    var searchBox = document.getElementById('searchBox');
+                    var results = document.getElementById('searchResults');
+                    if (!searchBox) return;
+
+                    // If a dedicated SearchModule is present, initialize it.
+                    if (window.SearchModule && typeof window.SearchModule.init === 'function') {
+                        try { window.SearchModule.init(); } catch (e) { console.warn('SearchModule.init failed', e); }
+                        return;
+                    }
+
+                    // Fallback: wire up global doSearch (legacy in-site implementation)
+                    if (typeof window.doSearch === 'function') {
+                        // avoid duplicate listeners
+                        if (!searchBox._hasHeaderLoaderSearch) {
+                            searchBox.addEventListener('input', function (e) { window.doSearch(e.target.value); });
+                            searchBox.addEventListener('keydown', function (e) {
+                                if (e.key === 'Enter') {
+                                    var q = searchBox.value && searchBox.value.trim();
+                                    if (q) window.location.href = '/search.html?q=' + encodeURIComponent(q);
+                                }
+                            });
+                            // Cmd/Ctrl+K focuses the search box
+                            document.addEventListener('keydown', function (e) { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); searchBox.focus(); } });
+                            searchBox._hasHeaderLoaderSearch = true;
+                        }
+                    }
+                } catch (e) {
+                    console.debug('header-loader attachSearchBindings error', e);
+                }
+            })();
         } catch (e) {
             console.debug('header-loader: failed to load partial', e);
         }

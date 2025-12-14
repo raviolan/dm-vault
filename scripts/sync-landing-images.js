@@ -26,8 +26,8 @@ const LANDING_PAGES = [
         excludeFiles: ['NPCs.html']
     },
     {
-        landingPage: '02_World/Locations/Locations.html',
-        entityDir: '02_World/Locations',
+        landingPage: '02_World/Locations.html',
+        entityDir: '02_World',
         excludeFiles: ['Locations.html']
     }
 ];

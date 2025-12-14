@@ -65,9 +65,10 @@
 
 code,
 pre {
-    background: #0b0d12;
+    background: var(--surface);
+    color: var(--text);
     border: 1px solid var(--border);
-    border-radius: 6px
+    border-radius: 6px;
 }
 
 pre {

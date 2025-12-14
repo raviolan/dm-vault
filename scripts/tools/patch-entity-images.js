@@ -13,7 +13,7 @@ const OTHER_DIRS = [
     path.join(SITE_DIR, '01_Arcs'),
     path.join(SITE_DIR, '02_World'),
     path.join(SITE_DIR, '05_Tools & Tables'),
-    path.join(SITE_DIR, "000_today's tools"),
+    path.join(SITE_DIR, 'data', '05_Tools & Tables', "000_today's tools"),
     path.join(SITE_DIR, 'tags'),
     path.join(SITE_DIR, 'web'),
     SITE_DIR // catch root HTML like index.html, graph.html, session.html

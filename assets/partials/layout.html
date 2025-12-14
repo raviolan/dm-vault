@@ -53,6 +53,10 @@
     <script src="/assets/shortcuts-guide.js?v={{VERSION}}"></script>
     <script src="/assets/collapsible-sections.js?v={{VERSION}}"></script>
     <script src="/assets/weather.js?v={{VERSION}}"></script>
+    <!-- Enemy Generator: Always include the mini-app script on this page -->
+    {{#if TITLE == 'Enemy Generator'}}
+    <script src="/assets/enemy-generator.js?v={{VERSION}}"></script>
+    {{/if}}
     {{EXTRA_SCRIPTS}}
     {{FOOTER}}
 </body>

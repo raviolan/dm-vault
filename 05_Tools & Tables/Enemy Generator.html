@@ -8,11 +8,11 @@
     <title>Enemy Generator</title>
     <link rel="icon"
         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%238b5cf6'/%3E%3C/svg%3E" />
-    <link rel="stylesheet" href="/assets/style.css?v=1765702182335" />
-    <link rel="stylesheet" href="/assets/components.css?v=1765702182335" />
-    <link rel="stylesheet" href="/assets/enhanced-todo.css?v=1765702182335" />
-    <link rel="stylesheet" href="/assets/modal.css?v=1765702182335" />
-    <link rel="stylesheet" href="/assets/landing-pages.css?v=1765702182335" />
+    <link rel="stylesheet" href="/assets/style.css?v=1765742596395" />
+    <link rel="stylesheet" href="/assets/components.css?v=1765742596395" />
+    <link rel="stylesheet" href="/assets/enhanced-todo.css?v=1765742596395" />
+    <link rel="stylesheet" href="/assets/modal.css?v=1765742596395" />
+    <link rel="stylesheet" href="/assets/landing-pages.css?v=1765742596395" />
     <script>window.SITE_BASE = "/"</script>
 </head>
 
@@ -177,64 +177,49 @@
                             d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
                     </svg>
                 </button>
-            </div><div class="page-header"><button class="bookmark-btn" data-rel="05_Tools & Tables/Enemy Generator.md"
-                    title="Toggle favorite"></button></div>
-            <article>
-                <section id="section-1">
-                    <h1 tabindex="0" role="button" aria-expanded="true" style="cursor: pointer;">Enemy/Boss Generator
-                    </h1>
-                    <div class="section-content">
-                        <p class="meta">#tools <a class="tag" href="/tags/index.html#combat">#combat</a></p>
-                        <details class="card" style="max-width: 600px; margin: 2rem auto;" open>
-                            <summary style="font-size:1.2em; font-weight:600;">Enemy Generator</summary>
-                            <form id="enemy-form"
-                                style="display: flex; flex-direction: column; gap: 1.2rem; margin-top:1em;">
-                                <label for="enemy-level"
-                                    style="font-weight: 600; font-size: 1.1em; color: var(--text);">Enemy Level
-                                    (PC-style):</label>
-                                <input type="number" id="enemy-level" name="enemy-level" min="1" max="20" required
-                                    aria-required="true"
-                                    style="padding: 0.5em; font-size: 1.1em; border-radius: 6px; border: 1.5px solid var(--border); background: var(--panel); color: var(--text);">
-                                <label for="enemy-class"
-                                    style="font-weight: 600; font-size: 1.1em; color: var(--text);">Enemy Class:</label>
-                                <select id="enemy-class" name="enemy-class" required aria-required="true"
-                                    style="padding: 0.5em; font-size: 1.1em; border-radius: 6px; border: 1.5px solid var(--border); background: var(--panel); color: var(--text);">
-                                    <option value="">Select class</option>
-                                    <option value="barbarian">Barbarian</option>
-                                    <option value="bard">Bard</option>
-                                    <option value="cleric">Cleric</option>
-                                    <option value="druid">Druid</option>
-                                    <option value="fighter">Fighter</option>
-                                    <option value="monk">Monk</option>
-                                    <option value="paladin">Paladin</option>
-                                    <option value="ranger">Ranger</option>
-                                    <option value="rogue">Rogue</option>
-                                    <option value="sorcerer">Sorcerer</option>
-                                    <option value="warlock">Warlock</option>
-                                    <option value="wizard">Wizard</option>
-                                </select>
-                                <label for="enemy-source"
-                                    style="font-weight: 600; font-size: 1.1em; color: var(--text);">Source:</label>
-                                <select id="enemy-source" name="enemy-source" required aria-required="true"
-                                    style="padding: 0.5em; font-size: 1.1em; border-radius: 6px; border: 1.5px solid var(--border); background: var(--panel); color: var(--text);">
-                                    <option value="open5e">Open5e API</option>
-                                    <option value="homebrew">Homebrew</option>
-                                </select>
-                                <button type="submit" class="btn-primary"
-                                    style="font-size: 1.1em; font-weight: 600; padding: 0.7em 0; border-radius: 6px; background: var(--accent); color: #fff; border: none; cursor: pointer;">Generate
-                                    Enemy</button>
-                            </form>
-                        </details>
+            </div><article class="entity-page">
+                <section class="entity">
+                    <div class="entity-header" style="--header:url('/assets/ph-header.svg')">
+                        <div class="entity-id">
+                            <div class="entity-avatar"><img src="/assets/ph-avatar.svg" alt="Enemy Generator"></div>
+                            <div class="entity-meta">
+                                <div class="entity-name">Enemy Generator</div>
+                                <div class="entity-sub">Generate a random enemy from Open5e or homebrew</div>
+                            </div>
+                        </div>
                     </div>
                 </section>
-                <section id="section-2">
-                    <h2 tabindex="0" role="button" aria-expanded="true" style="cursor: pointer;">Generated Enemy</h2>
-                    <div class="section-content">
-                        <section id="enemy-result" class="enemy-result card" aria-live="polite"
-                            style="max-width: 600px; margin: 2rem auto 0 auto; background: var(--panel); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); padding: 1.5em; color: var(--text); font-size: 1.08em;">
-                        </section>
-                    </div>
-                </section>
+                <div class="entity-body">
+                    <form id="enemy-form" class="card" style="max-width: 480px; margin: 0 auto 2em auto;">
+                        <div class="form-group">
+                            <label for="enemy-level">Enemy Level</label>
+                            <input type="number" id="enemy-level" name="enemy-level" min="1" max="20" value="1" required
+                                style="width: 80px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="enemy-class">Class</label>
+                            <select id="enemy-class" name="enemy-class" required>
+                                <option value="minion">Minion</option>
+                                <option value="brute">Brute</option>
+                                <option value="caster">Caster</option>
+                                <option value="elite">Elite</option>
+                                <option value="boss">Boss</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="enemy-source">Source</label>
+                            <select id="enemy-source" name="enemy-source" required>
+                                <option value="open5e">Open5e</option>
+                                <option value="homebrew">Homebrew</option>
+                            </select>
+                        </div>
+                        <div class="form-actions" style="margin-top:1em;">
+                            <button type="submit" id="enemy-generate-btn" class="btn-primary">Generate Enemy</button>
+                        </div>
+                    </form>
+                    <section id="enemy-result" class="enemy-result card" aria-live="polite"
+                        style="margin: 0 auto; max-width: 600px;"></section>
+                </div>
             </article>
         </main>
         <aside class="right"><!-- Right Panel Partial: Drawer with notepad, to-do, and tools -->
@@ -396,18 +381,22 @@
     </div>
     <button id="drawerReveal" class="drawer-tab" aria-label="Show tools">Tools</button>
     <script src="/assets/markdown.js"></script>
-    <script src="/assets/right-panel-loader.js?v=1765702182335"></script>
-    <script src="/assets/right-panel.js?v=1765702182335"></script>
-    <script src="/assets/site.js?v=1765702182335"></script>
-    <script src="/assets/favorites.js?v=1765702182335"></script>
-    <script src="/assets/wysiwyg.js?v=1765702182335"></script>
-    <script src="/assets/right-panel-loader.js?v=1765702182335"></script>
-    <script src="/assets/right-panel.js?v=1765702182335"></script>
-    <script src="/assets/keyboard-nav.js?v=1765702182335"></script>
-    <script src="/assets/theme.js?v=1765702182335"></script>
-    <script src="/assets/shortcuts-guide.js?v=1765702182335"></script>
-    <script src="/assets/collapsible-sections.js?v=1765702182335"></script>
-    <script src="/assets/weather.js?v=1765702182335"></script>
+    <script src="/assets/right-panel-loader.js?v=1765742596395"></script>
+    <script src="/assets/right-panel.js?v=1765742596395"></script>
+    <script src="/assets/site.js?v=1765742596395"></script>
+    <script src="/assets/favorites.js?v=1765742596395"></script>
+    <script src="/assets/wysiwyg.js?v=1765742596395"></script>
+    <script src="/assets/right-panel-loader.js?v=1765742596395"></script>
+    <script src="/assets/right-panel.js?v=1765742596395"></script>
+    <script src="/assets/keyboard-nav.js?v=1765742596395"></script>
+    <script src="/assets/theme.js?v=1765742596395"></script>
+    <script src="/assets/shortcuts-guide.js?v=1765742596395"></script>
+    <script src="/assets/collapsible-sections.js?v=1765742596395"></script>
+    <script src="/assets/weather.js?v=1765742596395"></script>
+    <!-- Enemy Generator: Always include the mini-app script on this page -->
+    {{#if TITLE == 'Enemy Generator'}}
+    <script src="/assets/enemy-generator.js?v=1765742596395"></script>
+    {{/if}}
     
     <!-- Footer Partial: Add site-wide footer content here if needed -->
 <footer class="footer">

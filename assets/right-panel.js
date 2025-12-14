@@ -5,6 +5,7 @@ function initRightPanel() {
     // For backward compatibility we also set --theme-color1..6 (mapped to bg, surface, primary, text, muted, border).
     const COLOR_THEMES = {
         auburn: {
+            mode: 'light',
             '--bg': '#FBF5F0',
             '--surface': '#FFFFFF',
             '--surface-2': '#F6EDEA',
@@ -21,6 +22,7 @@ function initRightPanel() {
             '--highlight': '#F2D2A5'
         },
         desert: {
+            mode: 'dark',
             '--bg': '#1E1A13',
             '--surface': '#272116',
             '--surface-2': '#312A1C',
@@ -37,6 +39,7 @@ function initRightPanel() {
             '--highlight': '#9E895F'
         },
         mother: {
+            mode: 'dark',
             '--bg': '#070A14',
             '--surface': '#0E1326',
             '--surface-2': '#141B33',
@@ -52,6 +55,7 @@ function initRightPanel() {
             '--accent': '#932549'
         },
         orchid: {
+            mode: 'light',
             '--bg': '#FFF7FB',
             '--surface': '#FFFFFF',
             '--surface-2': '#F3EAF2',
@@ -68,6 +72,7 @@ function initRightPanel() {
             '--highlight': '#FFE3F1'
         },
         pearls: {
+            mode: 'dark',
             '--bg': '#111424',
             '--surface': '#171A2F',
             '--surface-2': '#1D2140',
@@ -84,6 +89,7 @@ function initRightPanel() {
             '--highlight': '#E2C99E'
         },
         light: {
+            mode: 'light',
             '--bg': '#ffffff',
             '--surface': '#f6f7f8',
             '--surface-2': '#ffffff',
@@ -96,6 +102,7 @@ function initRightPanel() {
             '--accent': '#2563eb'
         },
         dark: {
+            mode: 'dark',
             '--bg': '#0b1220',
             '--surface': '#0f1724',
             '--surface-2': '#111827',
@@ -124,14 +131,19 @@ function initRightPanel() {
             const val = def[legacyMap[i]] || '#000000';
             document.documentElement.style.setProperty(`--theme-color${i + 1}`, val);
         }
-        // Maintain legacy `data-theme` for light/dark CSS overrides
-        if (theme === 'light' || theme === 'dark') {
-            document.body.setAttribute('data-theme', theme);
-        } else {
-            document.body.removeAttribute('data-theme');
-        }
+                // Maintain legacy `data-theme` only for the canonical 'light' or 'dark' themes
+                try {
+                    if (theme === 'light' || theme === 'dark') {
+                        document.body.setAttribute('data-theme', theme);
+                    } else {
+                        document.body.removeAttribute('data-theme');
+                    }
+                } catch (e) { }
         localStorage.setItem('colorTheme', theme);
     }
+
+        // Expose API for other scripts (theme.js) to call
+        try { window.applyColorTheme = applyColorTheme; } catch (e) { }
 
     // Restore theme on load
     const savedTheme = localStorage.getItem('colorTheme');

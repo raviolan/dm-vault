@@ -42,7 +42,7 @@
     padding: 8px 10px;
     border-radius: 6px;
     border: 1px solid var(--border);
-    background: #0b0d12;
+    background: var(--panel);
     color: var(--text)
 }
 
@@ -162,7 +162,7 @@ h4 {
     padding: 4px 8px;
     border: 1px solid var(--border);
     border-radius: 12px;
-    background: #10131a;
+    background: var(--panel);
     color: var(--muted);
     cursor: pointer
 }
@@ -182,7 +182,7 @@ h4 {
 
 .tool-tab {
     border: 1px solid var(--border);
-    background: #10131a;
+    background: var(--panel);
     color: var(--muted);
     border-radius: 8px;
     padding: 4px 8px;

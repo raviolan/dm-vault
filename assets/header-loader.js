@@ -84,6 +84,24 @@
                     console.debug('header-loader attachSearchBindings error', e);
                 }
             })();
+
+            // Reapply any stored theme and reinitialize collapsibles
+            try {
+                const saved = localStorage.getItem('colorTheme') || localStorage.getItem('theme');
+                if (saved) {
+                    if (window.applyColorTheme) {
+                        try { window.applyColorTheme(saved); } catch (e) { }
+                    } else if ((saved === 'light' || saved === 'dark') && window.applyTheme) {
+                        try { window.applyTheme(saved); } catch (e) { }
+                    }
+                }
+            } catch (e) { }
+
+            try {
+                if (window.initializeCollapsibleSections) {
+                    try { window.initializeCollapsibleSections(); } catch (e) { }
+                }
+            } catch (e) { }
         } catch (e) {
             console.debug('header-loader: failed to load partial', e);
         }

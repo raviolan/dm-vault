@@ -10,17 +10,17 @@ Update this file **after every commit**.
 * Repo: dm-vault
 * Branch: main
 * Current phase: Phase 3
-* Current step (exact): Phase 3 in progress. Moved all duplicate files (per report) to archive/. Attempted to move generated files (notes.json, search-index.json, build-warnings.txt) but they were already absent. Ran verify and build: all pass, no errors. No user-private content touched; no protected files moved/renamed/deleted.
+* Current step (exact): Phase 3 batch 2. Moved scripts/convert-right-panel.cjs to archive/. Ran verify and build: all pass, no errors. No user-private content touched; no protected files moved/renamed/deleted.
 
 ## Last Completed
 
 
 
 
+
 * Commit: (pending)
 * Summary: (1–3 bullets)
-  * Phase 3: Moved all duplicate files (per report) to archive/
-  * Attempted to move generated files (notes.json, search-index.json, build-warnings.txt) but they were already absent
+  * Phase 3 batch 2: Moved scripts/convert-right-panel.cjs to archive/
   * Ran verify and build: all pass, no errors
   * No user-private content touched; no protected files moved/renamed/deleted
 * Checks run:
@@ -29,7 +29,7 @@ Update this file **after every commit**.
 
 ## Next Step (Single Action Only)
 
-* Next step: Phase 3 — Commit changes, update refactor-log.md, then proceed to next batch if any remain
+* Next step: Phase 3 — Propose and scan next batch of candidates (max 5), prove safety, then await approval
 
 ## Protected Features Snapshot (Must Stay Green)
 

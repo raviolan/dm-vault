@@ -7,14 +7,16 @@ Update this file **after every commit**.
 
 
 
+
 ## Current State
 
 * Repo: dm-vault
 * Branch: main
 * Current phase: Phase 4C
 * Current step (exact):
-  - Phase 4C Pilot Batch 1 complete: Footer injection applied to index.html only, using canonical partial and loader script. No protected features or unrelated files touched. npm run verify: PASS.
-  - Next: Phase 4C Pilot Batch 2 — Expand footer injection to up to 4 more non-protected pages, confirm verify/build, and commit only intended edits.
+  - Phase 4C Pilot Batch 2 complete: Footer injection applied to Arcs.html, Locations.html, and Characters.html. No protected features or unrelated files touched. npm run verify: PASS.
+  - Next: Review and plan next injection/refactor batch (e.g., header or sidebar), or expand to additional non-protected pages as needed.
+
 
 
 
@@ -22,7 +24,7 @@ Update this file **after every commit**.
 
 * Commit: (pending)
 * Summary:
-  * Phase 4C Pilot Batch 1: Footer injection on index.html using canonical partial and loader script. No protected features or unrelated files touched. npm run verify: PASS.
+  * Phase 4C Pilot Batch 2: Footer injection on Arcs.html, Locations.html, and Characters.html. No protected features or unrelated files touched. npm run verify: PASS.
 * Checks run:
   * npm run verify: PASS
 

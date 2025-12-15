@@ -1,6 +1,10 @@
 # Refactor Log (Append-Only)
 
 
+2025-12-15: Phase 4C: fixed index.html header placement; verify PASS.
+# Refactor Log (Append-Only)
+
+
 2025-12-15: Phase 4C: header placement sweep batch 1 (move header slot above layout) on Arcs.html, Locations.html, Tools.html. Verify PASS. No protected features or user-private files touched.
 
 

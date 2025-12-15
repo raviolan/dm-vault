@@ -10,11 +10,11 @@ Date: 2025-12-15
 | Locations.html | OK     | Header slot is above <div class="layout"> |
 | NPCs.html      | OK     | Header slot is above <div class="layout"> |
 | Tools.html     | OK     | Header slot is above <div class="layout"> |
-| index.html     | BAD    | Header slot is inside <div class="layout"> |
+| index.html     | OK     | Header slot is above <div class="layout"> |
 | search.html    | OK     | Header slot is above <div class="layout"> |
 
 - BAD = header slot is inside <div class="layout"> (should be moved)
 - OK = header slot is above <div class="layout"> (correct)
 - EXEMPT = protected or user-private (none found in this batch)
 
-Next batch to fix: index.html (only BAD found)
+All BAD pages in this batch now fixed. No further action required for header placement in this batch.

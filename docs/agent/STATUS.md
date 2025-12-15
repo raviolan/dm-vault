@@ -35,6 +35,7 @@ Update this file **after every commit**.
 
 ## Next Step (Single Action Only)
 
+* Last completed: Phase 4C: fixed index.html header placement; verify PASS.
 * Next step: Phase 4C — Header Placement Sweep (Batch 2)
   - Repeat audit/fix for next 3 BAD pages (if any remain)
   - Otherwise, proceed to next phase per runbook

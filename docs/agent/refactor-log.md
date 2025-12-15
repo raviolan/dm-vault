@@ -1,6 +1,7 @@
 # Refactor Log (Append-Only)
 
-2025-12-15: Phase 4C Header Batch 2: inject header via header-loader.js on Arcs.html, Locations.html, Tools.html. Verify PASS.
+
+2025-12-15: Phase 4C: header placement sweep batch 1 (move header slot above layout) on Arcs.html, Locations.html, Tools.html. Verify PASS. No protected features or user-private files touched.
 
 
 

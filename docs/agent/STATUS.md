@@ -18,7 +18,7 @@ Update this file **after every commit**.
 
 
 * Current step (exact):
-  - Phase 4C Header Batch 3 Fix v2: moved header injection slot above .layout (was rendering in panel) on Characters.html, NPCs.html, search.html. Verify PASS. No protected features touched.
+  - Phase 4C: header placement sweep batch 1 (move header slot above layout) on Arcs.html, Locations.html, Tools.html. Verify PASS. No protected features or user-private files touched.
 
 
 
@@ -35,9 +35,9 @@ Update this file **after every commit**.
 
 ## Next Step (Single Action Only)
 
-* Next step: Phase 4C — Refactor Pilot (1 small injection change)
-  - Select a single repeated UI chunk for partialization (e.g., header, nav, or footer)
-  - Extract into a partial/template and update one canonical HTML page to use it
+* Next step: Phase 4C — Header Placement Sweep (Batch 2)
+  - Repeat audit/fix for next 3 BAD pages (if any remain)
+  - Otherwise, proceed to next phase per runbook
   - Ensure protected features remain functional and referenced
   - Run verify/build after the change, commit only intended edits
 

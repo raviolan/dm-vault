@@ -15,10 +15,9 @@ Update this file **after every commit**.
 * Current phase: Phase 4C
 
 
+
 * Current step (exact):
-  - Phase 4C Pilot Batch 4: Footer injection applied to NPCs.html, 04_NPCs/Adult Imperial Dragon.html, 03_PCs/Page.html. No protected features or unrelated files touched. npm run verify: PASS.
-  - Strengthened 'Pages to avoid' rule: avoid all YYYY-MM-DD.html, specific entity pages (e.g., 04_NPCs/<name>.html, individual PC/NPC sheets) unless explicitly approved, and all protected pages/features (see protected-paths.json).
-  - Next: Review and plan next injection/refactor batch (e.g., header or sidebar), or expand to additional non-protected pages as needed.
+  - Phase 4C Header Pilot Batch 1: inject header on index.html via header-loader.js. Verify PASS. No protected features touched.
 
 
 

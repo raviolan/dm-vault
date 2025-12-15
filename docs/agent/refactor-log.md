@@ -6,7 +6,13 @@
 
 
 
+
 # Refactor Log (Append-Only)
+
+2025-12-15: Phase 4C Header Pilot Batch 1: inject header on index.html via header-loader.js. Verify PASS.
+- index.html: replaced inline header with <div id="site-header"></div> and marker
+- header-loader.js: loads assets/partials/header.html into #site-header
+- npm run verify: PASS
 
 - 2025-12-15: Phase 4C Pilot Batch 4  Footer injection applied to NPCs.html, 04_NPCs/Adult Imperial Dragon.html, 03_PCs/Page.html. No protected features or unrelated files touched. Ran npm run verify: PASS.
 	- Strengthened 'Pages to avoid' rule: avoid all YYYY-MM-DD.html, specific entity pages (e.g., 04_NPCs/<name>.html, individual PC/NPC sheets) unless explicitly approved, and all protected pages/features (see protected-paths.json).

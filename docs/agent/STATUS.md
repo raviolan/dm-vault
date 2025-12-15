@@ -18,7 +18,7 @@ Update this file **after every commit**.
 
 
 * Current step (exact):
-  - Phase 4C Header Batch 3: inject header via header-loader.js on Characters.html, NPCs.html, search.html. Placement fixed to match Arcs.html. Verify PASS. No protected features touched.
+  - Phase 4C Header Batch 3 Fix v2: moved header injection slot above .layout (was rendering in panel) on Characters.html, NPCs.html, search.html. Verify PASS. No protected features touched.
 
 
 

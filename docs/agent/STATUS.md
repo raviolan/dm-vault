@@ -14,8 +14,10 @@ Update this file **after every commit**.
 * Branch: main
 * Current phase: Phase 4C
 
+
 * Current step (exact):
   - Phase 4C Pilot Batch 4: Footer injection applied to NPCs.html, 04_NPCs/Adult Imperial Dragon.html, 03_PCs/Page.html. No protected features or unrelated files touched. npm run verify: PASS.
+  - Strengthened 'Pages to avoid' rule: avoid all YYYY-MM-DD.html, specific entity pages (e.g., 04_NPCs/<name>.html, individual PC/NPC sheets) unless explicitly approved, and all protected pages/features (see protected-paths.json).
   - Next: Review and plan next injection/refactor batch (e.g., header or sidebar), or expand to additional non-protected pages as needed.
 
 
@@ -23,9 +25,11 @@ Update this file **after every commit**.
 
 ## Last Completed
 
+
 * Commit: (pending)
 * Summary:
-  * Phase 4C Pilot Batch 2: Footer injection on Arcs.html, Locations.html, and Characters.html. No protected features or unrelated files touched. npm run verify: PASS.
+  * Phase 4C Pilot Batch 4: Footer injection on NPCs.html, 04_NPCs/Adult Imperial Dragon.html, 03_PCs/Page.html. No protected features or unrelated files touched. npm run verify: PASS.
+  * Strengthened 'Pages to avoid' rule: avoid all YYYY-MM-DD.html, specific entity pages (e.g., 04_NPCs/<name>.html, individual PC/NPC sheets) unless explicitly approved, and all protected pages/features (see protected-paths.json).
 * Checks run:
   * npm run verify: PASS
 

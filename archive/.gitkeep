@@ -1,0 +1,2 @@
+# Archive directory
+This file ensures the archive/ directory is tracked by git even when empty.

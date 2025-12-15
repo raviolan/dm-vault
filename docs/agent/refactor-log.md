@@ -1,11 +1,12 @@
 
 
 
+
 # Refactor Log (Append-Only)
 
 This file records every change made by the DM-vault Guardian agent during the refactor process.
 
-- 2025-12-15: Pointer correction — Marked Phase 3, 4A, and 4B as complete in STATUS.md. Set next phase pointer to Phase 4C: Refactor Pilot (1 small injection change). No content or code changes made.
+- 2025-12-15: Phase 4C Pilot Batch 1 — Footer injection applied to index.html only. Created assets/footer-loader.js, replaced inline footer with placeholder and loader script. No protected features or unrelated files touched. Ran npm run verify: PASS.
 
 
 		* scripts/convert-right-panel.js → archive/scripts/convert-right-panel.js

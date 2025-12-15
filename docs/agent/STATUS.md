@@ -6,29 +6,23 @@ Update this file **after every commit**.
 ---
 
 
+
 ## Current State
 
 * Repo: dm-vault
 * Branch: main
 * Current phase: Phase 4C
 * Current step (exact):
-  - Phase 3 complete: All planned archive batches done, no pending duplicates or generated files remain for this phase.
-  - Phase 4A complete: Reference inventory and decision reports committed for graph/session.
-  - Phase 4B complete: Guardrails/verify sanity-check PASS, no changes needed.
-  - Next: Phase 4C — Refactor Pilot (1 small injection change)
-    • Select a single repeated UI chunk for partialization (e.g., header, nav, or footer)
-    • Extract into a partial/template and update one canonical HTML page to use it
-    • Ensure protected features remain functional and referenced
-    • Run verify/build after the change, commit only intended edits
+  - Phase 4C Pilot Batch 1 complete: Footer injection applied to index.html only, using canonical partial and loader script. No protected features or unrelated files touched. npm run verify: PASS.
+  - Next: Phase 4C Pilot Batch 2 — Expand footer injection to up to 4 more non-protected pages, confirm verify/build, and commit only intended edits.
+
 
 
 ## Last Completed
 
 * Commit: (pending)
 * Summary:
-  * Phase 3: All archive batches completed, no pending duplicates or generated files for this phase
-  * Phase 4A: Reference inventory and decision reports for graph/session committed
-  * Phase 4B: Guardrails/verify sanity-check PASS, no changes needed
+  * Phase 4C Pilot Batch 1: Footer injection on index.html using canonical partial and loader script. No protected features or unrelated files touched. npm run verify: PASS.
 * Checks run:
   * npm run verify: PASS
 

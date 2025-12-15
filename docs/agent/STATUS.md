@@ -9,8 +9,8 @@ Update this file **after every commit**.
 
 * Repo: dm-vault
 * Branch: main
-* Current phase: Phase 3
-* Current step (exact): Phase 3 batch 2. Moved scripts/convert-right-panel.cjs to archive/. Ran verify and build: all pass, no errors. No user-private content touched; no protected files moved/renamed/deleted.
+* Current phase: Phase 3 (complete)
+* Current step (exact): Phase 3 complete. Batch 1 and Batch 2 done. Remaining candidates (graph.html, graph.json, session.html) are still referenced outside archive and are BLOCKED. No further archiving possible in Phase 3.
 
 ## Last Completed
 
@@ -18,10 +18,12 @@ Update this file **after every commit**.
 
 
 
+
 * Commit: (pending)
 * Summary: (1–3 bullets)
-  * Phase 3 batch 2: Moved scripts/convert-right-panel.cjs to archive/
-  * Ran verify and build: all pass, no errors
+  * Phase 3 complete: Batch 1 and Batch 2 done
+  * Remaining candidates blocked by references: graph.html, graph.json, session.html
+  * No further archiving possible in Phase 3
   * No user-private content touched; no protected files moved/renamed/deleted
 * Checks run:
   * npm run verify: PASS
@@ -29,7 +31,7 @@ Update this file **after every commit**.
 
 ## Next Step (Single Action Only)
 
-* Next step: Phase 3 — Propose and scan next batch of candidates (max 5), prove safety, then await approval
+* Next step: Phase 4 — Refactor for injection/partials to resolve references and enable further archiving
 
 ## Protected Features Snapshot (Must Stay Green)
 

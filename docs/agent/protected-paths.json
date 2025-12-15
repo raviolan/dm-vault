@@ -1,0 +1,26 @@
+{
+  "weatherScript": "assets/weather.js",
+  "enemyGeneratorScript": "assets/enemy-generator.js",
+  "htmlPagesReferencing": [
+    "index.html",
+    "Locations.html",
+    "Arcs.html",
+    "03_PCs/Characters.html",
+    "03_PCs/Page.html",
+    "01_Arcs/Arcs.html",
+    "2025-12-04.html",
+    "test-sections.html",
+    "search.html",
+    "session.html",
+    "000_today's tools/Madryck.html",
+    "data/05_Tools & Tables/Enemy Generator.html",
+    "assets/partials/layout.html"
+  ],
+  "backendEndpoints": {
+    "saveEnemy": "server/index.js: app.post('/api/save-enemy')",
+    "listEnemies": "server/index.js: app.get('/api/enemies')"
+  },
+  "frontendApiUsage": [
+    "assets/enemy-generator.js"
+  ]
+}

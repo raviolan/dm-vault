@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/rebuild-from-partials.js && node scripts/sync-landing-images.js",
+    "verify": "node scripts/tools/verify-protected-paths.cjs",
     "patch": "node scripts/tools/patch-entity-images.js",
     "headers": "node scripts/tools/patch-entity-images.js",
-    "serve": "node scripts/serve.js",
     "seed-data": "node scripts/first-run-seed.js",
     "migrate-to-data": "node scripts/migrate-user-content-to-data.js",
     "migrate-upgrade": "node scripts/migrate-upgrade.js",

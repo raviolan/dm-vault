@@ -1,6 +1,10 @@
 # Refactor Log (Append-Only)
 
 
+2025-12-15: Phase 4C: sidebar loader bugfix (absolute path, script src); verify PASS.
+# Refactor Log (Append-Only)
+
+
 2025-12-15: Phase 4C Sidebar Pilot Batch 1: inject sidebar on index.html via sidebar-loader.js. Verify PASS.
 # Refactor Log (Append-Only)
 

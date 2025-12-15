@@ -35,7 +35,7 @@ Update this file **after every commit**.
 
 ## Next Step (Single Action Only)
 
-* Last completed: Phase 4C: sidebar injection pilot batch 1 executed on index.html; verify PASS.
+* Last completed: Phase 4C: sidebar loader bugfix (absolute path, script src); verify PASS.
 * Next step: Phase 4C — Sidebar Injection Batch 2 (next best candidates)
   - Repeat for next 3 non-protected pages (Arcs.html, Locations.html, Tools.html, etc.)
   - Otherwise, proceed to next phase per runbook

@@ -3,7 +3,10 @@
 
 
 
+
 # Refactor Log (Append-Only)
+
+- 2025-12-15: Phase 4C Pilot Batch 3 corrective — Reverted footer injection on 2025-12-04.html to avoid touching dated/user-like pages. Ran npm run verify: PASS. No protected features or unrelated files touched.
 
 This file records every change made by the DM-vault Guardian agent during the refactor process.
 

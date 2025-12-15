@@ -8,8 +8,10 @@
 - Locations.html
 - Characters.html
 - 03_Sessions.html
-- 2025-12-04.html
 - Tools.html
+
+## Reverted
+- 2025-12-04.html (footer injection reverted; avoid dated/user-like pages)
 
 ## Pages to avoid
 - Dated/user-private: 2025-12-04.html
@@ -53,4 +55,5 @@
 - Adult Imperial Dragon.html
 - Page.html
 
+**Rule:** Avoid dated/user-like pages for injection.
 **Note:** Only non-protected, non-dated, non-user-private pages are listed as safe. Confirm with latest repo state before proceeding.

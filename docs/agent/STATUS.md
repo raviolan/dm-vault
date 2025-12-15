@@ -13,8 +13,9 @@ Update this file **after every commit**.
 * Repo: dm-vault
 * Branch: main
 * Current phase: Phase 4C
+
 * Current step (exact):
-  - Phase 4C Pilot Batch 2 complete: Footer injection applied to Arcs.html, Locations.html, and Characters.html. No protected features or unrelated files touched. npm run verify: PASS.
+  - Phase 4C Pilot Batch 3 corrective: Reverted footer injection on 2025-12-04.html to avoid touching dated/user-like pages. No protected features or unrelated files touched. npm run verify: PASS.
   - Next: Review and plan next injection/refactor batch (e.g., header or sidebar), or expand to additional non-protected pages as needed.
 
 

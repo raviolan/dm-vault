@@ -41,7 +41,7 @@ const resultSection = document.getElementById('enemy-result');
             const id = setTimeout(() => controller.abort(), timeout);
             const r = await fetch('/api/enemies', { signal: controller.signal });
             clearTimeout(id);
-            return r.ok;
+            return r && r.ok;
         } catch (e) {
             return false;
         }
@@ -182,7 +182,14 @@ const resultSection = document.getElementById('enemy-result');
                 let serverList = [];
                 try {
                     const r2 = await fetch('/api/enemies');
-                    if (r2.ok) serverList = await r2.json();
+                    if (r2 && r2.ok) {
+                        try {
+                            serverList = await r2.json();
+                        } catch (jsonErr) {
+                            // fallback: treat as empty if not valid JSON
+                            serverList = [];
+                        }
+                    }
                 } catch (e) { /* ignore */ }
 
                 genList.forEach((g) => {

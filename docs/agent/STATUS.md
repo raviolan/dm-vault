@@ -15,7 +15,7 @@ Update this file **after every commit**.
 * Current phase: Phase 4C
 
 * Current step (exact):
-  - Phase 4C Pilot Batch 3 corrective: Reverted footer injection on 2025-12-04.html to avoid touching dated/user-like pages. No protected features or unrelated files touched. npm run verify: PASS.
+  - Phase 4C Pilot Batch 4: Footer injection applied to NPCs.html, 04_NPCs/Adult Imperial Dragon.html, 03_PCs/Page.html. No protected features or unrelated files touched. npm run verify: PASS.
   - Next: Review and plan next injection/refactor batch (e.g., header or sidebar), or expand to additional non-protected pages as needed.
 
 

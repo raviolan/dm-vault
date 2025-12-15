@@ -19,153 +19,158 @@
 <body>
     <div class="layout">
         <!-- Header Partial: Top toolbar and navigation -->
-<div class="top">
-    <div class="toolbar">
-        <a class="chip" href="/index.html">Hembränt</a>
-        <a class="chip" href="/graph.html">Graph</a>
-        <a class="chip" href="/tags/index.html">Tags</a>
-        <a class="chip" href="/session.html">Session</a>
-        <button id="btnCreatePage" class="chip" title="Create New Page">+ New</button>
-        <button id="btnEditPage" class="chip" title="Edit This Page">Edit</button>
-    </div>
-    <div class="search"><input id="searchBox" type="search" placeholder="Search titles, headings, #tags (Cmd/Ctrl-K)" />
-    </div>
-    <div id="searchResults" class="hovercard"></div>
-</div>
-
-<!-- Create Page Modal -->
-<div id="createPageModal" class="modal" style="display: none;">
-    <div class="modal-overlay"></div>
-    <div class="modal-content">
-        <h2>Create New Page</h2>
-        <form id="createPageForm">
-            <div class="form-group">
-                <label for="pageType">Page Type</label>
-                <select id="pageType" required>
-                    <option value="pc">Character (PC)</option>
-                    <option value="npc">NPC</option>
-                    <option value="location">Location</option>
-                    <option value="arc">Story Arc</option>
-                    <option value="shop">Shop</option>
-                    <option value="session">Session Note</option>
-                    <option value="tool">Tool/Reference</option>
-                </select>
+        <div class="top">
+            <div class="toolbar">
+                <a class="chip" href="/index.html">Hembränt</a>
+                <a class="chip" href="/graph.html">Graph</a>
+                <a class="chip" href="/tags/index.html">Tags</a>
+                <a class="chip" href="/session.html">Session</a>
+                <button id="btnCreatePage" class="chip" title="Create New Page">+ New</button>
+                <button id="btnEditPage" class="chip" title="Edit This Page">Edit</button>
             </div>
-            <div class="form-group">
-                <label for="pageTitle">Page Title</label>
-                <input type="text" id="pageTitle" placeholder="Enter page title..." required />
+            <div class="search"><input id="searchBox" type="search"
+                    placeholder="Search titles, headings, #tags (Cmd/Ctrl-K)" />
             </div>
-            <div class="form-actions">
-                <button type="submit" class="btn-primary">Create Page</button>
-                <button type="button" id="btnCancelCreate" class="btn-secondary">Cancel</button>
-            </div>
-        </form>
-        <div id="createPageStatus" style="display: none;"></div>
-    </div>
-</div>
-
-<!-- Edit Page Modal -->
-<div id="editPageModal" class="modal" style="display: none;">
-    <div class="modal-overlay"></div>
-    <div class="modal-content">
-        <h2>Edit Page</h2>
-        <form id="editPageForm">
-            <div class="form-group">
-                <label for="editPageContent">Page Content (HTML)</label>
-                <textarea id="editPageContent" rows="18" style="width:100%" required></textarea>
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="btn-primary">Save Changes</button>
-                <button type="button" id="btnCancelEdit" class="btn-secondary">Cancel</button>
-            </div>
-        </form>
-        <div id="editPageStatus" style="display: none;"></div>
-    </div>
-</div>
-
-<!-- Delete Page Modal -->
-<div id="deletePageModal" class="modal" style="display: none;">
-    <div class="modal-overlay"></div>
-    <div class="modal-content">
-        <h2>Delete Page</h2>
-        <p style="margin-bottom: 1em;">⚠️ This action cannot be undone. To confirm deletion, type the page title below:
-        </p>
-        <p style="margin-bottom: 1em;"><strong id="deletePageTitle"></strong></p>
-        <form id="deletePageForm">
-            <div class="form-group">
-                <label for="deletePageConfirm">Type page title to confirm:</label>
-                <input type="text" id="deletePageConfirm" style="width:100%" required autocomplete="off" />
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="btn-primary" style="background: #c33;">Delete Page</button>
-                <button type="button" id="btnCancelDelete" class="btn-secondary">Cancel</button>
-            </div>
-        </form>
-        <div id="deletePageStatus" style="display: none; margin-top: 1em;"></div>
-    </div>
-</div>
-
-<!-- Confirmation Modal -->
-<div id="confirmModal" class="modal" style="display: none;">
-    <div class="modal-overlay"></div>
-    <div class="modal-content" style="max-width: 450px;">
-        <h2 id="confirmModalTitle">Confirm</h2>
-        <p id="confirmModalMessage" style="margin: 1em 0;"></p>
-        <div class="form-actions">
-            <button type="button" id="confirmModalYes" class="btn-primary">Yes</button>
-            <button type="button" id="confirmModalNo" class="btn-secondary">No</button>
+            <div id="searchResults" class="hovercard"></div>
         </div>
-    </div>
-</div>
+
+        <!-- Create Page Modal -->
+        <div id="createPageModal" class="modal" style="display: none;">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <h2>Create New Page</h2>
+                <form id="createPageForm">
+                    <div class="form-group">
+                        <label for="pageType">Page Type</label>
+                        <select id="pageType" required>
+                            <option value="pc">Character (PC)</option>
+                            <option value="npc">NPC</option>
+                            <option value="location">Location</option>
+                            <option value="arc">Story Arc</option>
+                            <option value="shop">Shop</option>
+                            <option value="session">Session Note</option>
+                            <option value="tool">Tool/Reference</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pageTitle">Page Title</label>
+                        <input type="text" id="pageTitle" placeholder="Enter page title..." required />
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Create Page</button>
+                        <button type="button" id="btnCancelCreate" class="btn-secondary">Cancel</button>
+                    </div>
+                </form>
+                <div id="createPageStatus" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Edit Page Modal -->
+        <div id="editPageModal" class="modal" style="display: none;">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <h2>Edit Page</h2>
+                <form id="editPageForm">
+                    <div class="form-group">
+                        <label for="editPageContent">Page Content (HTML)</label>
+                        <textarea id="editPageContent" rows="18" style="width:100%" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Save Changes</button>
+                        <button type="button" id="btnCancelEdit" class="btn-secondary">Cancel</button>
+                    </div>
+                </form>
+                <div id="editPageStatus" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Delete Page Modal -->
+        <div id="deletePageModal" class="modal" style="display: none;">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <h2>Delete Page</h2>
+                <p style="margin-bottom: 1em;">⚠️ This action cannot be undone. To confirm deletion, type the page title
+                    below:
+                </p>
+                <p style="margin-bottom: 1em;"><strong id="deletePageTitle"></strong></p>
+                <form id="deletePageForm">
+                    <div class="form-group">
+                        <label for="deletePageConfirm">Type page title to confirm:</label>
+                        <input type="text" id="deletePageConfirm" style="width:100%" required autocomplete="off" />
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" style="background: #c33;">Delete Page</button>
+                        <button type="button" id="btnCancelDelete" class="btn-secondary">Cancel</button>
+                    </div>
+                </form>
+                <div id="deletePageStatus" style="display: none; margin-top: 1em;"></div>
+            </div>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div id="confirmModal" class="modal" style="display: none;">
+            <div class="modal-overlay"></div>
+            <div class="modal-content" style="max-width: 450px;">
+                <h2 id="confirmModalTitle">Confirm</h2>
+                <p id="confirmModalMessage" style="margin: 1em 0;"></p>
+                <div class="form-actions">
+                    <button type="button" id="confirmModalYes" class="btn-primary">Yes</button>
+                    <button type="button" id="confirmModalNo" class="btn-secondary">No</button>
+                </div>
+            </div>
+        </div>
         <!-- Compact weather strip: mirrors left-panel weather card -->
         <div id="weatherStrip" class="weather-strip" aria-hidden="false"></div>
         <aside class="left"><!-- Sidebar Partial: Navigation drawer and sections -->
-<div class="drawer" aria-label="Navigation">
-    <div class="drawer-handle">
-        <button id="leftDrawerToggle" class="chip" aria-expanded="true" aria-controls="leftDrawer">Nav</button>
-        <button id="leftDrawerPin" class="chip" aria-pressed="true">Pin</button>
-        <button id="leftCollapseExpand" class="chip" title="Collapse/Expand All">Collapse all</button>
-    </div>
-    <div id="leftDrawer" class="drawer-content">
-        <aside class="sidebar" role="navigation">
-            <div class="campaign-header">
-                <div class="campaign-title">Feywild Adventures</div>
-            </div>
-            <nav class="nav">
-                <a class="nav-item nav-dashboard" href="/index.html"><span class="nav-icon">🏠</span><span
-                        class="nav-text">Dashboard</span></a>
-                <div class="nav-quick"><input id="navQuick" placeholder="Quick nav..." /></div>
-                <!-- Top quick Tools block removed - use the Tools section from assets/nav.json instead -->
-                <details class="nav-details" open>
-                    <summary class="nav-label"><span class="nav-icon">⭐</span><span>Favorites</span></summary>
-                    <ul id="navFav" class="nav-list"></ul>
-                </details>
-                <ul id="navSections" class="nav-sections"></ul>
-                <script src="/assets/nav-loader.js"></script>
-            </nav>
-            <!-- Weather card: DnD dice-driven weather generator -->
-            <div id="weatherCard" class="card weather-card" aria-label="Weather">
-                <div class="weather-header">
-                    <div class="weather-title">Weather</div>
-                    <button id="rollWeather" class="chip" title="Roll weather">Roll</button>
+            <div class="drawer" aria-label="Navigation">
+                <div class="drawer-handle">
+                    <button id="leftDrawerToggle" class="chip" aria-expanded="true"
+                        aria-controls="leftDrawer">Nav</button>
+                    <button id="leftDrawerPin" class="chip" aria-pressed="true">Pin</button>
+                    <button id="leftCollapseExpand" class="chip" title="Collapse/Expand All">Collapse all</button>
                 </div>
-                <div class="weather-now" aria-live="polite">
-                    <div class="weather-icon">⛅</div>
-                    <div class="weather-desc">
-                        <div class="weather-condition">Unknown</div>
-                        <div class="weather-meta">--</div>
-                    </div>
-                </div>
-                <ul class="weather-forecast" role="list">
-                    <!-- forecast rows populated by JS -->
-                </ul>
-                <div class="weather-effects" aria-hidden="false">
-                    <!-- effects populated by JS -->
+                <div id="leftDrawer" class="drawer-content">
+                    <aside class="sidebar" role="navigation">
+                        <div class="campaign-header">
+                            <div class="campaign-title">Feywild Adventures</div>
+                        </div>
+                        <nav class="nav">
+                            <a class="nav-item nav-dashboard" href="/index.html"><span class="nav-icon">🏠</span><span
+                                    class="nav-text">Dashboard</span></a>
+                            <div class="nav-quick"><input id="navQuick" placeholder="Quick nav..." /></div>
+                            <!-- Top quick Tools block removed - use the Tools section from assets/nav.json instead -->
+                            <details class="nav-details" open>
+                                <summary class="nav-label"><span class="nav-icon">⭐</span><span>Favorites</span>
+                                </summary>
+                                <ul id="navFav" class="nav-list"></ul>
+                            </details>
+                            <ul id="navSections" class="nav-sections"></ul>
+                            <script src="/assets/nav-loader.js"></script>
+                        </nav>
+                        <!-- Weather card: DnD dice-driven weather generator -->
+                        <div id="weatherCard" class="card weather-card" aria-label="Weather">
+                            <div class="weather-header">
+                                <div class="weather-title">Weather</div>
+                                <button id="rollWeather" class="chip" title="Roll weather">Roll</button>
+                            </div>
+                            <div class="weather-now" aria-live="polite">
+                                <div class="weather-icon">⛅</div>
+                                <div class="weather-desc">
+                                    <div class="weather-condition">Unknown</div>
+                                    <div class="weather-meta">--</div>
+                                </div>
+                            </div>
+                            <ul class="weather-forecast" role="list">
+                                <!-- forecast rows populated by JS -->
+                            </ul>
+                            <div class="weather-effects" aria-hidden="false">
+                                <!-- effects populated by JS -->
+                            </div>
+                        </div>
+                    </aside>
                 </div>
             </div>
         </aside>
-    </div>
-</div></aside>
         <main class="main">
             <div class="breadcrumb-container">
                 <div id="breadcrumbText" class="main-breadcrumb meta"></div>
@@ -177,7 +182,8 @@
                             d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />
                     </svg>
                 </button>
-            </div><h1>Adult Imperial Dragon (Level 4 Ranger)</h1>
+            </div>
+            <h1>Adult Imperial Dragon (Level 4 Ranger)</h1>
             <p class="meta">#enemy</p>
             <p><strong>Type:</strong> Dragon | <strong>CR:</strong> 20</p>
             <p><strong>HP:</strong> 297 | <strong>AC:</strong> 19</p>
@@ -218,159 +224,162 @@
             <p style="font-style:italic;">Generated by Enemy Generator</p>
         </main>
         <aside class="right"><!-- Right Panel Partial: Drawer with notepad, to-do, and tools -->
-<div class="drawer" aria-label="Tools">
-    <div class="drawer-handle">
-        <button id="drawerToggle" class="chip" aria-expanded="true" aria-controls="drawerContent">Close</button>
-        <button id="drawerPin" class="chip" aria-pressed="true" title="Pin panel"></button>
-        <button id="themeToggle" class="chip" title="Toggle Light/Dark">Theme</button>
-        <button id="colorsToggle" class="chip" title="Open Colors Tool">Colors</button>
-    </div>
-    <div id="drawerContent" class="drawer-content">
-        <div id="drawerTop"></div>
-        <div class="right-split">
-            <div id="paneTop" class="pane">
-                <div class="pane-tabs" aria-hidden="false">
-                    <button class="pane-tab" data-pane="top" data-tool="note">Notepad</button>
-                    <button class="pane-tab" data-pane="top" data-tool="colors">Colors</button>
+            <div class="drawer" aria-label="Tools">
+                <div class="drawer-handle">
+                    <button id="drawerToggle" class="chip" aria-expanded="true"
+                        aria-controls="drawerContent">Close</button>
+                    <button id="drawerPin" class="chip" aria-pressed="true" title="Pin panel"></button>
+                    <button id="themeToggle" class="chip" title="Toggle Light/Dark">Theme</button>
+                    <button id="colorsToggle" class="chip" title="Open Colors Tool">Colors</button>
                 </div>
-                <div class="pane-body" data-pane="top"></div>
-            </div>
-            <div class="pane-resizer-h" aria-hidden="true"></div>
-            <div id="paneBottom" class="pane">
-                <div class="pane-tabs" aria-hidden="false">
-                    <button class="pane-tab" data-pane="bottom" data-tool="todo">To-Do</button>
-                </div>
-                <div class="pane-body" data-pane="bottom"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Hidden tool views rendered into panes by JS -->
-<div id="toolViews" style="display:none">
-    <div id="toolNote">
-        <div class="card">
-            <h3 style="margin:0">Notepad</h3>
-            <textarea id="toolNotepad" placeholder="Quick notes..."
-                style="width:100%;min-height:100px;flex:1;border:none;background:transparent;color:var(--text);resize:none;margin-top:8px;padding:0;outline:none"></textarea>
-        </div>
-    </div>
-    <div id="toolColors">
-        <div class="card">
-            <h3 style="margin:0">Colors</h3>
-            <div id="colorToolContent">
-                <div class="theme-picker">
-                    <h4>Choose a color theme:</h4>
-                    <div class="theme-list">
-                        <div class="theme-card">
-                            <button type="button" class="theme-swatch" data-theme="auburn" title="Auburn Linen">
-                                <div class="swatch-preview">
-                                    <span style="background:#FFFFFF"></span>
-                                    <span style="background:#F6EDEA"></span>
-                                    <span style="background:#8F2D1B"></span>
-                                    <span style="background:#6C4A78"></span>
-                                    <span style="background:#F2D2A5"></span>
-                                </div>
-                                <span class="theme-label">Auburn Linen</span>
-                            </button>
+                <div id="drawerContent" class="drawer-content">
+                    <div id="drawerTop"></div>
+                    <div class="right-split">
+                        <div id="paneTop" class="pane">
+                            <div class="pane-tabs" aria-hidden="false">
+                                <button class="pane-tab" data-pane="top" data-tool="note">Notepad</button>
+                                <button class="pane-tab" data-pane="top" data-tool="colors">Colors</button>
+                            </div>
+                            <div class="pane-body" data-pane="top"></div>
                         </div>
-                        <div class="theme-card">
-                            <button type="button" class="theme-swatch" data-theme="light" title="Light">
-                                <div class="swatch-preview">
-                                    <span style="background:#ffffff"></span>
-                                    <span style="background:#f6f7f8"></span>
-                                    <span style="background:#0ea5ff"></span>
-                                    <span style="background:#111827"></span>
-                                    <span style="background:#6b7280"></span>
-                                    <span style="background:#d1d5db"></span>
-                                </div>
-                                <span class="theme-label">Light</span>
-                            </button>
-                        </div>
-                        <div class="theme-card">
-                            <button type="button" class="theme-swatch" data-theme="dark" title="Dark">
-                                <div class="swatch-preview">
-                                    <span style="background:#0b1220"></span>
-                                    <span style="background:#0f1724"></span>
-                                    <span style="background:#8b5cf6"></span>
-                                    <span style="background:#e5e7eb"></span>
-                                    <span style="background:#9aa3b2"></span>
-                                    <span style="background:#0b0f16"></span>
-                                </div>
-                                <span class="theme-label">Dark</span>
-                            </button>
-                        </div>
-                        <div class="theme-card">
-                            <button class="theme-swatch" data-theme="desert" title="Desert">
-                                <div class="swatch-preview">
-                                    <span style="background:#ae5433"></span>
-                                    <span style="background:#ecc481"></span>
-                                    <span style="background:#aa462d"></span>
-                                    <span style="background:#9e895f"></span>
-                                    <span style="background:#d5c79f"></span>
-                                    <span style="background:#4a4231"></span>
-                                </div>
-                                <span class="theme-label">Desert</span>
-                            </button>
-                        </div>
-                        <div class="theme-card">
-                            <button class="theme-swatch" data-theme="mother" title="Mother of Dragons">
-                                <div class="swatch-preview">
-                                    <span style="background:#080d22"></span>
-                                    <span style="background:#531f4f"></span>
-                                    <span style="background:#6e234b"></span>
-                                    <span style="background:#932549"></span>
-                                    <span style="background:#fdf3eb"></span>
-                                </div>
-                                <span class="theme-label">Mother of Dragons</span>
-                            </button>
-                        </div>
-                        <div class="theme-card">
-                            <button class="theme-swatch" data-theme="orchid" title="Orchid Porcelain">
-                                <div class="swatch-preview">
-                                    <span style="background:#FFFFFF"></span>
-                                    <span style="background:#F3EAF2"></span>
-                                    <span style="background:#7E2A62"></span>
-                                    <span style="background:#C34A8A"></span>
-                                    <span style="background:#FFE3F1"></span>
-                                </div>
-                                <span class="theme-label">Orchid Porcelain</span>
-                            </button>
-                        </div>
-                        <div class="theme-card">
-                            <button class="theme-swatch" data-theme="pearls" title="Chinese Pearls">
-                                <div class="swatch-preview">
-                                    <span style="background:#414B9e"></span>
-                                    <span style="background:#9792CB"></span>
-                                    <span style="background:#AA74A0"></span>
-                                    <span style="background:#E2C99E"></span>
-                                    <span style="background:#852773"></span>
-                                </div>
-                                <span class="theme-label">Chinese Pearls</span>
-                            </button>
+                        <div class="pane-resizer-h" aria-hidden="true"></div>
+                        <div id="paneBottom" class="pane">
+                            <div class="pane-tabs" aria-hidden="false">
+                                <button class="pane-tab" data-pane="bottom" data-tool="todo">To-Do</button>
+                            </div>
+                            <div class="pane-body" data-pane="bottom"></div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div id="toolTodo">
-        <div id="todoBox" class="card" aria-label="Session To-Do">
-            <h3 style="margin:0 0 12px 0">To-Do</h3>
-            <form id="todoForm" class="todo-form" autocomplete="off">
-                <label class="sr-only" for="todoInput">Add a task</label>
-                <input id="todoInput" class="todo-input" placeholder="Add a task and press Enter" />
-                <button type="submit" class="todo-add">Add</button>
-            </form>
-            <div class="todo-actions">
-                <button id="todoClearDone" class="chip" title="Hide/Show completed">Hide Completed</button>
+
+            <!-- Hidden tool views rendered into panes by JS -->
+            <div id="toolViews" style="display:none">
+                <div id="toolNote">
+                    <div class="card">
+                        <h3 style="margin:0">Notepad</h3>
+                        <textarea id="toolNotepad" placeholder="Quick notes..."
+                            style="width:100%;min-height:100px;flex:1;border:none;background:transparent;color:var(--text);resize:none;margin-top:8px;padding:0;outline:none"></textarea>
+                    </div>
+                </div>
+                <div id="toolColors">
+                    <div class="card">
+                        <h3 style="margin:0">Colors</h3>
+                        <div id="colorToolContent">
+                            <div class="theme-picker">
+                                <h4>Choose a color theme:</h4>
+                                <div class="theme-list">
+                                    <div class="theme-card">
+                                        <button type="button" class="theme-swatch" data-theme="auburn"
+                                            title="Auburn Linen">
+                                            <div class="swatch-preview">
+                                                <span style="background:#FFFFFF"></span>
+                                                <span style="background:#F6EDEA"></span>
+                                                <span style="background:#8F2D1B"></span>
+                                                <span style="background:#6C4A78"></span>
+                                                <span style="background:#F2D2A5"></span>
+                                            </div>
+                                            <span class="theme-label">Auburn Linen</span>
+                                        </button>
+                                    </div>
+                                    <div class="theme-card">
+                                        <button type="button" class="theme-swatch" data-theme="light" title="Light">
+                                            <div class="swatch-preview">
+                                                <span style="background:#ffffff"></span>
+                                                <span style="background:#f6f7f8"></span>
+                                                <span style="background:#0ea5ff"></span>
+                                                <span style="background:#111827"></span>
+                                                <span style="background:#6b7280"></span>
+                                                <span style="background:#d1d5db"></span>
+                                            </div>
+                                            <span class="theme-label">Light</span>
+                                        </button>
+                                    </div>
+                                    <div class="theme-card">
+                                        <button type="button" class="theme-swatch" data-theme="dark" title="Dark">
+                                            <div class="swatch-preview">
+                                                <span style="background:#0b1220"></span>
+                                                <span style="background:#0f1724"></span>
+                                                <span style="background:#8b5cf6"></span>
+                                                <span style="background:#e5e7eb"></span>
+                                                <span style="background:#9aa3b2"></span>
+                                                <span style="background:#0b0f16"></span>
+                                            </div>
+                                            <span class="theme-label">Dark</span>
+                                        </button>
+                                    </div>
+                                    <div class="theme-card">
+                                        <button class="theme-swatch" data-theme="desert" title="Desert">
+                                            <div class="swatch-preview">
+                                                <span style="background:#ae5433"></span>
+                                                <span style="background:#ecc481"></span>
+                                                <span style="background:#aa462d"></span>
+                                                <span style="background:#9e895f"></span>
+                                                <span style="background:#d5c79f"></span>
+                                                <span style="background:#4a4231"></span>
+                                            </div>
+                                            <span class="theme-label">Desert</span>
+                                        </button>
+                                    </div>
+                                    <div class="theme-card">
+                                        <button class="theme-swatch" data-theme="mother" title="Mother of Dragons">
+                                            <div class="swatch-preview">
+                                                <span style="background:#080d22"></span>
+                                                <span style="background:#531f4f"></span>
+                                                <span style="background:#6e234b"></span>
+                                                <span style="background:#932549"></span>
+                                                <span style="background:#fdf3eb"></span>
+                                            </div>
+                                            <span class="theme-label">Mother of Dragons</span>
+                                        </button>
+                                    </div>
+                                    <div class="theme-card">
+                                        <button class="theme-swatch" data-theme="orchid" title="Orchid Porcelain">
+                                            <div class="swatch-preview">
+                                                <span style="background:#FFFFFF"></span>
+                                                <span style="background:#F3EAF2"></span>
+                                                <span style="background:#7E2A62"></span>
+                                                <span style="background:#C34A8A"></span>
+                                                <span style="background:#FFE3F1"></span>
+                                            </div>
+                                            <span class="theme-label">Orchid Porcelain</span>
+                                        </button>
+                                    </div>
+                                    <div class="theme-card">
+                                        <button class="theme-swatch" data-theme="pearls" title="Chinese Pearls">
+                                            <div class="swatch-preview">
+                                                <span style="background:#414B9e"></span>
+                                                <span style="background:#9792CB"></span>
+                                                <span style="background:#AA74A0"></span>
+                                                <span style="background:#E2C99E"></span>
+                                                <span style="background:#852773"></span>
+                                            </div>
+                                            <span class="theme-label">Chinese Pearls</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="toolTodo">
+                    <div id="todoBox" class="card" aria-label="Session To-Do">
+                        <h3 style="margin:0 0 12px 0">To-Do</h3>
+                        <form id="todoForm" class="todo-form" autocomplete="off">
+                            <label class="sr-only" for="todoInput">Add a task</label>
+                            <input id="todoInput" class="todo-input" placeholder="Add a task and press Enter" />
+                            <button type="submit" class="todo-add">Add</button>
+                        </form>
+                        <div class="todo-actions">
+                            <button id="todoClearDone" class="chip" title="Hide/Show completed">Hide Completed</button>
+                        </div>
+                        <div class="todo-list-container">
+                            <ul id="todoList" class="todo-list" role="list" aria-live="polite"></ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="todo-list-container">
-                <ul id="todoList" class="todo-list" role="list" aria-live="polite"></ul>
-            </div>
-        </div>
-    </div>
-</div></aside>
+        </aside>
         <div class="resizer resizer-left" aria-hidden="true"></div>
         <div class="resizer resizer-right" aria-hidden="true"></div>
     </div>
@@ -392,11 +401,11 @@
     {{#if TITLE == 'Enemy Generator'}}
     <script src="/assets/enemy-generator.js?v=1765788543237"></script>
     {{/if}}
-    
-    <!-- Footer Partial: Add site-wide footer content here if needed -->
-<footer class="footer">
-    <div class="meta">&copy; 2025 Feywild Adventures</div>
-</footer>
+
+
+    <!-- Footer injected via assets/footer-loader.js -->
+    <div id="footer-placeholder"></div>
+    <script src="/assets/footer-loader.js"></script>
 
 </body>
 

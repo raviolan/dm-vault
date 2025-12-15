@@ -1,4 +1,3 @@
-- 2025-12-15: Phase 3 wrap-up — Phase 3 complete. Batch 1 and Batch 2 done. Remaining candidates (graph.html, graph.json, session.html) are still referenced outside archive and are BLOCKED. No further archiving possible in Phase 3. Next required work is Phase 4 (refactor/injection) to resolve references safely before any further archiving.
 
 # Refactor Log (Append-Only)
 

@@ -1,28 +1,8 @@
-
-
-
-
-
-
-
-
-
-
 # Refactor Log (Append-Only)
 
 2025-12-15: Phase 4C Header Batch 2: inject header via header-loader.js on Arcs.html, Locations.html, Tools.html. Verify PASS.
-- Arcs.html: replaced inline header with <div id="site-header"></div> and marker
-- Locations.html: replaced inline header with <div id="site-header"></div> and marker
-- Tools.html: replaced inline header with <div id="site-header"></div> and marker
-- npm run verify: PASS
 
-2025-12-15: Phase 4C Header Pilot Batch 1: inject header on index.html via header-loader.js. Verify PASS.
-- index.html: replaced inline header with <div id="site-header"></div> and marker
-- header-loader.js: loads assets/partials/header.html into #site-header
-- npm run verify: PASS
 
-- 2025-12-15: Phase 4C Pilot Batch 4  Footer injection applied to NPCs.html, 04_NPCs/Adult Imperial Dragon.html, 03_PCs/Page.html. No protected features or unrelated files touched. Ran npm run verify: PASS.
-	- Strengthened 'Pages to avoid' rule: avoid all YYYY-MM-DD.html, specific entity pages (e.g., 04_NPCs/<name>.html, individual PC/NPC sheets) unless explicitly approved, and all protected pages/features (see protected-paths.json).
 
 - 2025-12-15: Phase 4C Pilot Batch 3 corrective  Reverted footer injection on 2025-12-04.html to avoid touching dated/user-like pages. Ran npm run verify: PASS. No protected features or unrelated files touched.
 
@@ -56,3 +36,9 @@ This file records every change made by the DM-vault Guardian agent during the re
 - 2025-12-15: Phase 2 complete. Generated docs/agent/reports/duplicates.md and docs/agent/reports/suspected-generated.md. Labeled all groups/items. Ran npm run verify and npm run build: all pass, no errors. Discarded build HTML rewrites per runbook. No user-private content touched; no files moved/renamed/deleted.
 
 - 2025-12-15: Guardrails: remove graph from protected paths + verify (no deletions)
+
+2025-12-15: Phase 4C Header Batch 3: inject header via header-loader.js on Characters.html, NPCs.html, search.html. Placement fixed to match Arcs.html. Verify PASS.
+- Characters.html: replaced inline header with <div id="site-header"></div> and marker, placement fixed
+- NPCs.html: replaced inline header with <div id="site-header"></div> and marker, placement fixed
+- search.html: replaced inline header with <div id="site-header"></div> and marker, placement fixed
+- npm run verify: PASS

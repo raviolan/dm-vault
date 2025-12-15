@@ -16,8 +16,9 @@ Update this file **after every commit**.
 
 
 
+
 * Current step (exact):
-  - Phase 4C Header Batch 2: inject header via header-loader.js on Arcs.html, Locations.html, Tools.html. Verify PASS. No protected features touched.
+  - Phase 4C Header Batch 3: inject header via header-loader.js on Characters.html, NPCs.html, search.html. Placement fixed to match Arcs.html. Verify PASS. No protected features touched.
 
 
 

@@ -5,31 +5,40 @@ Update this file **after every commit**.
 
 ---
 
+
 ## Current State
 
 * Repo: dm-vault
 * Branch: main
-* Current phase: Phase 3
-* Current step (exact): Protection update — Added graph.html, session.html, and their required dependencies to protected-paths.json. Updated verify script. Ran verify: PASS. No user-private content touched; no unrelated files changed.
+* Current phase: Phase 4C
+* Current step (exact):
+  - Phase 3 complete: All planned archive batches done, no pending duplicates or generated files remain for this phase.
+  - Phase 4A complete: Reference inventory and decision reports committed for graph/session.
+  - Phase 4B complete: Guardrails/verify sanity-check PASS, no changes needed.
+  - Next: Phase 4C — Refactor Pilot (1 small injection change)
+    • Select a single repeated UI chunk for partialization (e.g., header, nav, or footer)
+    • Extract into a partial/template and update one canonical HTML page to use it
+    • Ensure protected features remain functional and referenced
+    • Run verify/build after the change, commit only intended edits
+
 
 ## Last Completed
 
-
-
-
-
 * Commit: (pending)
-* Summary: (1–3 bullets)
-  * Protection update: Added graph.html, session.html, and required dependencies to protected-paths.json
-  * Updated verify script for new protections
-  * Ran verify: PASS
-  * No user-private content touched; no unrelated files changed
+* Summary:
+  * Phase 3: All archive batches completed, no pending duplicates or generated files for this phase
+  * Phase 4A: Reference inventory and decision reports for graph/session committed
+  * Phase 4B: Guardrails/verify sanity-check PASS, no changes needed
 * Checks run:
   * npm run verify: PASS
 
 ## Next Step (Single Action Only)
 
-* Next step: Phase 3 — Propose and scan next batch of candidates (max 5), prove safety, then await approval
+* Next step: Phase 4C — Refactor Pilot (1 small injection change)
+  - Select a single repeated UI chunk for partialization (e.g., header, nav, or footer)
+  - Extract into a partial/template and update one canonical HTML page to use it
+  - Ensure protected features remain functional and referenced
+  - Run verify/build after the change, commit only intended edits
 
 ## Protected Features Snapshot (Must Stay Green)
 

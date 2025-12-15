@@ -1,4 +1,5 @@
 
+
 # Refactor Log (Append-Only)
 
 This file records every change made by the DM-vault Guardian agent during the refactor process.
@@ -18,6 +19,8 @@ This file records every change made by the DM-vault Guardian agent during the re
   Ran npm run verify: PASS
   Ran npm run build: PASS
   No user-private content touched; no protected files moved/renamed/deleted.
+
+- 2025-12-15: Protection update — Added graph.html, session.html, and their required dependencies to protected-paths.json. Updated verify script. Ran verify: PASS. No user-private content touched; no unrelated files changed.
 
 - 2025-12-14: Phase 0 initialized. Created docs/agent/, reports/, and archive/ directories.
 - 2025-12-14: Ensured .gitignore includes .DS_Store. Phase 0 complete. Ready for Phase 1.

@@ -16,6 +16,7 @@ function checkFileExists(relPath) {
   }
 }
 
+
 // Check scripts
 checkFileExists(protectedConfig.weatherScript);
 checkFileExists(protectedConfig.enemyGeneratorScript);
@@ -44,6 +45,18 @@ protectedConfig.htmlPagesReferencing.forEach(relPath => {
     }
   });
 });
+
+// Check graph/session protected pages and their dependencies
+if (protectedConfig.graphAndSessionPages && Array.isArray(protectedConfig.graphAndSessionPages)) {
+  protectedConfig.graphAndSessionPages.forEach(relPath => {
+    checkFileExists(relPath);
+  });
+}
+if (protectedConfig.graphAndSessionDependencies && Array.isArray(protectedConfig.graphAndSessionDependencies)) {
+  protectedConfig.graphAndSessionDependencies.forEach(relPath => {
+    checkFileExists(relPath);
+  });
+}
 
 if (failed) {
   process.exit(1);

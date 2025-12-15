@@ -22,5 +22,30 @@
   },
   "frontendApiUsage": [
     "assets/enemy-generator.js"
+  ],
+  "graphAndSessionPages": [
+    "graph.html",
+    "session.html"
+  ],
+  "graphAndSessionDependencies": [
+    "assets/graph.js",
+    "assets/session.js",
+    "assets/site.js",
+    "assets/right-panel.js",
+    "assets/right-panel-loader.js",
+    "assets/markdown.js",
+    "assets/favorites.js",
+    "assets/wysiwyg.js",
+    "assets/keyboard-nav.js",
+    "assets/theme.js",
+    "assets/shortcuts-guide.js",
+    "assets/collapsible-sections.js",
+    "assets/weather.js",
+    "assets/enhanced-todo.css",
+    "assets/components.css",
+    "assets/style.css",
+    "assets/modal.css",
+    "assets/landing-pages.css",
+    "graph.json"
   ]
 }

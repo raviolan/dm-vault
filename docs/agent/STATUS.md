@@ -10,7 +10,7 @@ Update this file **after every commit**.
 * Repo: dm-vault
 * Branch: main
 * Current phase: Phase 3
-* Current step (exact): Phase 3 batch 2. Moved scripts/convert-right-panel.cjs to archive/. Ran verify and build: all pass, no errors. No user-private content touched; no protected files moved/renamed/deleted.
+* Current step (exact): Protection update — Added graph.html, session.html, and their required dependencies to protected-paths.json. Updated verify script. Ran verify: PASS. No user-private content touched; no unrelated files changed.
 
 ## Last Completed
 
@@ -20,12 +20,12 @@ Update this file **after every commit**.
 
 * Commit: (pending)
 * Summary: (1–3 bullets)
-  * Phase 3 batch 2: Moved scripts/convert-right-panel.cjs to archive/
-  * Ran verify and build: all pass, no errors
-  * No user-private content touched; no protected files moved/renamed/deleted
+  * Protection update: Added graph.html, session.html, and required dependencies to protected-paths.json
+  * Updated verify script for new protections
+  * Ran verify: PASS
+  * No user-private content touched; no unrelated files changed
 * Checks run:
   * npm run verify: PASS
-  * npm run build: PASS
 
 ## Next Step (Single Action Only)
 

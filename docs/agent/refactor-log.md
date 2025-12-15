@@ -1,6 +1,10 @@
 # Refactor Log (Append-Only)
 
 
+2025-12-15: Phase 4C: sidebar injection plan created/approved; awaiting pilot execution.
+# Refactor Log (Append-Only)
+
+
 2025-12-15: Phase 4C: fixed index.html header placement; verify PASS.
 # Refactor Log (Append-Only)
 

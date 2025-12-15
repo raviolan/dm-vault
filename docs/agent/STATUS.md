@@ -35,9 +35,9 @@ Update this file **after every commit**.
 
 ## Next Step (Single Action Only)
 
-* Last completed: Phase 4C: fixed index.html header placement; verify PASS.
-* Next step: Phase 4C — Header Placement Sweep (Batch 2)
-  - Repeat audit/fix for next 3 BAD pages (if any remain)
+* Last completed: Phase 4C: sidebar injection plan approved; next is Pilot Batch 1 (index.html only).
+* Next step: Phase 4C — Sidebar Injection Pilot Batch 1 (index.html only)
+  - Replace sidebar block in index.html with partial/loader per plan
   - Otherwise, proceed to next phase per runbook
   - Ensure protected features remain functional and referenced
   - Run verify/build after the change, commit only intended edits

@@ -1,0 +1,56 @@
+# Footer Injection Rollout Audit
+
+**Date:** 2025-12-15
+
+## Injected pages so far
+- index.html
+- Arcs.html
+- Locations.html
+- Characters.html
+- 03_Sessions.html
+- 2025-12-04.html
+- Tools.html
+
+## Pages to avoid
+- Dated/user-private: 2025-12-04.html
+- Protected (per protected-paths.json):
+  - index.html
+  - Locations.html
+  - Arcs.html
+  - 03_PCs/Characters.html
+  - 03_PCs/Page.html
+  - 01_Arcs/Arcs.html
+  - 2025-12-04.html
+  - test-sections.html
+  - search.html
+  - session.html
+  - 000_today's tools/Madryck.html
+  - data/05_Tools & Tables/Enemy Generator.html
+  - assets/partials/layout.html
+  - graph.html
+  - session.html
+
+## Safe next candidates (top 10)
+- NPCs.html
+- Tools.html (already injected)
+- test-sections.html (protected, skip)
+- 03_PCs/Page.html (protected, skip)
+- 03_PCs/Characters.html (protected, skip)
+- 01_Arcs/Arcs.html (protected, skip)
+- 000_today's tools/Madryck.html (protected, skip)
+- search.html (protected, skip)
+- session.html (protected, skip)
+- graph.html (protected, skip)
+- test-sections.html (protected, skip)
+- Madryck.html (protected, skip)
+- Adult Imperial Dragon.html
+- NPCs.html
+- test-sections.html
+- Page.html
+
+**Recommended for Batch 4:**
+- NPCs.html
+- Adult Imperial Dragon.html
+- Page.html
+
+**Note:** Only non-protected, non-dated, non-user-private pages are listed as safe. Confirm with latest repo state before proceeding.

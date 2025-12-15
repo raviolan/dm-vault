@@ -35,9 +35,9 @@ Update this file **after every commit**.
 
 ## Next Step (Single Action Only)
 
-* Last completed: Phase 4C: sidebar injection plan approved; next is Pilot Batch 1 (index.html only).
-* Next step: Phase 4C — Sidebar Injection Pilot Batch 1 (index.html only)
-  - Replace sidebar block in index.html with partial/loader per plan
+* Last completed: Phase 4C: sidebar injection pilot batch 1 executed on index.html; verify PASS.
+* Next step: Phase 4C — Sidebar Injection Batch 2 (next best candidates)
+  - Repeat for next 3 non-protected pages (Arcs.html, Locations.html, Tools.html, etc.)
   - Otherwise, proceed to next phase per runbook
   - Ensure protected features remain functional and referenced
   - Run verify/build after the change, commit only intended edits

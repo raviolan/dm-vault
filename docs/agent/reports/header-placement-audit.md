@@ -1,23 +1,20 @@
-# Header Placement Audit — Phase 4C
+
+# Header Placement Audit — Phase 4C (Re-Audit)
 
 Date: 2025-12-15
 
-## Tracked HTML files with HEADER-PARTIAL-INJECTED
+| File           | Status | Note |
+|----------------|--------|------|
+| Arcs.html      | OK     | Header slot is above <div class="layout"> |
+| Characters.html| OK     | Header slot is above <div class="layout"> |
+| Locations.html | OK     | Header slot is above <div class="layout"> |
+| NPCs.html      | OK     | Header slot is above <div class="layout"> |
+| Tools.html     | OK     | Header slot is above <div class="layout"> |
+| index.html     | BAD    | Header slot is inside <div class="layout"> |
+| search.html    | OK     | Header slot is above <div class="layout"> |
 
-- Arcs.html — BAD (header slot is INSIDE <div class="layout">)
-- Characters.html — OK (header slot is ABOVE <div class="layout">)
-- Locations.html — BAD (header slot is INSIDE <div class="layout">)
-- NPCs.html — OK (header slot is ABOVE <div class="layout">)
-- Tools.html — BAD (header slot is INSIDE <div class="layout">)
-- index.html — OK (header slot is ABOVE <div class="layout">)
-- search.html — OK (header slot is ABOVE <div class="layout">)
+- BAD = header slot is inside <div class="layout"> (should be moved)
+- OK = header slot is above <div class="layout"> (correct)
+- EXEMPT = protected or user-private (none found in this batch)
 
-BAD = header slot is INSIDE <div class="layout"> (should be moved)
-OK = header slot is ABOVE <div class="layout"> (correct)
-
-First 3 BAD pages to fix:
-- Arcs.html
-- Locations.html
-- Tools.html
-
-(Protected/user-private pages excluded from fix list.)
+Next batch to fix: index.html (only BAD found)

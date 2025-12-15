@@ -7,7 +7,14 @@
 
 
 
+
 # Refactor Log (Append-Only)
+
+2025-12-15: Phase 4C Header Batch 2: inject header via header-loader.js on Arcs.html, Locations.html, Tools.html. Verify PASS.
+- Arcs.html: replaced inline header with <div id="site-header"></div> and marker
+- Locations.html: replaced inline header with <div id="site-header"></div> and marker
+- Tools.html: replaced inline header with <div id="site-header"></div> and marker
+- npm run verify: PASS
 
 2025-12-15: Phase 4C Header Pilot Batch 1: inject header on index.html via header-loader.js. Verify PASS.
 - index.html: replaced inline header with <div id="site-header"></div> and marker

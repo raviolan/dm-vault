@@ -3,9 +3,18 @@
 
 This file records every change made by the DM-vault Guardian agent during the refactor process.
 
----
 
-## Log Start
+
+- 2025-12-15: Phase 3 (batch 1) — Moved all duplicate files (per report) to archive/:
+		* scripts/convert-right-panel.js → archive/scripts/convert-right-panel.js
+		* 04_NPCs/NPCs.html → archive/04_NPCs/NPCs.html
+		* backup-index.html → archive/backup-index.html
+		* 02_World/Locations.html → archive/02_World/Locations.html
+		* scripts/archive/lib/io.js → archive/scripts/archive/lib/io.js
+	Attempted to move generated files (notes.json, search-index.json, build-warnings.txt) but they were already absent.
+	Ran npm run verify: PASS
+	Ran npm run build: PASS
+	No user-private content touched; no protected files moved/renamed/deleted.
 
 - 2025-12-14: Phase 0 initialized. Created docs/agent/, reports/, and archive/ directories.
 - 2025-12-14: Ensured .gitignore includes .DS_Store. Phase 0 complete. Ready for Phase 1.

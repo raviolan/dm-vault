@@ -1,11 +1,27 @@
-// Sidebar now ships in-page via partials. Initialize behaviors on DOM ready.
-document.addEventListener('DOMContentLoaded', () => {
-  try { initializeSplitClickNavigation && initializeSplitClickNavigation(); } catch { }
+// Sidebar now ships in-page via partials. Initialize behaviors on DOM ready and after partial injection events.
+function dmSidebarInit() {
+  if (window.__dm_sidebar_inited) return;
+  window.__dm_sidebar_inited = true;
   try { window.initializeFavorites && window.initializeFavorites(); } catch { }
   try { window.initializeSidebar && window.initializeSidebar(); } catch { }
   try { window.initializeNavSectionState && window.initializeNavSectionState(); } catch { }
   try { window.addKeyboardShortcuts && window.addKeyboardShortcuts(); } catch { }
+  try { initializeSplitClickNavigation && initializeSplitClickNavigation(); } catch { }
+}
+function dmHeaderInit() {
+  if (window.__dm_header_inited) return;
+  window.__dm_header_inited = true;
+  // Only bind header-related actions (Edit/New/Delete/etc)
+  try { window.addKeyboardShortcuts && window.addKeyboardShortcuts(); } catch { }
+  // Add more header-specific initializers if needed
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.__dm_sidebar_injected) dmSidebarInit();
+  if (window.__dm_header_injected) dmHeaderInit();
 });
+window.addEventListener('dm-sidebar-injected', dmSidebarInit);
+window.addEventListener('dm-header-injected', dmHeaderInit);
 
 // --- Split-Click Navigation for Category Landing Pages ---
 function initializeSplitClickNavigation() {

@@ -10,6 +10,8 @@ fetch('assets/partials/header.html')
     const container = document.getElementById('site-header');
     if (container) {
       container.innerHTML = html;
+      window.__dm_header_injected = true;
+      window.dispatchEvent(new Event('dm-header-injected'));
     } else {
       console.error('site-header container not found');
     }

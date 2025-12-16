@@ -1,3 +1,4 @@
+# 2025-12-16: Stabilized injected sidebar/header pipeline: execute injected scripts, static-first nav.json, and post-injection init handshake; verify PASS.
 # Refactor Log (Append-Only)
 
 

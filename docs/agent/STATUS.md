@@ -18,7 +18,8 @@ Update this file **after every commit**.
 
 
 * Current step (exact):
-  - Phase 4C: Sidebar Injection Batch 2 completed (Arcs.html, Locations.html, Tools.html). Verify PASS. No protected features or user-private files touched.
+
+  - Phase 4C: Sidebar/Header injection stabilization complete. Sidebar injection now requires the wrapper <aside class="left" id="site-sidebar"></aside>. Loader scripts dispatch dm-sidebar-injected / dm-header-injected so UI wiring runs after injection. Verify PASS.
 
 
 
@@ -36,11 +37,8 @@ Update this file **after every commit**.
 ## Next Step (Single Action Only)
 
 * Last completed: Phase 4C: sidebar loader bugfix (absolute path, script src); verify PASS.
-* Next step: Phase 4C — Sidebar Injection Batch 3 (next 3 non-protected pages)
-  - Repeat for next 3 non-protected pages (excluding already completed)
-  - Otherwise, proceed to next phase per runbook
-  - Ensure protected features remain functional and referenced
-  - Run verify/build after the change, commit only intended edits
+
+* Next step: Resume Phase 4C injection batches using the corrected pattern (sidebar/header partials, loader, and handshake events). Ensure all new sidebar/header injections use the wrapper and event handshake. Verify/build after each batch, commit only intended edits.
 
 ## Protected Features Snapshot (Must Stay Green)
 

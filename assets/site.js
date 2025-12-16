@@ -1256,6 +1256,16 @@ window.saveSessionSnapshot = async function () {
 // --- Make Entity Body Sections Collapsible ---
 // Collapsible sections moved to assets/collapsible-sections.js
 /* (function makeEntitySectionsCollapsible() {
+ 
+
+
+
+
+
+
+
+
+
   const entityBody = document.querySelector('.entity-body');
   const article = document.querySelector('article');
   const main = document.querySelector('main.main');
@@ -1403,3 +1413,188 @@ window.saveSessionSnapshot = async function () {
     });
   });
 })(); */
+
+// Ensure modal event bindings are re-initialized after global-ui is injected. Add a handler for the dm-global-ui-injected event to re-run modal setup code.
+window.addEventListener('dm-global-ui-injected', () => {
+  // Re-run modal event bindings for create/edit/delete/confirm modals
+  // Create Page Modal
+  (function () {
+    const modal = document.getElementById('createPageModal');
+    const form = document.getElementById('createPageForm');
+    const btnOpen = document.getElementById('btnCreatePage');
+    const btnCancel = document.getElementById('btnCancelCreate');
+    const statusDiv = document.getElementById('createPageStatus');
+    if (!modal || !form || !btnOpen) return;
+    function openModal() {
+      modal.style.display = 'flex';
+      document.getElementById('pageTitle').focus();
+    }
+    function closeModal() {
+      modal.style.display = 'none';
+      form.reset();
+      statusDiv.style.display = 'none';
+      statusDiv.className = '';
+    }
+    btnOpen.addEventListener('click', openModal);
+    btnCancel.addEventListener('click', closeModal);
+    modal.querySelector('.modal-overlay').addEventListener('click', closeModal);
+    document.addEventListener('keydown', function escClose(e) {
+      if (e.key === 'Escape' && modal.style.display === 'flex') closeModal();
+    });
+  })();
+  // Edit Page Modal
+  (function () {
+    const btnEdit = document.getElementById('btnEditPage');
+    if (!btnEdit) return;
+    btnEdit.onclick = null;
+    btnEdit.addEventListener('click', () => {
+      const existing = document.querySelector('.inplace-wysiwyg-editor');
+      if (existing) { existing.focus(); return; }
+      const main = document.querySelector('main.main') || document.querySelector('article') || document.body;
+      if (!main) return;
+      if (window.createInplaceEditor) {
+        window.createInplaceEditor(main, { noReload: false });
+        return;
+      }
+      const modal = document.getElementById('editPageModal');
+      const ta = document.getElementById('editPageContent');
+      if (!modal || !ta) return;
+      ta.value = main.innerHTML;
+      modal.style.display = 'flex';
+    });
+  })();
+  // Delete Page Modal
+  (function () {
+    const modal = document.getElementById('deletePageModal');
+    const form = document.getElementById('deletePageForm');
+    const btnOpen = document.getElementById('btnDeletePage');
+    const btnCancel = document.getElementById('btnCancelDelete');
+    const confirmInput = document.getElementById('deletePageConfirm');
+    const titleDisplay = document.getElementById('deletePageTitle');
+    const statusDiv = document.getElementById('deletePageStatus');
+    if (!modal || !form || !btnOpen) return;
+
+    // Extract page title from the h1 or document title
+    function getPageTitle() {
+      const h1 = document.querySelector('main.main h1');
+      if (h1) return h1.textContent.trim();
+      return document.title.split('|')[0].trim();
+    }
+
+    function openModal() {
+      const title = getPageTitle();
+      titleDisplay.textContent = title;
+      confirmInput.dataset.expectedTitle = title;
+      modal.style.display = 'flex';
+      confirmInput.value = '';
+      confirmInput.focus();
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+      form.reset();
+      statusDiv.style.display = 'none';
+      statusDiv.className = '';
+    }
+
+    function showStatus(message, type) {
+      statusDiv.textContent = message;
+      statusDiv.className = type;
+      statusDiv.style.display = 'block';
+    }
+
+    btnOpen.addEventListener('click', openModal);
+    btnCancel.addEventListener('click', closeModal);
+
+    // Close on overlay click
+    modal.querySelector('.modal-overlay').addEventListener('click', closeModal);
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.style.display === 'flex') {
+        closeModal();
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const expectedTitle = confirmInput.dataset.expectedTitle;
+      const enteredTitle = confirmInput.value.trim();
+
+      if (enteredTitle !== expectedTitle) {
+        showStatus('Title does not match. Please type the exact title to confirm deletion.', 'error');
+        return;
+      }
+
+      // Disable form
+      const submitBtn = form.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      confirmInput.disabled = true;
+      showStatus('Deleting page...', 'loading');
+
+      try {
+        const response = await fetch('/api/delete-page', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: window.location.pathname })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showStatus('Page deleted! Redirecting to dashboard...', 'success');
+          setTimeout(() => {
+            window.location.href = '/index.html';
+          }, 1500);
+        } else {
+          showStatus(data.error || 'Failed to delete page', 'error');
+          submitBtn.disabled = false;
+          confirmInput.disabled = false;
+        }
+      } catch (err) {
+        showStatus('Network error: ' + err.message, 'error');
+        submitBtn.disabled = false;
+        confirmInput.disabled = false;
+      }
+    });
+  })();
+});
+
+// --- Debugging and Development Helpers ---
+// (function devHelpers() {
+//   // Show all elements (for debugging)
+//   document.querySelectorAll('*').forEach(el => el.style.outline = '1px solid red');
+
+//   // Log all fetch requests and responses
+//   const originalFetch = window.fetch;
+//   window.fetch = async (...args) => {
+//     const response = await originalFetch(...args);
+//     const clonedResponse = response.clone();
+//     clonedResponse
+//       .text()
+//       .then(body => console.log('Fetch URL:', args[0], 'Response:', body))
+//       .catch(err => console.error('Fetch error:', err));
+//     return response;
+//   };
+
+//   // Intercept and log XHR requests
+//   const originalXhrOpen = XMLHttpRequest.prototype.open;
+//   XMLHttpRequest.prototype.open = function (...args) {
+//     this.addEventListener('load', function () {
+//       console.log('XHR Request:', args[1], 'Response:', this.responseText);
+//     });
+//     return originalXhrOpen.apply(this, args);
+//   };
+
+//   // Log all form submissions
+//   document.addEventListener('submit', (e) => {
+//     const form = e.target.closest('form');
+//     if (form) {
+//       const formData = new FormData(form);
+//       const data = {};
+//       formData.forEach((value, key) => { data[key] = value });
+//       console.log('Form submitted:', data);
+//     }
+//   });
+// })();

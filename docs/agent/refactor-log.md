@@ -60,8 +60,6 @@ This file records every change made by the DM-vault Guardian agent during the re
 - search.html: replaced inline header with <div id="site-header"></div> and marker, placement fixed
 - npm run verify: PASS
 
-2025-12-15: Phase 4C Header Batch 3 Fix v2: moved header injection slot above .layout (was rendering in panel) on Characters.html, NPCs.html, search.html. Verify PASS.
-- Characters.html: header injection slot moved above .layout
+
+2025-12-16: Phase 4C Sidebar Injection Batch 2: Arcs.html, Locations.html, Tools.html; verify PASS.
 - NPCs.html: header injection slot moved above .layout
-- search.html: header injection slot moved above .layout
-- npm run verify: PASS

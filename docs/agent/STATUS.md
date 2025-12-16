@@ -18,7 +18,7 @@ Update this file **after every commit**.
 
 
 * Current step (exact):
-  - Phase 4C: header placement sweep batch 1 (move header slot above layout) on Arcs.html, Locations.html, Tools.html. Verify PASS. No protected features or user-private files touched.
+  - Phase 4C: Sidebar Injection Batch 2 completed (Arcs.html, Locations.html, Tools.html). Verify PASS. No protected features or user-private files touched.
 
 
 
@@ -36,8 +36,8 @@ Update this file **after every commit**.
 ## Next Step (Single Action Only)
 
 * Last completed: Phase 4C: sidebar loader bugfix (absolute path, script src); verify PASS.
-* Next step: Phase 4C — Sidebar Injection Batch 2 (next best candidates)
-  - Repeat for next 3 non-protected pages (Arcs.html, Locations.html, Tools.html, etc.)
+* Next step: Phase 4C — Sidebar Injection Batch 3 (next 3 non-protected pages)
+  - Repeat for next 3 non-protected pages (excluding already completed)
   - Otherwise, proceed to next phase per runbook
   - Ensure protected features remain functional and referenced
   - Run verify/build after the change, commit only intended edits

@@ -19,9 +19,10 @@ Update this file **after every commit**.
 
 
 
+
 * Current step (exact):
 
-  - Phase 5A: Legacy modal bindings (Create Page Modal, Delete Page Modal, dm-global-ui-injected rebinding) were found and removed from assets/site.js. Ran npm run verify: PASS, npm run build: PASS. Only intended changes committed.
+  - Phase 5A: Locations.html now loads /assets/ui/page-modals.js before /assets/site.js (cache-busting style matched). Ran npm run verify: PASS, npm run build: PASS. Only intended changes committed.
 
 
 

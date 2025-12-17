@@ -1,3 +1,8 @@
+# 2025-12-17: Phase 5A: load page-modals module on Locations
+- Locations.html now loads /assets/ui/page-modals.js before /assets/site.js (cache-busting style matched).
+- Ran npm run verify: PASS
+- Ran npm run build: PASS
+- Only intended changes committed.
 # 2025-12-17: Phase 5A: remove legacy modal bindings from site.js
 - Found and removed: Create Page Modal IIFE, Delete Page Modal IIFE, and dm-global-ui-injected rebinding from assets/site.js.
 - Ran npm run verify: PASS

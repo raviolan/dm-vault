@@ -18,9 +18,10 @@ Update this file **after every commit**.
 
 
 
+
 * Current step (exact):
 
-  - Phase 5A: Delegated page modals module (pilot Locations). Extracted Create/Delete modal logic from site.js to assets/ui/page-modals.js using event delegation. Updated Locations.html to load new module before site.js. Removed old modal wiring and dm-global-ui-injected rebinding from site.js. Ran npm run verify: PASS, npm run build: PASS. Committed only intended changes.
+  - Phase 5A: Legacy modal bindings (Create Page Modal, Delete Page Modal, dm-global-ui-injected rebinding) were found and removed from assets/site.js. Ran npm run verify: PASS, npm run build: PASS. Only intended changes committed.
 
 
 

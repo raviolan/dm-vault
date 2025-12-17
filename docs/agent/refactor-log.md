@@ -1,3 +1,8 @@
+# 2025-12-17: Phase 5A: remove legacy modal bindings from site.js
+- Found and removed: Create Page Modal IIFE, Delete Page Modal IIFE, and dm-global-ui-injected rebinding from assets/site.js.
+- Ran npm run verify: PASS
+- Ran npm run build: PASS
+- Only intended changes committed.
 # 2025-12-17: Phase 5A: delegated page modals module (pilot Locations)
 - Extracted Create/Delete modal logic from assets/site.js to new assets/ui/page-modals.js using event delegation (injection-safe).
 - Updated Locations.html to load new module before site.js, matching cache-busting style.

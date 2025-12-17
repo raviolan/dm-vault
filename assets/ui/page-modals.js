@@ -1,102 +1,99 @@
+
+
 // Delegated modal handler for Create/Delete Page modals (pilot: Locations.html)
 // Injection-safe: works if modals are injected after load
-(function () {
-    // Helper: find modal and form by id
-    function $(id) { return document.getElementById(id); }
 
-    // Delegated click handler
-    document.addEventListener('click', function (e) {
-        // Open Create Page Modal
-        if (e.target.closest && e.target.closest('#btnCreatePage')) {
-            const modal = $('createPageModal');
-            if (modal) {
-                modal.style.display = 'flex';
-                const title = $('pageTitle');
-                if (title) title.focus();
-            }
-            return;
+// Delegated click handler (document-level, event delegation)
+document.addEventListener('click', function (e) {
+    // Open Create Page Modal
+    if (e.target.closest && e.target.closest('#btnCreatePage')) {
+        const modal = document.getElementById('createPageModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            const title = document.getElementById('pageTitle');
+            if (title) title.focus();
         }
-        // Open Delete Page Modal
-        if (e.target.closest && e.target.closest('#btnDeletePage')) {
-            const modal = $('deletePageModal');
-            const titleDisplay = $('deletePageTitle');
-            const confirmInput = $('deletePageConfirm');
-            if (modal && titleDisplay && confirmInput) {
-                // Extract page title from h1 or document.title
-                let pageTitle = '';
-                const h1 = document.querySelector('main.main h1');
-                if (h1) pageTitle = h1.textContent.trim();
-                else pageTitle = document.title.split('|')[0].trim();
-                titleDisplay.textContent = pageTitle;
-                confirmInput.dataset.expectedTitle = pageTitle;
-                confirmInput.value = '';
-                modal.style.display = 'flex';
-                confirmInput.focus();
-            }
-            return;
+        return;
+    }
+    // Open Delete Page Modal
+    if (e.target.closest && e.target.closest('#btnDeletePage')) {
+        const modal = document.getElementById('deletePageModal');
+        const titleDisplay = document.getElementById('deletePageTitle');
+        const confirmInput = document.getElementById('deletePageConfirm');
+        if (modal && titleDisplay && confirmInput) {
+            let pageTitle = '';
+            const h1 = document.querySelector('main.main h1');
+            if (h1) pageTitle = h1.textContent.trim();
+            else pageTitle = document.title.split('|')[0].trim();
+            titleDisplay.textContent = pageTitle;
+            confirmInput.dataset.expectedTitle = pageTitle;
+            confirmInput.value = '';
+            modal.style.display = 'flex';
+            confirmInput.focus();
         }
-        // Cancel Create
-        if (e.target.closest && e.target.closest('#btnCancelCreate')) {
-            const modal = $('createPageModal');
-            if (modal) {
-                modal.style.display = 'none';
-                const form = $('createPageForm');
-                const statusDiv = $('createPageStatus');
-                if (form) form.reset();
-                if (statusDiv) { statusDiv.style.display = 'none'; statusDiv.className = ''; }
-            }
-            return;
+        return;
+    }
+    // Cancel Create
+    if (e.target.closest && e.target.closest('#btnCancelCreate')) {
+        const modal = document.getElementById('createPageModal');
+        if (modal) {
+            modal.style.display = 'none';
+            const form = document.getElementById('createPageForm');
+            const statusDiv = document.getElementById('createPageStatus');
+            if (form) form.reset();
+            if (statusDiv) { statusDiv.style.display = 'none'; statusDiv.className = ''; }
         }
-        // Cancel Delete
-        if (e.target.closest && e.target.closest('#btnCancelDelete')) {
-            const modal = $('deletePageModal');
-            if (modal) {
-                modal.style.display = 'none';
-                const form = $('deletePageForm');
-                const statusDiv = $('deletePageStatus');
-                if (form) form.reset();
-                if (statusDiv) { statusDiv.style.display = 'none'; statusDiv.className = ''; }
-            }
-            return;
+        return;
+    }
+    // Cancel Delete
+    if (e.target.closest && e.target.closest('#btnCancelDelete')) {
+        const modal = document.getElementById('deletePageModal');
+        if (modal) {
+            modal.style.display = 'none';
+            const form = document.getElementById('deletePageForm');
+            const statusDiv = document.getElementById('deletePageStatus');
+            if (form) form.reset();
+            if (statusDiv) { statusDiv.style.display = 'none'; statusDiv.className = ''; }
         }
-        // Overlay click (Create)
-        if (e.target.classList && e.target.classList.contains('modal-overlay')) {
-            const modal = e.target.closest('.modal');
-            if (modal && (modal.id === 'createPageModal' || modal.id === 'deletePageModal')) {
+        return;
+    }
+    // Overlay click (Create/Delete)
+    if (e.target.classList && e.target.classList.contains('modal-overlay')) {
+        const modal = e.target.closest('.modal');
+        if (modal && (modal.id === 'createPageModal' || modal.id === 'deletePageModal')) {
+            modal.style.display = 'none';
+            const form = modal.querySelector('form');
+            const statusDiv = modal.querySelector('.modal-status');
+            if (form) form.reset();
+            if (statusDiv) { statusDiv.style.display = 'none'; statusDiv.className = ''; }
+        }
+        return;
+    }
+});
+
+// Delegated Escape key handler (document-level)
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        const modals = [document.getElementById('createPageModal'), document.getElementById('deletePageModal')];
+        modals.forEach(modal => {
+            if (modal && modal.style.display === 'flex') {
                 modal.style.display = 'none';
                 const form = modal.querySelector('form');
                 const statusDiv = modal.querySelector('.modal-status');
                 if (form) form.reset();
                 if (statusDiv) { statusDiv.style.display = 'none'; statusDiv.className = ''; }
             }
-            return;
-        }
-    });
+        });
+    }
+});
 
-    // Delegated Escape key handler
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') {
-            const modals = [$('createPageModal'), $('deletePageModal')];
-            modals.forEach(modal => {
-                if (modal && modal.style.display === 'flex') {
-                    modal.style.display = 'none';
-                    const form = modal.querySelector('form');
-                    const statusDiv = modal.querySelector('.modal-status');
-                    if (form) form.reset();
-                    if (statusDiv) { statusDiv.style.display = 'none'; statusDiv.className = ''; }
-                }
-            });
-        }
-    });
-
-    // Create Page Form submit
-    document.addEventListener('submit', async function (e) {
-        const form = e.target.closest('#createPageForm');
-        if (!form) return;
+// Delegated form submit handler (document-level)
+document.addEventListener('submit', async function (e) {
+    if (e.target && e.target.id === 'createPageForm') {
         e.preventDefault();
-        const type = $('pageType') ? $('pageType').value : '';
-        const title = $('pageTitle') ? $('pageTitle').value.trim() : '';
-        const statusDiv = $('createPageStatus');
+        const type = document.getElementById('pageType') ? document.getElementById('pageType').value : '';
+        const title = document.getElementById('pageTitle') ? document.getElementById('pageTitle').value.trim() : '';
+        const statusDiv = document.getElementById('createPageStatus');
         if (!title) {
             if (statusDiv) {
                 statusDiv.textContent = 'Please enter a page title';
@@ -105,7 +102,7 @@
             }
             return;
         }
-        const submitBtn = form.querySelector('button[type="submit"]');
+        const submitBtn = e.target.querySelector('button[type="submit"]');
         if (submitBtn) submitBtn.disabled = true;
         if (statusDiv) {
             statusDiv.textContent = 'Creating page...';
@@ -139,17 +136,14 @@
             }
             if (submitBtn) submitBtn.disabled = false;
         }
-    });
-
-    // Delete Page Form submit
-    document.addEventListener('submit', async function (e) {
-        const form = e.target.closest('#deletePageForm');
-        if (!form) return;
+        return;
+    }
+    if (e.target && e.target.id === 'deletePageForm') {
         e.preventDefault();
-        const confirmInput = $('deletePageConfirm');
+        const confirmInput = document.getElementById('deletePageConfirm');
         const expectedTitle = confirmInput ? confirmInput.dataset.expectedTitle : '';
         const enteredTitle = confirmInput ? confirmInput.value.trim() : '';
-        const statusDiv = $('deletePageStatus');
+        const statusDiv = document.getElementById('deletePageStatus');
         if (enteredTitle !== expectedTitle) {
             if (statusDiv) {
                 statusDiv.textContent = 'Title does not match. Please type the exact title to confirm deletion.';
@@ -158,7 +152,7 @@
             }
             return;
         }
-        const submitBtn = form.querySelector('button[type="submit"]');
+        const submitBtn = e.target.querySelector('button[type="submit"]');
         if (submitBtn) submitBtn.disabled = true;
         if (confirmInput) confirmInput.disabled = true;
         if (statusDiv) {
@@ -195,5 +189,7 @@
             if (submitBtn) submitBtn.disabled = false;
             if (confirmInput) confirmInput.disabled = false;
         }
-    });
-})();
+        return;
+    }
+});
+});

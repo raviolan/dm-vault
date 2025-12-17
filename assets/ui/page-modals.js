@@ -4,9 +4,38 @@
 // Phase 5A hotfix: load marker for script execution
 window.__dmPageModalsLoaded = true;
 
+
 // --- Delegated modal handler for Create/Delete Page modals (pilot: Locations.html) ---
 
-function onClick(e) {
+// Helper: ensure modals are present in DOM, else fetch and inject
+async function ensureModals() {
+    if (document.getElementById('createPageModal') && document.getElementById('deletePageModal')) return;
+    // Avoid double-injecting
+    if (window.__dmPageModalsInjecting) return;
+    window.__dmPageModalsInjecting = true;
+    try {
+        // Use SITE_BASE if available, else relative path
+        const base = window.SITE_BASE || '';
+        const resp = await fetch(`${base}/assets/ui/page-modals.html`);
+        if (!resp.ok) throw new Error('Failed to load modal markup');
+        const html = await resp.text();
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        // Only append the modals, not the wrapper div
+        Array.from(temp.children).forEach(child => {
+            if (child.id === 'createPageModal' || child.id === 'deletePageModal') {
+                document.body.appendChild(child);
+            }
+        });
+    } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Modal injection failed:', err);
+    } finally {
+        window.__dmPageModalsInjecting = false;
+    }
+}
+
+async function onClick(e) {
     // Robust composedPath/closest detection for Create/Delete buttons
     const path = e.composedPath?.() || [];
     const createBtn = e.target.closest?.('#btnCreatePage') || path.find(n => n?.id === 'btnCreatePage');
@@ -15,6 +44,7 @@ function onClick(e) {
     // Open Create Page Modal
     if (createBtn) {
         e.preventDefault();
+        await ensureModals();
         const modal = document.getElementById('createPageModal');
         if (modal) {
             modal.style.display = 'flex';
@@ -26,6 +56,7 @@ function onClick(e) {
     // Open Delete Page Modal
     if (deleteBtn) {
         e.preventDefault();
+        await ensureModals();
         const modal = document.getElementById('deletePageModal');
         const titleDisplay = document.getElementById('deletePageTitle');
         const confirmInput = document.getElementById('deletePageConfirm');
@@ -204,4 +235,3 @@ async function onSubmit(e) {
 document.addEventListener('click', onClick, true);
 document.addEventListener('keydown', onKeydown, true);
 document.addEventListener('submit', onSubmit, true);
-});

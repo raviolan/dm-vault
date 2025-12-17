@@ -1,0 +1,42 @@
+<!-- Shared modals for Create and Delete Page (Phase 5A) -->
+
+<!-- Create Page Modal -->
+<div id="createPageModal" class="modal modal-overlay" style="display:none;">
+  <div class="modal-content">
+    <form id="createPageForm" autocomplete="off">
+      <h2>Create New Page</h2>
+      <label for="pageType">Type:</label>
+      <select id="pageType" name="pageType">
+        <option value="location">Location</option>
+        <option value="npc">NPC</option>
+        <option value="pc">PC</option>
+        <option value="arc">Arc</option>
+        <option value="tool">Tool</option>
+      </select>
+      <label for="pageTitle">Title:</label>
+      <input id="pageTitle" name="pageTitle" type="text" required />
+      <div class="modal-actions">
+        <button type="submit" id="btnCreatePage">Create</button>
+        <button type="button" id="btnCancelCreate">Cancel</button>
+      </div>
+      <div id="createPageStatus" class="modal-status" style="display:none;"></div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Page Modal -->
+<div id="deletePageModal" class="modal modal-overlay" style="display:none;">
+  <div class="modal-content">
+    <form id="deletePageForm" autocomplete="off">
+      <h2>Delete Page</h2>
+      <div>Are you sure you want to delete <span id="deletePageTitle"></span>?</div>
+      <label for="deletePageConfirm">Type the page title to confirm:</label>
+      <input id="deletePageConfirm" name="deletePageConfirm" type="text" required data-expected-title="" />
+      <div class="modal-actions">
+        <button type="submit" id="btnDeletePage">Delete</button>
+        <button type="button" id="btnCancelDelete">Cancel</button>
+      </div>
+      <div id="deletePageStatus" class="modal-status" style="display:none;"></div>
+    </form>
+  </div>
+</div>

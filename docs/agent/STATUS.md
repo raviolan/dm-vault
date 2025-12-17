@@ -12,14 +12,15 @@ Update this file **after every commit**.
 
 * Repo: dm-vault
 * Branch: main
-* Current phase: Phase 4C
+* Current phase: Phase 5A
+
 
 
 
 
 * Current step (exact):
 
-  - Phase 4C: Sidebar/Header injection stabilization complete. Sidebar injection now requires the wrapper <aside class="left" id="site-sidebar"></aside>. Loader scripts dispatch dm-sidebar-injected / dm-header-injected so UI wiring runs after injection. Verify PASS.
+  - Phase 5A: Delegated page modals module (pilot Locations). Extracted Create/Delete modal logic from site.js to assets/ui/page-modals.js using event delegation. Updated Locations.html to load new module before site.js. Removed old modal wiring and dm-global-ui-injected rebinding from site.js. Ran npm run verify: PASS, npm run build: PASS. Committed only intended changes.
 
 
 
@@ -36,9 +37,10 @@ Update this file **after every commit**.
 
 ## Next Step (Single Action Only)
 
-* Last completed: Phase 4C: sidebar loader bugfix (absolute path, script src); verify PASS.
 
-* Next step: Resume Phase 4C injection batches using the corrected pattern (sidebar/header partials, loader, and handshake events). Ensure all new sidebar/header injections use the wrapper and event handshake. Verify/build after each batch, commit only intended edits.
+* Last completed: Phase 5A: delegated page modals module (pilot Locations); verify/build PASS.
+
+* Next step: Evaluate pilot, then proceed to Phase 5B (expand to additional pages if pilot is successful).
 
 ## Protected Features Snapshot (Must Stay Green)
 

@@ -1,3 +1,10 @@
+# 2025-12-17: Phase 5A: delegated page modals module (pilot Locations)
+- Extracted Create/Delete modal logic from assets/site.js to new assets/ui/page-modals.js using event delegation (injection-safe).
+- Updated Locations.html to load new module before site.js, matching cache-busting style.
+- Removed old modal wiring and dm-global-ui-injected rebinding from site.js (Create/Delete only).
+- Ran npm run verify: PASS
+- Ran npm run build: PASS
+- Committed only intended changes, restored unrelated build rewrites per runbook.
 # 2025-12-16: Stabilized injected sidebar/header pipeline: execute injected scripts, static-first nav.json, and post-injection init handshake; verify PASS.
 # Refactor Log (Append-Only)
 

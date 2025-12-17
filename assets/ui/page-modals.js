@@ -1,12 +1,20 @@
 
 
-// Delegated modal handler for Create/Delete Page modals (pilot: Locations.html)
-// Injection-safe: works if modals are injected after load
 
-// Delegated click handler (document-level, event delegation)
-document.addEventListener('click', function (e) {
+// Phase 5A hotfix: load marker for script execution
+window.__dmPageModalsLoaded = true;
+
+// --- Delegated modal handler for Create/Delete Page modals (pilot: Locations.html) ---
+
+function onClick(e) {
+    // Robust composedPath/closest detection for Create/Delete buttons
+    const path = e.composedPath?.() || [];
+    const createBtn = e.target.closest?.('#btnCreatePage') || path.find(n => n?.id === 'btnCreatePage');
+    const deleteBtn = e.target.closest?.('#btnDeletePage') || path.find(n => n?.id === 'btnDeletePage');
+
     // Open Create Page Modal
-    if (e.target.closest && e.target.closest('#btnCreatePage')) {
+    if (createBtn) {
+        e.preventDefault();
         const modal = document.getElementById('createPageModal');
         if (modal) {
             modal.style.display = 'flex';
@@ -16,7 +24,8 @@ document.addEventListener('click', function (e) {
         return;
     }
     // Open Delete Page Modal
-    if (e.target.closest && e.target.closest('#btnDeletePage')) {
+    if (deleteBtn) {
+        e.preventDefault();
         const modal = document.getElementById('deletePageModal');
         const titleDisplay = document.getElementById('deletePageTitle');
         const confirmInput = document.getElementById('deletePageConfirm');
@@ -69,10 +78,9 @@ document.addEventListener('click', function (e) {
         }
         return;
     }
-});
+}
 
-// Delegated Escape key handler (document-level)
-document.addEventListener('keydown', function (e) {
+function onKeydown(e) {
     if (e.key === 'Escape') {
         const modals = [document.getElementById('createPageModal'), document.getElementById('deletePageModal')];
         modals.forEach(modal => {
@@ -85,10 +93,9 @@ document.addEventListener('keydown', function (e) {
             }
         });
     }
-});
+}
 
-// Delegated form submit handler (document-level)
-document.addEventListener('submit', async function (e) {
+async function onSubmit(e) {
     if (e.target && e.target.id === 'createPageForm') {
         e.preventDefault();
         const type = document.getElementById('pageType') ? document.getElementById('pageType').value : '';
@@ -191,5 +198,10 @@ document.addEventListener('submit', async function (e) {
         }
         return;
     }
-});
+}
+
+// Attach delegated listeners in CAPTURE phase
+document.addEventListener('click', onClick, true);
+document.addEventListener('keydown', onKeydown, true);
+document.addEventListener('submit', onSubmit, true);
 });

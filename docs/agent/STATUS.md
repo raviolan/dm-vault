@@ -12,25 +12,63 @@ Update this file **after every commit**.
 
 * Repo: dm-vault
 * Branch: main
-* Current phase: Phase 5A
+* Current phase: Phase 1A
 
 * Current step (exact):
 
-  - Phase 5A: Phase 3-style cleanup of assets/site.js. Archived all large commented-out/dead blocks (see refactor-log.md for details). No functional code removed. Next: verify, build, and dedupe includes.
+
+
+  - 03A bindRecents added: Converted Recents IIFE to bindRecents(leftRoot) with per-element guard, called from dmSidebarInit. No other sidebar logic changed.
+  - 03B Quick Nav filter: Converted Quick Nav filter IIFE to bindNavQuickFilter(leftRoot) with per-element guard, called from dmSidebarInit. No other sidebar logic changed.
+  - 03C OnlySection: Converted "Show only this section" IIFE to bindOnlySectionToggle(leftRoot) with per-element guard, called from dmSidebarInit. No other sidebar logic changed.
+  - 03D Left Drawer: Converted Left Drawer (toggle + pin + collapse/expand all) IIFE to bindLeftDrawer(leftRoot) with per-element guard, called from dmSidebarInit. Reveal button logic now reuses or creates as needed. No other sidebar logic changed.
+  - 03E Split-Click: Converted split-click navigation IIFE to bindSplitClickNavigation(leftRoot) with per-element guard, called from dmSidebarInit. No other sidebar logic changed.
+
+  - 03F Nav Section State: Added element-scoped guard to window.initializeNavSectionState. Now finds sidebar root (.left), returns if not found, and uses leftRoot.dataset.dmNavStateBound to prevent duplicate binding after sidebar reinjection. All behavior unchanged.
+  - Next: 03F convert section mini-filters IIFE to binder (bindSectionMiniFilters).
+
+
+## Last Completed
+
+
+
+
+
+* Commit: (pending)
+* Summary:
+  * 03F Nav Section State: Added element-scoped guard to window.initializeNavSectionState. Now safe to call multiple times after sidebar reinjection. All behavior unchanged.
+* Checks run:
+  * Manual smoke tests:
+    - Sidebar injected: nav expands/collapses
+    - Section open/close state persists after reload
+    - No duplicate console spam on repeated sidebar injection
+    - No errors on load or reinjection
+    - Recents, quick filter, only-section, left drawer, split-click all still work
+    - State restores as expected
+    - PASS
+
 
 ## Last Completed
 
 * Commit: (pending)
 * Summary:
-  * Phase 5A: Phase 3-style cleanup of assets/site.js. Archived all large commented-out/dead blocks. No functional code removed. See refactor-log.md for archive details.
+  * Phase 1A: Replaced global sidebar/header init flags with per-element dataset guards in assets/site.js. No behavior change. Injection events and DOMContentLoaded still call these functions.
 * Checks run:
+  * Manual smoke tests:
+    - Sidebar injected: nav expands/collapses, split-click landing works, recents renders, quick filter works
+    - Header injected: edit button works (if present), ctrl/cmd+k focuses search, Save Session / Bookmark buttons behave
+    - Right drawer: toggle/pin/reveal states persist
+    - Search dropdown renders results and hides properly
+    - Hovercard does not appear in left nav, appears on main content links
+    - Todo tool works on pages with todo elements
+    - No console errors on load
   * npm run verify: [pending]
   * npm run build: [pending]
 
 ## Next Step (Single Action Only)
 
 * Last completed: Phase 5A: Phase 3-style cleanup of assets/site.js; archive dead/commented code; update logs.
-* Next step: Run npm run verify, npm run build, and dedupe script includes if safe. Then manual smoke test.
+* Next step: 03E convert section mini-filters IIFE to binder (bindSectionMiniFilters).
 
 ## Protected Features Snapshot (Must Stay Green)
 

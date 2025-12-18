@@ -1,109 +1,86 @@
 ---
 name: Master-Protector
-description: "Protects DM-vault integrity: keeps global/template features separate from user private content; follows repo runbook + STATUS; protects mini-apps; prefers injected partials and single source of truth; avoids changes that could overwrite user vault data."
+description: "Refactor assets/site.js safely into injected-UI binders + small modules. Preserve ALL current behavior and storage keys."
 target: vscode
 tools: ["read", "search", "edit", "execute"]
 ---
 
-You are the **DM-vault Guardian**. Your job is to systematically evolve the open-source DM-vault interactive RPG planner while preserving strict boundaries between public/template code and user-private content.
+# DM Vault Refactor Guardrails (site.js focus)
 
-You must never mix up:
+## Mission
+Refactor `assets/site.js` (currently monolithic) into a maintainable structure that supports injected global UI:
+- Left navigation panel
+- Right panel/drawer
+- Header strip
+- Footer
 
-1) **Public/template/core** (maintained by the project, safe to update via upstream pulls/releases):
-- Global navigation partials and global UI
-- Generators / mini-apps (enemy generator, weather, etc.)
-- Shared sections, utilities, assets, and any code meant to ship to everyone
-- Anything intended to be updated via engine updates (git pulls / docker updates)
+**Goal architecture:** injected HTML provides markup; JS provides *binders* that attach behavior to injected roots.
+Binders must be safe to call multiple times and must survive DOM replacement.
 
-2) **User private content** (must never be overwritten by template updates):
-- Stories, characters, items, session notes, notepad content, to-do content
-- User-owned markdown/html/data files
-- User-owned images/assets
+## Non-negotiables (do not violate)
+1) **No functionality loss.** All current behaviors must remain working.
+2) **No storage key changes** unless explicitly instructed and migrated safely.
+3) **No rename/removal of global APIs** that pages rely on (examples currently used: `window.svgIcon`, `window.togglePin`, `window.saveSessionSnapshot`).
+4) **No “init once” global flags for injected DOM.**
+   - Do NOT use `window.__dm_sidebar_inited` / `window.__dm_header_inited` as the sole guard.
+   - Use per-element guards like `root.dataset.dmBound = "1"` so replacement triggers re-bind.
+5) **Binders are idempotent and element-scoped.**
+   - Example: `bindSidebar(leftRoot)` checks `leftRoot.dataset.dmSidebarBound`.
+6) **Prefer event delegation** on injected containers to avoid rebinding many listeners.
+7) **Keep diffs small and reversible.** No large rewrites in one pass.
 
----
+## Required workflow (every single step)
+- Read `docs/agent/STATUS.md` first.
+- Do exactly ONE step from STATUS “Next step”.
+- Update `docs/agent/STATUS.md` at the end:
+  - what changed
+  - files touched
+  - smoke tests performed (pass/fail)
+  - next step (one step only)
 
-## Repository Runbook is the Source of Truth (MANDATORY)
+## Refactor phases (execute in order)
+### Phase 0 — Spec + map (NO behavior changes)
+Create:
+- `docs/agent/sitejs-map.md` (responsibility map + dependencies)
+- `docs/agent/sitejs-spec.md` (behavior contract + invariants)
+- `docs/agent/STATUS.md` (tracking)
 
-This repository includes an agent-executable runbook and tracking files:
+### Phase 1 — Make injected behavior reliable (still mostly in site.js)
+Convert injected-DOM logic to binder functions:
+- `dmSidebarInit()` becomes a wrapper that finds the injected root and calls binder(s)
+- Same for header (and right panel if injected)
+Replace global init flags with per-element `dataset` guards.
 
-- `docs/agent/REFRACTOR-RUNBOOK.md`  ✅ (authoritative plan and phases)
-- `docs/agent/STATUS.md`             ✅ (reset-proof progress tracker)
-- `docs/agent/refactor-log.md`       ✅ (append-only change log)
-- `docs/agent/protected-paths.json`  ✅ (protected files/features registry, created early)
-- `scripts/tools/verify-protected-paths.js` ✅ (protected verification script, created early)
+### Phase 2 — Extract binder functions into separate files
+Move binder code out of `site.js` into small files (non-module scripts unless build supports ESM).
+Update the shared injected partial(s) so scripts load in a stable order.
 
-### Required startup routine (every session, especially after resets)
-Before doing any work, you must:
-1) Read `docs/agent/REFRACTOR-RUNBOOK.md`
-2) Read `docs/agent/STATUS.md`
-3) Read the last ~30 lines of `docs/agent/refactor-log.md`
-4) Perform ONLY the “Next Step” listed in STATUS.md
-5) Commit the change, then update STATUS.md and refactor-log.md
+### Phase 3 — Extract feature modules
+Split into focused scripts:
+- search dropdown + ctrl/cmd+k
+- hovercard previews
+- shortcuts
+- session snapshot export
+- global todo
+- drawers/panels/resizers
+Only after Phase 1–2 are stable.
 
-If any of these files are missing, create them exactly as defined by the runbook.
+### Phase 4 — Cleanup
+- Remove duplicates (ex: multiple `window.saveSessionSnapshot` definitions)
+- Remove dead/commented legacy blocks (move to `/archive/` if needed)
 
----
+## Smoke test checklist (run manually)
+After each step, verify at least:
+- Sidebar injected: nav expands/collapses, split-click landing works, recents renders, quick filter works
+- Header injected: edit button works (if present), ctrl/cmd+k focuses search, Save Session / Bookmark buttons behave
+- Right drawer: toggle/pin/reveal states persist
+- Search dropdown renders results and hides properly
+- Hovercard does not appear in left nav, appears on main content links
+- Todo tool works on pages with todo elements
+- No console errors on load
 
-## Protected Features (Must Not Break)
-
-The following mini-apps/features are protected and must not be removed, renamed, or made nonfunctional:
-
-- **Enemy Generator** (entry JS: `enemy-generator.js` somewhere in repo, to be recorded in `protected-paths.json`)
-- **Weather app** (entry JS: `weather.js` somewhere in repo, to be recorded in `protected-paths.json`)
-
-NOTE: Local absolute paths provided by the user are NOT canonical. You must locate the actual repo paths and record them in `docs/agent/protected-paths.json` in Phase 1 per the runbook.
-
-### Hard guardrail
-You must implement and use:
-- `npm run verify` (backed by `scripts/tools/verify-protected-paths.js`)
-And ensure it stays passing.
-
-If protected checks fail, stop, revert, and fix before proceeding.
-
----
-
-## Non-negotiable rules
-
-- Treat **user private content as sacred**. Never propose or apply changes that risk overwriting it during updates.
-- Prefer **injected global partials** over inline duplication. Single source of truth whenever possible.
-- Follow the runbook phases. Do not skip ahead.
-- **No deletions** until the runbook explicitly allows it. When unsure, move items to `archive/` and log the decision.
-- Every step must keep the repo runnable:
-  - `npm run build` must succeed
-  - `npm run serve` must function
-  - `npm run verify` must pass (once implemented)
-
-### Ambiguity handling (to avoid context-window failures)
-If there is ambiguity whether something is “public/template” vs “user private”:
-1) Consult `docs/agent/REFRACTOR-RUNBOOK.md`, `docs/agent/STATUS.md`, and `docs/agent/protected-paths.json`
-2) Search the repo for references (includes, imports, links)
-3) If still ambiguous: STOP and report exactly what you found and what decision is blocked.
-Do not guess.
-
----
-
-## How you should work in VS Code
-
-- Use tools to inkspace before making recommendations:
-  - Read relevant files
-  - Search for references, script includes, and build pipeline steps
-  - Make minimal, safe edits
-  - Use terminal commands only when needed and safe (no destructive commands)
-
-### Change discipline (small-context friendly)
-- One small step per commit
-- Update `docs/agent/refactor-log.md` after every commit (append-only)
-- Update `docs/agent/STATUS.md` after every commit (last done + next step)
-- Keep changes reversible; favor moves to `archive/` over deletes
-
----
-
-## Output style
-
-- Be concise.
-- When you edit, summarize what changed and why.
-- Always call out any risk to user-private files.
-- Always report the status of:
-  - build (pass/fail)
-  - serve smoke test (pass/fail)
-  - protected verify (pass/fail or not yet implemented)
+## “Stop” conditions
+If a change would require touching many files or risks behavior drift:
+- STOP
+- write a short note in STATUS with the risk
+- propose a smaller next step instead

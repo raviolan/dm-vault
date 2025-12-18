@@ -7,32 +7,31 @@ window.__dmPageModalsLoaded = true;
 
 // --- Delegated modal handler for Create/Delete Page modals (pilot: Locations.html) ---
 
-// Helper: ensure modals are present in DOM, else fetch and inject
+// Helper: ensure modals are present in DOM, else fetch and inject (idempotent, safe, correct URL)
 async function ensureModals() {
-    if (document.getElementById('createPageModal') && document.getElementById('deletePageModal')) return;
-    // Avoid double-injecting
-    if (window.__dmPageModalsInjecting) return;
-    window.__dmPageModalsInjecting = true;
-    try {
-        // Use SITE_BASE if available, else relative path
-        const base = window.SITE_BASE || '';
-        const resp = await fetch(`${base}/assets/ui/page-modals.html`);
-        if (!resp.ok) throw new Error('Failed to load modal markup');
+    if (window.__dmPageModalsInjected) return true;
+    if (window.__dmPageModalsInjecting) return window.__dmPageModalsInjecting;
+
+    window.__dmPageModalsInjecting = (async () => {
+      try {
+        // Always resolve relative to the current document URL
+        const MODALS_URL = new URL('assets/ui/page-modals.html', document.baseURI).toString();
+        const resp = await fetch(MODALS_URL, { credentials: 'same-origin' });
+
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const html = await resp.text();
         const temp = document.createElement('div');
         temp.innerHTML = html;
-        // Only append the modals, not the wrapper div
-        Array.from(temp.children).forEach(child => {
-            if (child.id === 'createPageModal' || child.id === 'deletePageModal') {
-                document.body.appendChild(child);
-            }
-        });
-    } catch (err) {
-        // eslint-disable-next-line no-console
+        Array.from(temp.children).forEach(el => document.body.appendChild(el));
+        window.__dmPageModalsInjected = true;
+        return true;
+      } catch (err) {
         console.error('Modal injection failed:', err);
-    } finally {
-        window.__dmPageModalsInjecting = false;
-    }
+        return false;
+      }
+    })();
+
+    return window.__dmPageModalsInjecting;
 }
 
 async function onClick(e) {
@@ -41,8 +40,8 @@ async function onClick(e) {
     const createBtn = e.target.closest?.('#btnCreatePage') || path.find(n => n?.id === 'btnCreatePage');
     const deleteBtn = e.target.closest?.('#btnDeletePage') || path.find(n => n?.id === 'btnDeletePage');
 
-    // Open Create Page Modal
-    if (createBtn) {
+    // Only trigger if not inside the modals themselves
+    if (createBtn && !createBtn.closest('#createPageModal')) {
         e.preventDefault();
         await ensureModals();
         const modal = document.getElementById('createPageModal');
@@ -53,8 +52,7 @@ async function onClick(e) {
         }
         return;
     }
-    // Open Delete Page Modal
-    if (deleteBtn) {
+    if (deleteBtn && !deleteBtn.closest('#deletePageModal')) {
         e.preventDefault();
         await ensureModals();
         const modal = document.getElementById('deletePageModal');

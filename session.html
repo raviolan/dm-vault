@@ -8,11 +8,11 @@
     <title>Session</title>
     <link rel="icon"
         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%238b5cf6'/%3E%3C/svg%3E" />
-    <link rel="stylesheet" href="/assets/style.css?v=1765896686273" />
-    <link rel="stylesheet" href="/assets/components.css?v=1765896686273" />
-    <link rel="stylesheet" href="/assets/enhanced-todo.css?v=1765896686273" />
-    <link rel="stylesheet" href="/assets/modal.css?v=1765896686273" />
-    <link rel="stylesheet" href="/assets/landing-pages.css?v=1765896686273" />
+    <link rel="stylesheet" href="/assets/style.css?v=1765986881626" />
+    <link rel="stylesheet" href="/assets/components.css?v=1765986881626" />
+    <link rel="stylesheet" href="/assets/enhanced-todo.css?v=1765986881626" />
+    <link rel="stylesheet" href="/assets/modal.css?v=1765986881626" />
+    <link rel="stylesheet" href="/assets/landing-pages.css?v=1765986881626" />
     <script>window.SITE_BASE = "/"</script>
 </head>
 
@@ -31,91 +31,6 @@
     <div class="search"><input id="searchBox" type="search" placeholder="Search titles, headings, #tags (Cmd/Ctrl-K)" />
     </div>
     <div id="searchResults" class="hovercard"></div>
-</div>
-
-<!-- Create Page Modal -->
-<div id="createPageModal" class="modal" style="display: none;">
-    <div class="modal-overlay"></div>
-    <div class="modal-content">
-        <h2>Create New Page</h2>
-        <form id="createPageForm">
-            <div class="form-group">
-                <label for="pageType">Page Type</label>
-                <select id="pageType" required>
-                    <option value="pc">Character (PC)</option>
-                    <option value="npc">NPC</option>
-                    <option value="location">Location</option>
-                    <option value="arc">Story Arc</option>
-                    <option value="shop">Shop</option>
-                    <option value="session">Session Note</option>
-                    <option value="tool">Tool/Reference</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="pageTitle">Page Title</label>
-                <input type="text" id="pageTitle" placeholder="Enter page title..." required />
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="btn-primary">Create Page</button>
-                <button type="button" id="btnCancelCreate" class="btn-secondary">Cancel</button>
-            </div>
-        </form>
-        <div id="createPageStatus" style="display: none;"></div>
-    </div>
-</div>
-
-<!-- Edit Page Modal -->
-<div id="editPageModal" class="modal" style="display: none;">
-    <div class="modal-overlay"></div>
-    <div class="modal-content">
-        <h2>Edit Page</h2>
-        <form id="editPageForm">
-            <div class="form-group">
-                <label for="editPageContent">Page Content (HTML)</label>
-                <textarea id="editPageContent" rows="18" style="width:100%" required></textarea>
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="btn-primary">Save Changes</button>
-                <button type="button" id="btnCancelEdit" class="btn-secondary">Cancel</button>
-            </div>
-        </form>
-        <div id="editPageStatus" style="display: none;"></div>
-    </div>
-</div>
-
-<!-- Delete Page Modal -->
-<div id="deletePageModal" class="modal" style="display: none;">
-    <div class="modal-overlay"></div>
-    <div class="modal-content">
-        <h2>Delete Page</h2>
-        <p style="margin-bottom: 1em;">⚠️ This action cannot be undone. To confirm deletion, type the page title below:
-        </p>
-        <p style="margin-bottom: 1em;"><strong id="deletePageTitle"></strong></p>
-        <form id="deletePageForm">
-            <div class="form-group">
-                <label for="deletePageConfirm">Type page title to confirm:</label>
-                <input type="text" id="deletePageConfirm" style="width:100%" required autocomplete="off" />
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="btn-primary" style="background: #c33;">Delete Page</button>
-                <button type="button" id="btnCancelDelete" class="btn-secondary">Cancel</button>
-            </div>
-        </form>
-        <div id="deletePageStatus" style="display: none; margin-top: 1em;"></div>
-    </div>
-</div>
-
-<!-- Confirmation Modal -->
-<div id="confirmModal" class="modal" style="display: none;">
-    <div class="modal-overlay"></div>
-    <div class="modal-content" style="max-width: 450px;">
-        <h2 id="confirmModalTitle">Confirm</h2>
-        <p id="confirmModalMessage" style="margin: 1em 0;"></p>
-        <div class="form-actions">
-            <button type="button" id="confirmModalYes" class="btn-primary">Yes</button>
-            <button type="button" id="confirmModalNo" class="btn-secondary">No</button>
-        </div>
-    </div>
 </div>
         <!-- Compact weather strip: mirrors left-panel weather card -->
         <div id="weatherStrip" class="weather-strip" aria-hidden="false"></div>
@@ -190,6 +105,47 @@
             <div class="card">
                 <input id="diceInput" placeholder="e.g. 1d20+5, 4d6kh3" /><button id="rollBtn">Roll</button>
                 <div id="diceOut" class="meta"></div>
+            </div>
+            <!-- Page Actions Modals -->
+            <div class="modal" id="createPageModal" tabindex="-1" aria-modal="true" style="display:none;">
+                <div class="modal-content">
+                    <h2>Create New Page</h2>
+                    <form>
+                        <label>Section
+                            <select name="pageSection" disabled>
+                                <option value="">(Coming soon)</option>
+                            </select>
+                        </label>
+                        <label>Type
+                            <select name="pageType">
+                                <option value="note">Note</option>
+                                <option value="npc">NPC</option>
+                                <option value="location">Location</option>
+                                <option value="arc">Arc</option>
+                                <option value="tool">Tool</option>
+                            </select>
+                        </label>
+                        <label>Title
+                            <input name="pageTitle" type="text" required autocomplete="off" />
+                        </label>
+                        <div class="modal-actions">
+                            <button type="button" class="modal-cancel">Cancel</button>
+                            <button type="button" class="modal-confirm">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal" id="deletePageModal" tabindex="-1" aria-modal="true" style="display:none;">
+                <div class="modal-content">
+                    <h2>Delete Page</h2>
+                    <p>Are you sure? This cannot be undone.</p>
+                    <p>Type the page title to confirm: <strong class="delete-page-title-label"></strong></p>
+                    <input name="deleteConfirmTitle" type="text" autocomplete="off" />
+                    <div class="modal-actions">
+                        <button type="button" class="modal-cancel">Cancel</button>
+                        <button type="button" class="modal-confirm" disabled>Delete</button>
+                    </div>
+                </div>
             </div>
         </main>
         <aside class="right"><!-- Right Panel Partial: Drawer with notepad, to-do, and tools -->
@@ -351,22 +307,23 @@
     </div>
     <button id="drawerReveal" class="drawer-tab" aria-label="Show tools">Tools</button>
     <script src="/assets/markdown.js"></script>
-    <script src="/assets/right-panel-loader.js?v=1765896686273"></script>
-    <script src="/assets/right-panel.js?v=1765896686273"></script>
-    <script src="/assets/site.js?v=1765896686273"></script>
-    <script src="/assets/favorites.js?v=1765896686273"></script>
-    <script src="/assets/wysiwyg.js?v=1765896686273"></script>
-    <script src="/assets/right-panel-loader.js?v=1765896686273"></script>
-    <script src="/assets/right-panel.js?v=1765896686273"></script>
-    <script src="/assets/keyboard-nav.js?v=1765896686273"></script>
-    <script src="/assets/theme.js?v=1765896686273"></script>
-    <script src="/assets/shortcuts-guide.js?v=1765896686273"></script>
-    <script src="/assets/collapsible-sections.js?v=1765896686273"></script>
-    <script src="/assets/weather.js?v=1765896686273"></script>
+    <script src="/assets/right-panel-loader.js?v=1765986881626"></script>
+    <script src="/assets/right-panel.js?v=1765986881626"></script>
+    <script src="/assets/site.js?v=1765986881626"></script>
+    <script src="/assets/favorites.js?v=1765986881626"></script>
+    <script src="/assets/wysiwyg.js?v=1765986881626"></script>
+    <script src="/assets/right-panel-loader.js?v=1765986881626"></script>
+    <script src="/assets/right-panel.js?v=1765986881626"></script>
+    <script src="/assets/keyboard-nav.js?v=1765986881626"></script>
+    <script src="/assets/theme.js?v=1765986881626"></script>
+    <script src="/assets/shortcuts-guide.js?v=1765986881626"></script>
+    <script src="/assets/collapsible-sections.js?v=1765986881626"></script>
+    <script src="/assets/weather.js?v=1765986881626"></script>
     <!-- Enemy Generator: Always include the mini-app script on this page -->
     {{#if TITLE == 'Enemy Generator'}}
-    <script src="/assets/enemy-generator.js?v=1765896686273"></script>
+    <script src="/assets/enemy-generator.js?v=1765986881626"></script>
     {{/if}}
+    <script src="/assets/ui/page-actions.js?v=1765986881626"></script>
     
     <script src="/assets/session.js?v=1765643025396"></script>
     <!-- Footer Partial: Add site-wide footer content here if needed -->

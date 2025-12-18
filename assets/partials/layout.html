@@ -34,6 +34,47 @@
                     </svg>
                 </button>
             </div>{{CONTENT}}
+            <!-- Page Actions Modals -->
+            <div class="modal" id="createPageModal" tabindex="-1" aria-modal="true" style="display:none;">
+                <div class="modal-content">
+                    <h2>Create New Page</h2>
+                    <form>
+                        <label>Section
+                            <select name="pageSection" disabled>
+                                <option value="">(Coming soon)</option>
+                            </select>
+                        </label>
+                        <label>Type
+                            <select name="pageType">
+                                <option value="note">Note</option>
+                                <option value="npc">NPC</option>
+                                <option value="location">Location</option>
+                                <option value="arc">Arc</option>
+                                <option value="tool">Tool</option>
+                            </select>
+                        </label>
+                        <label>Title
+                            <input name="pageTitle" type="text" required autocomplete="off" />
+                        </label>
+                        <div class="modal-actions">
+                            <button type="button" class="modal-cancel">Cancel</button>
+                            <button type="button" class="modal-confirm">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal" id="deletePageModal" tabindex="-1" aria-modal="true" style="display:none;">
+                <div class="modal-content">
+                    <h2>Delete Page</h2>
+                    <p>Are you sure? This cannot be undone.</p>
+                    <p>Type the page title to confirm: <strong class="delete-page-title-label"></strong></p>
+                    <input name="deleteConfirmTitle" type="text" autocomplete="off" />
+                    <div class="modal-actions">
+                        <button type="button" class="modal-cancel">Cancel</button>
+                        <button type="button" class="modal-confirm" disabled>Delete</button>
+                    </div>
+                </div>
+            </div>
         </main>
         <aside class="right">{{RIGHT}}</aside>
         <div class="resizer resizer-left" aria-hidden="true"></div>
@@ -57,6 +98,7 @@
     {{#if TITLE == 'Enemy Generator'}}
     <script src="/assets/enemy-generator.js?v={{VERSION}}"></script>
     {{/if}}
+    <script src="/assets/ui/page-actions.js?v={{VERSION}}"></script>
     {{EXTRA_SCRIPTS}}
     {{FOOTER}}
 </body>

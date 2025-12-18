@@ -1,3 +1,196 @@
+// --- Delegated modals: survives DOM replacement/injection ---
+(function () {
+  if (window.__dmDelegatedModalsInit) return;
+  window.__dmDelegatedModalsInit = true;
+
+  const $ = (id) => document.getElementById(id);
+
+  function showStatus(el, message, type) {
+    if (!el) return;
+    el.textContent = message;
+    el.className = type;
+    el.style.display = 'block';
+  }
+
+  function openCreateModal() {
+    const modal = $('createPageModal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    $('pageTitle')?.focus();
+  }
+
+  function closeCreateModal() {
+    const modal = $('createPageModal');
+    if (!modal) return;
+    modal.style.display = 'none';
+    $('createPageForm')?.reset();
+    const status = $('createPageStatus');
+    if (status) {
+      status.style.display = 'none';
+      status.className = '';
+      status.textContent = '';
+    }
+  }
+
+  function getPageTitle() {
+    const h1 = document.querySelector('main.main h1');
+    if (h1) return h1.textContent.trim();
+    return (document.title.split('|')[0] || '').trim();
+  }
+
+  function openDeleteModal() {
+    const modal = $('deletePageModal');
+    const titleDisplay = $('deletePageTitle');
+    const confirmInput = $('deletePageConfirm');
+    if (!modal || !titleDisplay || !confirmInput) return;
+
+    const title = getPageTitle();
+    titleDisplay.textContent = title;
+    confirmInput.dataset.expectedTitle = title;
+
+    modal.style.display = 'flex';
+    confirmInput.value = '';
+    confirmInput.focus();
+  }
+
+  function closeDeleteModal() {
+    const modal = $('deletePageModal');
+    if (!modal) return;
+    modal.style.display = 'none';
+    $('deletePageForm')?.reset();
+    const status = $('deletePageStatus');
+    if (status) {
+      status.style.display = 'none';
+      status.className = '';
+      status.textContent = '';
+    }
+    const confirmInput = $('deletePageConfirm');
+    if (confirmInput) confirmInput.disabled = false;
+    const submitBtn = $('deletePageForm')?.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = false;
+  }
+
+  // Click delegation
+  document.addEventListener('click', (e) => {
+    const t = e.target;
+
+    if (t.closest('#btnCreatePage')) {
+      e.preventDefault();
+      openCreateModal();
+      return;
+    }
+    if (t.closest('#btnCancelCreate') || t.closest('#createPageModal .modal-overlay')) {
+      e.preventDefault();
+      closeCreateModal();
+      return;
+    }
+
+    if (t.closest('#btnDeletePage')) {
+      e.preventDefault();
+      openDeleteModal();
+      return;
+    }
+    if (t.closest('#btnCancelDelete') || t.closest('#deletePageModal .modal-overlay')) {
+      e.preventDefault();
+      closeDeleteModal();
+      return;
+    }
+  });
+
+  // Escape closes any open modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if ($('createPageModal')?.style.display === 'flex') closeCreateModal();
+    if ($('deletePageModal')?.style.display === 'flex') closeDeleteModal();
+  });
+
+  // Submit delegation (capture so it triggers even if forms added later)
+  document.addEventListener('submit', async (e) => {
+    const form = e.target;
+    if (!(form instanceof HTMLFormElement)) return;
+
+    // Create
+    if (form.id === 'createPageForm') {
+      e.preventDefault();
+
+      const type = $('pageType')?.value;
+      const title = ($('pageTitle')?.value || '').trim();
+      const status = $('createPageStatus');
+      const submitBtn = form.querySelector('button[type="submit"]');
+
+      if (!title) {
+        showStatus(status, 'Please enter a page title', 'error');
+        return;
+      }
+
+      if (submitBtn) submitBtn.disabled = true;
+      showStatus(status, 'Creating page...', 'loading');
+
+      try {
+        const res = await fetch('/api/create-page', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type, title })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok && data.url) {
+          showStatus(status, 'Page created! Redirecting...', 'success');
+          setTimeout(() => { window.location.href = data.url; }, 500);
+        } else {
+          showStatus(status, data.error || 'Failed to create page', 'error');
+          if (submitBtn) submitBtn.disabled = false;
+        }
+      } catch (err) {
+        showStatus(status, 'Network error: ' + err.message, 'error');
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    }
+
+    // Delete
+    if (form.id === 'deletePageForm') {
+      e.preventDefault();
+
+      const confirmInput = $('deletePageConfirm');
+      const status = $('deletePageStatus');
+      const submitBtn = form.querySelector('button[type="submit"]');
+
+      const expectedTitle = confirmInput?.dataset.expectedTitle || '';
+      const enteredTitle = (confirmInput?.value || '').trim();
+
+      if (enteredTitle !== expectedTitle) {
+        showStatus(status, 'Title does not match. Please type the exact title to confirm deletion.', 'error');
+        return;
+      }
+
+      if (submitBtn) submitBtn.disabled = true;
+      if (confirmInput) confirmInput.disabled = true;
+      showStatus(status, 'Deleting page...', 'loading');
+
+      try {
+        const res = await fetch('/api/delete-page', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: window.location.pathname })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok) {
+          showStatus(status, 'Page deleted! Redirecting to dashboard...', 'success');
+          setTimeout(() => { window.location.href = '/index.html'; }, 800);
+        } else {
+          showStatus(status, data.error || 'Failed to delete page', 'error');
+          if (submitBtn) submitBtn.disabled = false;
+          if (confirmInput) confirmInput.disabled = false;
+        }
+      } catch (err) {
+        showStatus(status, 'Network error: ' + err.message, 'error');
+        if (submitBtn) submitBtn.disabled = false;
+        if (confirmInput) confirmInput.disabled = false;
+      }
+    }
+  }, true);
+})();
 // Sidebar now ships in-page via partials. Initialize behaviors on DOM ready and after partial injection events.
 function dmSidebarInit() {
   if (window.__dm_sidebar_inited) return;
@@ -64,84 +257,7 @@ function initializeSplitClickNavigation() {
   });
 }
 
-// --- Confirmation Modal ---
-function showConfirmModal(title, message) {
-  return new Promise((resolve) => {
-    const modal = document.getElementById('confirmModal');
-    const titleEl = document.getElementById('confirmModalTitle');
-    const messageEl = document.getElementById('confirmModalMessage');
-    const yesBtn = document.getElementById('confirmModalYes');
-    const noBtn = document.getElementById('confirmModalNo');
-
-    if (!modal) {
-      resolve(window.confirm(message)); // Fallback
-      return;
-    }
-
-    titleEl.textContent = title;
-    messageEl.textContent = message;
-    modal.style.display = 'flex';
-
-    // Get all focusable elements in the modal
-    const modalContent = modal.querySelector('.modal-content');
-    const focusableElements = modalContent.querySelectorAll('button:not([disabled])');
-    const firstFocusable = focusableElements[0];
-    const lastFocusable = focusableElements[focusableElements.length - 1];
-
-    // Focus the No button by default (safer)
-    setTimeout(() => noBtn.focus(), 100);
-
-    function cleanup() {
-      modal.style.display = 'none';
-      yesBtn.removeEventListener('click', handleYes);
-      noBtn.removeEventListener('click', handleNo);
-      document.removeEventListener('keydown', handleKey);
-      modalContent.removeEventListener('keydown', trapFocus);
-    }
-
-    function handleYes() {
-      cleanup();
-      resolve(true);
-    }
-
-    function handleNo() {
-      cleanup();
-      resolve(false);
-    }
-
-    function handleKey(e) {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        handleNo();
-      }
-    }
-
-    // Trap focus within modal for accessibility
-    function trapFocus(e) {
-      if (e.key === 'Tab') {
-        if (e.shiftKey) { // Shift + Tab
-          if (document.activeElement === firstFocusable) {
-            e.preventDefault();
-            lastFocusable.focus();
-          }
-        } else { // Tab
-          if (document.activeElement === lastFocusable) {
-            e.preventDefault();
-            firstFocusable.focus();
-          }
-        }
-      }
-    }
-
-    yesBtn.addEventListener('click', handleYes);
-    noBtn.addEventListener('click', handleNo);
-    document.addEventListener('keydown', handleKey);
-    modalContent.addEventListener('keydown', trapFocus);
-
-    // Close on overlay click
-    modal.querySelector('.modal-overlay').addEventListener('click', handleNo, { once: true });
-  });
-}
+// ...existing code...
 
 // WYSIWYG editor moved to assets/wysiwyg.js
 const byId = (id) => document.getElementById(id);
@@ -1078,7 +1194,7 @@ window.saveSessionSnapshot = async function () {
 // --- Make Entity Body Sections Collapsible ---
 // Collapsible sections moved to assets/collapsible-sections.js
 /* (function makeEntitySectionsCollapsible() {
- 
+
 
 
 

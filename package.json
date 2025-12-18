@@ -14,7 +14,8 @@
     "update-html": "node scripts/tools/update-existing-html.js",
     "rebuild-search": "node scripts/tools/rebuild-search-index.js",
     "enhance-todo": "node scripts/tools/add-enhanced-todo-css.js",
-    "sync-images": "node scripts/sync-landing-images.js"
+    "sync-images": "node scripts/sync-landing-images.js",
+    "serve": "node scripts/serve.js"
   },
   "backend": "node server/index.js"
 }

@@ -14,35 +14,23 @@ Update this file **after every commit**.
 * Branch: main
 * Current phase: Phase 5A
 
-
-
-
-
-
-
 * Current step (exact):
 
-  - Phase 5A: Locations.html now loads /assets/ui/page-modals.js before /assets/site.js (cache-busting style matched). Ran npm run verify: PASS, npm run build: PASS. Only intended changes committed.
-
-
-
+  - Phase 5A: Phase 3-style cleanup of assets/site.js. Archived all large commented-out/dead blocks (see refactor-log.md for details). No functional code removed. Next: verify, build, and dedupe includes.
 
 ## Last Completed
 
-
 * Commit: (pending)
 * Summary:
-  * Phase 4C Pilot Batch 4: Footer injection on NPCs.html, 04_NPCs/Adult Imperial Dragon.html, 03_PCs/Page.html. No protected features or unrelated files touched. npm run verify: PASS.
-  * Strengthened 'Pages to avoid' rule: avoid all YYYY-MM-DD.html, specific entity pages (e.g., 04_NPCs/<name>.html, individual PC/NPC sheets) unless explicitly approved, and all protected pages/features (see protected-paths.json).
+  * Phase 5A: Phase 3-style cleanup of assets/site.js. Archived all large commented-out/dead blocks. No functional code removed. See refactor-log.md for archive details.
 * Checks run:
-  * npm run verify: PASS
+  * npm run verify: [pending]
+  * npm run build: [pending]
 
 ## Next Step (Single Action Only)
 
-
-* Last completed: Phase 5A: delegated page modals module (pilot Locations); verify/build PASS.
-
-* Next step: Evaluate pilot, then proceed to Phase 5B (expand to additional pages if pilot is successful).
+* Last completed: Phase 5A: Phase 3-style cleanup of assets/site.js; archive dead/commented code; update logs.
+* Next step: Run npm run verify, npm run build, and dedupe script includes if safe. Then manual smoke test.
 
 ## Protected Features Snapshot (Must Stay Green)
 

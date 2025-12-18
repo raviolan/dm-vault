@@ -1,3 +1,15 @@
+# 2025-12-18: Phase 5A: Phase 3-style cleanup of assets/site.js
+- Archived and removed all large commented-out/dead blocks from assets/site.js:
+  - Right panel tools (moved to docs/agent/archive/phase3/sitejs/right-panel-tools.js)
+  - Keyboard shortcuts guide (moved to docs/agent/archive/phase3/sitejs/shortcuts-guide.js)
+  - Theme toggle (moved to docs/agent/archive/phase3/sitejs/theme-toggle.js)
+  - Collapsible entity body sections (moved to docs/agent/archive/phase3/sitejs/collapsible-sections.js)
+  - Debugging/dev helpers (moved to docs/agent/archive/phase3/sitejs/dev-helpers.js)
+- No functional code was removed; only dead/commented/duplicate code.
+- Before: ~1394 lines, After: ~1198 lines (reduction: ~196 lines)
+- Ran npm run verify: [pending]
+- Ran npm run build: [pending]
+- Only intended changes committed.
 # 2025-12-17: Phase 5A: load page-modals module on Locations
 - Locations.html now loads /assets/ui/page-modals.js before /assets/site.js (cache-busting style matched).
 - Ran npm run verify: PASS

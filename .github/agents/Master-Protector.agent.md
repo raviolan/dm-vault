@@ -84,7 +84,7 @@ Do not guess.
 
 ## How you should work in VS Code
 
-- Use tools to inspect the workspace before making recommendations:
+- Use tools to inkspace before making recommendations:
   - Read relevant files
   - Search for references, script includes, and build pipeline steps
   - Make minimal, safe edits

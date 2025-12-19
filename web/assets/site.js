@@ -1,7 +1,6 @@
-// GENERATED FILE - DO NOT EDIT DIRECTLY. This file is produced by the build process from assets/site/entry.js and modules in assets/site/.
 (() => {
   // assets/site/runtime.js
-  (function () {
+  (function() {
     window.DM = window.DM || {};
     window.DM.config = {
       apiCreatePage: "/api/create-page",
@@ -87,11 +86,11 @@
   }
 
   // assets/site/modals.js
-  (function () {
+  (function() {
     function initDelegatedModals() {
       if (window.__dmDelegatedModalsInit) return;
       window.__dmDelegatedModalsInit = true;
-      document.addEventListener("submit", async function (e) {
+      document.addEventListener("submit", async function(e) {
         const form = e.target;
         if (!(form instanceof HTMLFormElement)) return;
         if (form.id === "createPageForm") {
@@ -177,10 +176,10 @@
   // assets/site/shortcuts.js
   window.DM = window.DM || {};
   window.DM.shortcuts = window.DM.shortcuts || {};
-  window.DM.shortcuts.init = function () {
+  window.DM.shortcuts.init = function() {
     if (window.__dmShortcutsInit) return;
     window.__dmShortcutsInit = true;
-    document.addEventListener("keydown", function (e) {
+    document.addEventListener("keydown", function(e) {
       const active = document.activeElement;
       const isTyping = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable);
       if (e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey && e.key.toLowerCase() === "b") {

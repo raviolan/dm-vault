@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/rebuild-from-partials.js && node scripts/sync-landing-images.js",
+    "build": "npm run bundle-sitejs && node scripts/rebuild-from-partials.js && node scripts/sync-landing-images.js",
     "verify": "node scripts/tools/verify-protected-paths.cjs",
     "patch": "node scripts/tools/patch-entity-images.js",
     "headers": "node scripts/tools/patch-entity-images.js",
@@ -15,7 +15,11 @@
     "rebuild-search": "node scripts/tools/rebuild-search-index.js",
     "enhance-todo": "node scripts/tools/add-enhanced-todo-css.js",
     "sync-images": "node scripts/sync-landing-images.js",
-    "serve": "node scripts/serve.js"
+    "serve": "node scripts/serve.js",
+    "bundle-sitejs": "esbuild assets/site/entry.js --bundle --format=iife --target=es2018 --sourcemap --tree-shaking=false --outfile=assets/site.js && esbuild assets/site/entry.js --bundle --format=iife --target=es2018 --sourcemap --tree-shaking=false --outfile=web/assets/site.js"
   },
-  "backend": "node server/index.js"
+  "backend": "node server/index.js",
+  "devDependencies": {
+    "esbuild": "^0.27.2"
+  }
 }

@@ -232,69 +232,16 @@ function initRightPanel() {
 
     // Per-pane selection and adjustable split (split mode)
     if (SPLIT) {
-        const topBody = document.querySelector('.pane-body[data-pane="top"]');
-        const bottomBody = document.querySelector('.pane-body[data-pane="bottom"]');
-        function iconFor(tool) { return tool === 'home' ? (window.svgIcon ? svgIcon('home', 14) : 'H') : tool === 'todo' ? (window.svgIcon ? svgIcon('checklist', 14) : 'T') : (window.svgIcon ? svgIcon('note', 14) : 'N'); }
-        function activatePane(pane, tool) {
-            const body = pane === 'top' ? topBody : bottomBody;
-            if (!body) return;
-            const el = views[tool];
-            if (!el) return;
-            body.innerHTML = '';
-            body.appendChild(el);
-            // Ensure the appended element is visible (in case setActive previously hid it)
-            try { el.style.display = ''; } catch (e) { }
-            document.querySelectorAll('.pane-tab[data-pane="' + pane + '"]').forEach(b => {
-                const t = b.getAttribute('data-tool');
-                b.classList.toggle('active', t === tool);
-                if (window.svgIcon) { b.innerHTML = iconFor(t); }
-            });
-            localStorage.setItem(pane === 'top' ? KEY_TOP : KEY_BOTTOM, tool);
-            if (tool === 'home') renderHome();
-        }
-        // Init pane tab icons and clicks
-        document.querySelectorAll('.pane-tab').forEach(b => { const t = b.getAttribute('data-tool'); if (window.svgIcon) b.innerHTML = iconFor(t); b.addEventListener('click', () => activatePane(b.getAttribute('data-pane') || 'top', t)); });
-        // Ensure header Colors button also activates the top pane tab when clicked
-        if (colorsBtn) {
-            colorsBtn.addEventListener('click', () => activatePane('top', 'colors'));
-        }
-        const topSel = localStorage.getItem(KEY_TOP) || 'todo';
-        const botSel = localStorage.getItem(KEY_BOTTOM) || 'note';
-        activatePane('top', topSel);
-        activatePane('bottom', botSel);
-        // Adjustable split resizer
-        (function () {
-            const container = document.querySelector('.right-split');
-            const res = document.querySelector('.pane-resizer-h'); if (!container || !res) return;
-            const saved = localStorage.getItem(KEY_SPLIT);
-            // Initialize and clamp
-            function initSplit() {
-                const rect = container.getBoundingClientRect();
-                const minPx = 120; const maxPx = Math.max(minPx, rect.height - 120);
-                // Use a smaller default top pane height so the bottom To-Do has more room
-                let val = '30%';
-                if (saved && /^(\d+)(px|%)$/.test(saved)) {
-                    if (saved.endsWith('%')) {
-                        const pct = parseFloat(saved); let px = rect.height * ((isNaN(pct) ? 50 : pct) / 100);
-                        if (px < minPx) px = Math.min(rect.height / 2, minPx); if (px > maxPx) px = Math.max(rect.height / 2, maxPx);
-                        val = px + 'px';
-                    } else {
-                        let px = parseFloat(saved); if (isNaN(px)) px = rect.height / 2;
-                        if (px < minPx) px = Math.min(rect.height / 2, minPx); if (px > maxPx) px = Math.max(rect.height / 2, maxPx);
-                        val = px + 'px';
-                    }
-                }
-                container.style.setProperty('--pane-top-h', val);
+        // Import and initialize the right panel split resizer
+        try {
+            if (window.initPanelResizers) {
+                window.initPanelResizers();
+            } else if (typeof require === 'function') {
+                require('./site/panels.js').initPanelResizers();
             }
-            initSplit();
-            function onDown(e) {
-                e.preventDefault(); const rect = container.getBoundingClientRect(); const startY = e.clientY; const cur = getComputedStyle(container).getPropertyValue('--pane-top-h').trim(); const startPx = cur.endsWith('%') ? rect.height * parseFloat(cur) / 100 : parseFloat(cur) || (rect.height / 2);
-                function onMove(ev) { const dy = ev.clientY - startY; let h = startPx + dy; const min = 120; const max = rect.height - 120; if (h < min) h = min; if (h > max) h = max; const val = h + 'px'; container.style.setProperty('--pane-top-h', val); try { localStorage.setItem(KEY_SPLIT, val); } catch { } }
-                function onUp() { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); }
-                document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp);
-            }
-            res.addEventListener('mousedown', onDown);
-        })();
+        } catch (e) {
+            // Fallback: do nothing if import fails
+        }
     }
 }
 

@@ -18,7 +18,6 @@ Before any phase work:
 ### R1 — Protected features must never break
 Protected features include:
 - Weather mini-app (entry script: `assets/weather.js`)
-- Enemy Generator mini-app (entry script: `assets/enemy-generator.js`)
 - Any files/paths listed in `docs/agent/protected-paths.json` (this file is authoritative once it exists)
 
 The agent must never delete, move, rename, or silently rewrite protected files.
@@ -104,7 +103,6 @@ Make protected features “fail-fast” if broken.
 ### Outputs
 - `docs/agent/protected-paths.json` containing:
   - `assets/weather.js`
-  - `assets/enemy-generator.js`
   - the HTML pages that reference them
   - backend endpoints for enemy saving (if present) and any files required for that
 - `scripts/tools/verify-protected-paths.cjs`
@@ -113,7 +111,6 @@ Make protected features “fail-fast” if broken.
 ### Completion criteria
 - `npm run verify` PASS
 - `npm run build` PASS
-- Optional smoke: `npm run serve` (home + weather + enemy generator)
 
 ---
 

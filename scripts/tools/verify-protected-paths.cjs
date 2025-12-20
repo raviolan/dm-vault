@@ -19,7 +19,6 @@ function checkFileExists(relPath) {
 
 // Check scripts
 checkFileExists(protectedConfig.weatherScript);
-checkFileExists(protectedConfig.enemyGeneratorScript);
 
 // Check backend endpoints (just file presence)
 checkFileExists('server/index.js');
@@ -27,7 +26,6 @@ checkFileExists('server/index.js');
 // Check HTML pages reference scripts
 const requiredScripts = [
     '/assets/weather.js',
-    '/assets/enemy-generator.js'
 ];
 
 protectedConfig.htmlPagesReferencing.forEach(relPath => {

@@ -16,7 +16,6 @@ app.use((req, res, next) => {
     next();
 });
 
-const ENEMY_DIR = path.resolve(process.cwd(), '05_Tools & Tables', 'Enemy Generator');
 
 // Ensure directory exists
 fs.mkdirSync(ENEMY_DIR, { recursive: true });

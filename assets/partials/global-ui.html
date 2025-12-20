@@ -1,2 +1,168 @@
-<!-- Global UI Partial: For overlays, toasts, confirm dialogs, etc. -->
-<!-- (Empty for now; will move content here if needed in future) -->
+<!-- Global UI Partial: Contains all global overlays, sidebars, header, footer, and modals -->
+<div class="top">
+    <div class="toolbar">
+        <a class="chip" href="/index.html">Hembränt</a>
+        <a class="chip" href="/graph.html">Graph</a>
+        <a class="chip" href="/tags/index.html">Tags</a>
+        <a class="chip" href="/session.html">Session</a>
+        <button id="btnCreatePage" class="chip" title="Create New Page">+ New</button>
+        <button id="btnEditPage" class="chip" title="Edit This Page">Edit</button>
+    </div>
+    <div class="search"><input id="searchBox" type="search" placeholder="Search titles, headings, #tags (Cmd/Ctrl-K)" />
+    </div>
+    <div id="searchResults" class="hovercard"></div>
+</div>
+<div id="weatherStrip" class="weather-strip" aria-hidden="false"></div>
+<aside class="left">
+    <div class="drawer" aria-label="Navigation">
+        <div class="drawer-handle">
+            <button id="leftDrawerToggle" class="chip" aria-expanded="true" aria-controls="leftDrawer">Nav</button>
+            <button id="leftDrawerPin" class="chip" aria-pressed="true">Pin</button>
+            <button id="leftCollapseExpand" class="chip" title="Collapse/Expand All">Collapse all</button>
+        </div>
+        <div id="leftDrawer" class="drawer-content">
+            <aside class="sidebar" role="navigation">
+                <div class="campaign-header">
+                    <div class="campaign-title">Feywild Adventures</div>
+                </div>
+                <nav class="nav">
+                    <a class="nav-item nav-dashboard" href="/index.html"><span class="nav-icon">🏠</span><span
+                            class="nav-text">Dashboard</span></a>
+                    <div class="nav-quick"><input id="navQuick" placeholder="Quick nav..." /></div>
+                    <details class="nav-details" open>
+                        <summary class="nav-label"><span class="nav-icon">⭐</span><span>Favorites</span></summary>
+                        <ul id="navFav" class="nav-list"></ul>
+                    </details>
+                    <ul id="navSections" class="nav-sections"></ul>
+                </nav>
+            </aside>
+            <div id="weatherCard" class="card weather-card" aria-label="Weather">
+                <div class="weather-header">
+                    <div class="weather-title">Weather</div>
+                    <button id="rollWeather" class="chip" title="Roll weather">Roll</button>
+                </div>
+                <div class="weather-now" aria-live="polite">
+                    <div class="weather-icon">⛅</div>
+                    <div class="weather-desc">
+                        <div class="weather-condition">Unknown</div>
+                        <div class="weather-meta">--</div>
+                    </div>
+                </div>
+                <ul class="weather-forecast" role="list"></ul>
+                <div class="weather-effects" aria-hidden="false"></div>
+            </div>
+        </div>
+    </div>
+</aside>
+<aside class="right">
+    <div class="drawer" aria-label="Tools">
+        <div class="drawer-handle">
+            <button id="drawerToggle" class="chip" aria-expanded="true" aria-controls="drawerContent">Close</button>
+            <button id="drawerPin" class="chip" aria-pressed="true" title="Pin panel"></button>
+            <button id="themeToggle" class="chip" title="Toggle Light/Dark">Theme</button>
+            <button id="colorsToggle" class="chip" title="Open Colors Tool">Colors</button>
+        </div>
+        <div id="drawerContent" class="drawer-content">
+            <div id="drawerTop"></div>
+            <div class="right-split">
+                <div id="paneTop" class="pane">
+                    <div class="pane-tabs" aria-hidden="false">
+                        <button class="pane-tab" data-pane="top" data-tool="note">Notepad</button>
+                        <button class="pane-tab" data-pane="top" data-tool="colors">Colors</button>
+                    </div>
+                    <div class="pane-body" data-pane="top"></div>
+                </div>
+                <div class="pane-resizer-h" aria-hidden="true"></div>
+                <div id="paneBottom" class="pane">
+                    <div class="pane-tabs" aria-hidden="false">
+                        <button class="pane-tab" data-pane="bottom" data-tool="todo">To-Do</button>
+                    </div>
+                    <div class="pane-body" data-pane="bottom"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="toolViews" style="display:none">
+        <div id="toolNote">
+            <div class="card">
+                <h3 style="margin:0">Notepad</h3>
+                <textarea id="toolNotepad" placeholder="Quick notes..."
+                    style="width:100%;min-height:100px;flex:1;border:none;background:transparent;color:var(--text);resize:none;margin-top:8px;padding:0;outline:none"></textarea>
+            </div>
+        </div>
+        <div id="toolColors">
+            <div class="card">
+                <h3 style="margin:0">Colors</h3>
+                <div id="colorToolContent">
+                    <div class="theme-picker">
+                        <h4>Choose a color theme:</h4>
+                        <div class="theme-list">
+                            <!-- Theme cards go here (see index.html for full markup) -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="toolTodo">
+            <div id="todoBox" class="card" aria-label="Session To-Do">
+                <h3 style="margin:0 0 12px 0">To-Do</h3>
+                <form id="todoForm" class="todo-form" autocomplete="off">
+                    <label class="sr-only" for="todoInput">Add a task</label>
+                    <input id="todoInput" class="todo-input" placeholder="Add a task and press Enter" />
+                    <button type="submit" class="todo-add">Add</button>
+                </form>
+                <div class="todo-actions">
+                    <button id="todoClearDone" class="chip" title="Hide/Show completed">Hide Completed</button>
+                </div>
+                <div class="todo-list-container">
+                    <ul id="todoList" class="todo-list" role="list" aria-live="polite"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>
+<!-- Modals: Create/Delete Page (global) -->
+<div class="modal" id="createPageModal" tabindex="-1" aria-modal="true" style="display:none;">
+    <div class="modal-content">
+        <h2>Create New Page</h2>
+        <form>
+            <label>Section
+                <select name="pageSection" disabled>
+                    <option value="">(Coming soon)</option>
+                </select>
+            </label>
+            <label>Type
+                <select name="pageType">
+                    <option value="note">Note</option>
+                    <option value="npc">NPC</option>
+                    <option value="location">Location</option>
+                    <option value="arc">Arc</option>
+                    <option value="tool">Tool</option>
+                </select>
+            </label>
+            <label>Title
+                <input name="pageTitle" type="text" required autocomplete="off" />
+            </label>
+            <div class="modal-actions">
+                <button type="button" class="modal-cancel">Cancel</button>
+                <button type="button" class="modal-confirm">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal" id="deletePageModal" tabindex="-1" aria-modal="true" style="display:none;">
+    <div class="modal-content">
+        <h2>Delete Page</h2>
+        <p>Are you sure? This cannot be undone.</p>
+        <p>Type the page title to confirm: <strong class="delete-page-title-label"></strong></p>
+        <input name="deleteConfirmTitle" type="text" autocomplete="off" />
+        <div class="modal-actions">
+            <button type="button" class="modal-cancel">Cancel</button>
+            <button type="button" class="modal-confirm" disabled>Delete</button>
+        </div>
+    </div>
+</div>
+<!-- Footer -->
+<footer class="footer">
+    <div class="meta">&copy; 2025 Feywild Adventures</div>
+</footer>

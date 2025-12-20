@@ -38,11 +38,9 @@ Update model for users
   - Docker image: publish images on release; users can pull new tags.
 
 See `CONTRIBUTING.md` and `.github/workflows` for CI and release details.
-Enemy Generator - Local & Optional Backend
 
 Overview
 
-This site includes an Enemy/Boss generator tool under `05_Tools & Tables/Enemy Generator.html`.
 
 Two usage modes are supported:
 
@@ -50,12 +48,10 @@ Two usage modes are supported:
    - When you "Save as Page", the site will download the generated enemy as an HTML file to your browser.
    - The generator also stores a lightweight index in your browser's `localStorage` so the left navigation shows a "Saved Enemies" list for quick access on that machine and browser.
    - To make a saved enemy permanently available to the site (accessible to all machines), move the downloaded HTML file into the repository folder:
-     `05_Tools & Tables/Enemy Generator/`
    - After you move the file, the saved page will be accessible within the site UI. If your static server caches directory listings you may need to restart or refresh the static server to pick up new files.
 
 2) Optional backend (recommended for seamless saving)
    - A small Express backend is included at `server/index.js`. Run it only if you want the site to write files directly into the repository from the browser.
-   - When the backend is running, the "Save as Page" flow will POST the page to the backend which writes an HTML file into `05_Tools & Tables/Enemy Generator/` automatically and the UI will show the saved file in the left nav.
 
 Running the backend (optional)
 
@@ -68,7 +64,6 @@ npm run backend
 ```
 
 This starts the backend on port 4000 and exposes two endpoints:
-- `POST /api/save-enemy` — accepts `{ pageName, html }` and writes an HTML file into the `Enemy Generator` folder.
 - `GET /api/enemies` — returns a list of saved HTML pages in that folder.
 
 Security & Notes

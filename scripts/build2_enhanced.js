@@ -187,7 +187,7 @@ async function buildOnce() {
     if (FLAGS.public) {
         // In public mode, only copy a small whitelist of shared assets (avoid personal photos/avatars).
         const whitelist = new Set([
-            'site.js', 'enemy-generator.js', 'weather.js', 'right-panel.js', 'favorites.js', 'search.js', 'utils.js', 'site-note.js', 'graph.js', 'session.js',
+            'site.js', 'weather.js', 'right-panel.js', 'favorites.js', 'search.js', 'utils.js', 'site-note.js', 'graph.js', 'session.js',
             'components.css', 'style.css', 'layout.css', 'home.css', 'landing-pages.css', 'enhanced-features.css', 'enhanced-todo.css', 'theme.css', 'modal.css', 'sidebar.css',
             'landing-pages.js', 'site-tags.js', 'site-note.js', 'home.css'
         ]);
@@ -351,12 +351,12 @@ async function buildOnce() {
             const label = friendlyName(sec);
             const cls = folderClass(sec);
             // Collect file links for this section (only those present in notes)
-            const files = allNoteKeys.filter(k => k.includes(sec) && notes.has(k)).slice().sort((a,b)=>a.localeCompare(b));
-            const items = files.map(f => ({ title: (notes.get(f)?.title) || path.basename(f).replace(/\.md$/i,''), href: urlFor(f) }));
+            const files = allNoteKeys.filter(k => k.includes(sec) && notes.has(k)).slice().sort((a, b) => a.localeCompare(b));
+            const items = files.map(f => ({ title: (notes.get(f)?.title) || path.basename(f).replace(/\.md$/i, ''), href: urlFor(f) }));
             return { label, cls, icon: '', items };
         });
         const navOutDir = path.join(OUT_DIR, 'assets');
-        try { ensureDir(navOutDir); } catch (e) {}
+        try { ensureDir(navOutDir); } catch (e) { }
         writeFile(path.join(navOutDir, 'nav.json'), JSON.stringify({ sections: navSections }, null, 2));
     } catch (e) { /* non-fatal */ }
 
@@ -379,7 +379,7 @@ async function buildOnce() {
             return '<img alt="' + target + '" src="' + assetUrl(attRel) + '" />';
         });
 
-        
+
         md = md.replace(/\[\[([^\]]+)\]\]/g, function (_m, inside) {
             const parts = inside.split('|'); const target = parts[0].trim(); const display = parts[1]?.trim();
             const resolved = resolveWikiTarget(fromRel, target);

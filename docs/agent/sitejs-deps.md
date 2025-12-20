@@ -1,4 +1,63 @@
-# site.js Dependency Map
+
+# site.js Dependency Map & Ownership Boundaries (2025-12-19)
+
+## Ownership Boundaries & Anti-Duplication
+
+### 1. Loader Scripts (header-loader.js, right-panel-loader.js, nav-loader.js)
+- **Purpose:** Inject markup/HTML partials only (header, nav/sidebar, right panel, etc.)
+- **No behavior binding:** These scripts must *not* attach event listeners or re-bind UI logic. They only ensure the correct DOM structure is present for the main bundle to act on.
+- **Examples:**
+	- `header-loader.js` injects the header partial if missing.
+	- `right-panel-loader.js` injects the right panel partial if missing.
+	- `nav-loader.js` (if present) injects the sidebar/nav partial.
+
+### 2. Bundled Behavior: `site.js` (built from assets/site/entry.js)
+- **Purpose:** Binds all interactive behaviors, event listeners, and global UI logic for the site.
+- **Single source of truth:** All sidebar, header, right panel, modals, shortcuts, and main UI logic must be bound here (via modules under `assets/site/`).
+- **No page-level re-binding:** Feature scripts (see below) should *not* re-bind or duplicate logic already handled by `site.js`.
+- **Examples:**
+	- Sidebar expand/collapse, recents, filters, etc.
+	- Right panel pin/open logic, tag colorization, etc.
+	- Keyboard shortcuts, modals, hovercards, etc.
+
+### 3. Feature Scripts (theme.js, collapsible-sections.js, keyboard-nav.js, etc.)
+- **Purpose:** Provide *only* features not yet migrated to the main bundle, or legacy compatibility shims.
+- **No duplicate binding:** If a feature is now handled by `site.js`, these scripts should be reduced to no-ops or helpers only.
+- **Migration in progress:**
+	- `theme.js`: Only manages theme switching and persistence. (If/when theme logic is moved to the bundle, this can be removed.)
+	- `collapsible-sections.js`: Handles collapsible content outside the sidebar. If/when this is bundled, remove page-level script.
+	- `keyboard-nav.js`: Currently a noop shim; real logic is in `site.js`/`shortcuts.js`.
+
+### 4. Page-Level Scripts
+- **Allowed:** Only scripts that provide page-unique features not suitable for the main bundle.
+- **To be removed:** Any script that duplicates logic now in `site.js` should be removed after migration is complete and verified.
+
+---
+
+## Migration Table (Dec 2025)
+
+| Script                     | Current Role                | Bundled in site.js? | Remove Later? |
+|----------------------------|-----------------------------|---------------------|---------------|
+| header-loader.js           | Inject header partial       | No                  | No            |
+| right-panel-loader.js      | Inject right panel partial  | No                  | No            |
+| nav-loader.js              | Inject nav/sidebar partial  | No                  | No            |
+| theme.js                   | Theme switch/persist        | No                  | Yes           |
+| collapsible-sections.js    | Collapsible content         | No                  | Yes           |
+| keyboard-nav.js            | Noop shim                   | Yes (shortcuts.js)  | Yes           |
+| favorites.js               | Bookmark/favorite logic     | Yes                 | Yes           |
+| site.js (bundle)           | All main UI behaviors       | Yes                 | N/A           |
+| site/site/* (modules)      | Modular UI logic            | Yes                 | N/A           |
+
+---
+
+## Summary
+
+- **Injectors (header/nav/right-panel loaders):** Markup only, no event binding.
+- **site.js (bundle):** Binds all UI behaviors, single source of truth.
+- **Feature scripts:** Only for features not yet migrated; should not duplicate bundle logic.
+- **Remove legacy scripts** after verifying all logic is handled by the bundle.
+
+**No behavior changes in this step.**
 
 ## Runtime/Dependency Note (2025-12-18)
 

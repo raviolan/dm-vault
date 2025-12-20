@@ -10,8 +10,12 @@
             if (!res.ok) return;
             const html = await res.text();
             root.innerHTML = html;
+            root.dataset.dmInjected = '1';
+            window.dispatchEvent(new Event('dm-right-panel-injected'));
+            window.dispatchEvent(new CustomEvent('dm:right-panel:ready'));
+            // Loader is injection-only; no behavior binding here.
         } catch (e) {
-            console.debug('right-panel-loader: failed to load partial', e);
+            console.error('right-panel-loader: failed to load partial', e);
         }
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render); else render();

@@ -1,5 +1,22 @@
 // Right panel tools: tabs, pinning, notepad autosave, default home
+// Idempotent, event-driven initialization
 function initRightPanel() {
+    if (window.__dmRightPanelInitDone) return true;
+    // Query required elements
+    const root = document.querySelector('.right');
+    const drawer = root && root.querySelector('.drawer');
+    const drawerContent = document.getElementById('drawerContent');
+    const resizer = document.querySelector('.pane-resizer-h');
+    const paneTop = document.getElementById('paneTop');
+    const paneBottom = document.getElementById('paneBottom');
+    const tabButtons = document.querySelectorAll('.pane-tab');
+    const toolViews = document.getElementById('toolViews');
+    const toolNotepad = document.getElementById('toolNotepad');
+    // If any critical element is missing, abort (do not set init flag)
+    if (!root || !drawer || !drawerContent || !resizer || !paneTop || !paneBottom || !tabButtons.length || !toolViews) return false;
+    // Guard: prevent double-binding listeners
+    if (window.__dmRightPanelListenersBound) return true;
+    window.__dmRightPanelListenersBound = true;
     // Color theme definitions as token maps. Each theme provides semantic tokens:
     // --bg, --surface, --surface-2, --border, --text, --muted, --primary, --primary-hover, --on-primary, --accent
     // For backward compatibility we also set --theme-color1..6 (mapped to bg, surface, primary, text, muted, border).
@@ -131,19 +148,19 @@ function initRightPanel() {
             const val = def[legacyMap[i]] || '#000000';
             document.documentElement.style.setProperty(`--theme-color${i + 1}`, val);
         }
-                // Maintain legacy `data-theme` only for the canonical 'light' or 'dark' themes
-                try {
-                    if (theme === 'light' || theme === 'dark') {
-                        document.body.setAttribute('data-theme', theme);
-                    } else {
-                        document.body.removeAttribute('data-theme');
-                    }
-                } catch (e) { }
+        // Maintain legacy `data-theme` only for the canonical 'light' or 'dark' themes
+        try {
+            if (theme === 'light' || theme === 'dark') {
+                document.body.setAttribute('data-theme', theme);
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        } catch (e) { }
         localStorage.setItem('colorTheme', theme);
     }
 
-        // Expose API for other scripts (theme.js) to call
-        try { window.applyColorTheme = applyColorTheme; } catch (e) { }
+    // Expose API for other scripts (theme.js) to call
+    try { window.applyColorTheme = applyColorTheme; } catch (e) { }
 
     // Restore theme on load
     const savedTheme = localStorage.getItem('colorTheme');
@@ -213,7 +230,10 @@ function initRightPanel() {
         if (window.svgIcon) {
             b.innerHTML = t === 'home' ? svgIcon('home') : t === 'todo' ? svgIcon('checklist') : t === 'note' ? svgIcon('note') : t === 'colors' ? svgIcon('palette') : '';
         }
-        b.addEventListener('click', () => setActive(b.getAttribute('data-tool') || 'home'));
+        if (!b.__dmTabClickBound) {
+            b.addEventListener('click', () => setActive(b.getAttribute('data-tool') || 'home'));
+            b.__dmTabClickBound = true;
+        }
     });
 
     // Colors button logic
@@ -224,10 +244,15 @@ function initRightPanel() {
         });
     }
     // Pin buttons
-    document.querySelectorAll('.tool-pin').forEach(btn => btn.addEventListener('click', () => togglePin(btn.getAttribute('data-tool') || '')));
+    document.querySelectorAll('.tool-pin').forEach(btn => {
+        if (!btn.__dmPinClickBound) {
+            btn.addEventListener('click', () => togglePin(btn.getAttribute('data-tool') || ''));
+            btn.__dmPinClickBound = true;
+        }
+    });
     renderPins();
     // Notepad autosave
-    (function () { const ta = document.getElementById('toolNotepad'); if (!ta) return; const KEY = 'sessionNotes'; try { ta.value = localStorage.getItem(KEY) || ''; } catch { } ta.addEventListener('input', () => { try { localStorage.setItem(KEY, ta.value); } catch { } }); })();
+    (function () { const ta = document.getElementById('toolNotepad'); if (!ta) return; const KEY = 'sessionNotes'; try { ta.value = localStorage.getItem(KEY) || ''; } catch { } if (!ta.__dmInputBound) { ta.addEventListener('input', () => { try { localStorage.setItem(KEY, ta.value); } catch { } }); ta.__dmInputBound = true; } })();
     setActive(localStorage.getItem(KEY_TOOL) || 'home');
 
     // Per-pane selection and adjustable split (split mode)
@@ -243,6 +268,17 @@ function initRightPanel() {
             // Fallback: do nothing if import fails
         }
     }
+    window.__dmRightPanelInitDone = true;
+    return true;
+
 }
 
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initRightPanel); else initRightPanel();
+// Event-driven, idempotent init
+function tryInitRightPanel() { setTimeout(initRightPanel, 0); }
+if (!window.__dmRightPanelInitEventsBound) {
+    window.__dmRightPanelInitEventsBound = true;
+    document.addEventListener('DOMContentLoaded', tryInitRightPanel);
+    window.addEventListener('dm:right-panel:ready', tryInitRightPanel);
+    // Also try immediately in case DOM is already ready
+    tryInitRightPanel();
+}

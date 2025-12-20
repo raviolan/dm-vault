@@ -16,7 +16,17 @@ const SITE_ROOT = path.join(__dirname, '../');
 const PARTIALS_DIR = path.join(SITE_ROOT, 'assets/partials');
 const VERSION = Date.now();
 
-const SKIP_DIRS = ['assets', 'scripts', 'node_modules', '.git', 'backup'];
+const SKIP_DIRS = [
+    'assets',
+    'scripts',
+    'node_modules',
+    '.git',
+    'backup',
+    'archive',
+    'data',
+    '__MACOSX',
+    'campaigndash_site',
+];
 
 let processed = 0;
 let updated = 0;

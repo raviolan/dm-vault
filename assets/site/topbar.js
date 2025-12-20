@@ -2,12 +2,10 @@
 // Exports: initTopbarButtons()
 
 export function initTopbarButtons() {
-  // Prevent duplicate injection
-  if (window.__dmTopbarButtonsInit) return;
-  window.__dmTopbarButtonsInit = true;
-
-  // Find the topbar search element
-  const search = document.querySelector('.top .search');
+  // Find the header root and anchor
+  const header = document.querySelector('.top');
+  if (!header) return;
+  const search = header.querySelector('.search');
   if (!search) return;
 
   // Bookmark button
@@ -20,13 +18,17 @@ export function initTopbarButtons() {
     bookmarkBtn.title = 'Bookmark this page';
     bookmarkBtn.innerHTML = '☆';
     bookmarkBtn.setAttribute('data-rel', decodeURIComponent(location.pathname.replace(/^\//, '')).replace(/\.html$/i, '.md'));
+    search.insertAdjacentElement('afterend', bookmarkBtn);
+  }
+  // Guard against duplicate listeners
+  if (!bookmarkBtn.dataset.dmBound) {
     bookmarkBtn.addEventListener('click', function (e) {
       e.preventDefault();
       if (typeof window.addFavorite === 'function') {
         window.addFavorite();
       }
     });
-    search.insertAdjacentElement('afterend', bookmarkBtn);
+    bookmarkBtn.dataset.dmBound = '1';
   }
 
   // Save Session button
@@ -38,12 +40,15 @@ export function initTopbarButtons() {
     saveBtn.type = 'button';
     saveBtn.title = 'Save session notes snapshot';
     saveBtn.innerHTML = '💾';
+    bookmarkBtn.insertAdjacentElement('afterend', saveBtn);
+  }
+  if (!saveBtn.dataset.dmBound) {
     saveBtn.addEventListener('click', function (e) {
       e.preventDefault();
       if (typeof window.saveSessionSnapshot === 'function') {
         window.saveSessionSnapshot();
       }
     });
-    bookmarkBtn.insertAdjacentElement('afterend', saveBtn);
+    saveBtn.dataset.dmBound = '1';
   }
 }

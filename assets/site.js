@@ -1,7 +1,6 @@
-// GENERATED FILE - DO NOT EDIT DIRECTLY. This file is produced by the build process from assets/site/entry.js and modules in assets/site/.
 (() => {
   // assets/site/runtime.js
-  (function () {
+  (function() {
     window.DM = window.DM || {};
     window.DM.config = {
       apiCreatePage: "/api/create-page",
@@ -28,70 +27,71 @@
     };
   })();
 
-  // assets/site/right-drawer.js
-  function initRightDrawer() {
-    const right = document.querySelector(".right");
-    const toggle = document.getElementById("drawerToggle");
-    const pin = document.getElementById("drawerPin");
-    const reveal = document.getElementById("drawerReveal");
-    const KEY_PINNED = "drawerPinned";
-    const KEY_OPEN = "drawerOpen";
-    let pinned = JSON.parse(localStorage.getItem(KEY_PINNED) || "false");
-    let open = JSON.parse(localStorage.getItem(KEY_OPEN) || "true");
-    function updateUI() {
-      if (!right) return;
-      if (pinned) {
-        right.classList.remove("collapsed");
-        document.body.classList.remove("drawer-collapsed");
-        pin.setAttribute("aria-pressed", "true");
-        localStorage.setItem(KEY_OPEN, "true");
-        open = true;
-      } else {
-        pin.setAttribute("aria-pressed", "false");
-        if (!open) {
-          right.classList.add("collapsed");
-          document.body.classList.add("drawer-collapsed");
+  // assets/site/icons.js
+  (function() {
+    window.DM = window.DM || {};
+    window.DM.icons = window.DM.icons || {};
+    function svgIcon(name, size = 16) {
+      const icons = {
+        search: `<svg width="${size}" height="${size}" viewBox="0 0 16 16" fill="currentColor">
+        <circle cx="6" cy="6" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="10" y1="10" x2="14" y2="14" stroke="currentColor" stroke-width="1.5"/>
+      </svg>`,
+        close: `<svg width="${size}" height="${size}" viewBox="0 0 16 16" fill="currentColor">
+        <line x1="2" y1="2" x2="14" y2="14" stroke="currentColor" stroke-width="2"/>
+        <line x1="14" y1="2" x2="2" y2="14" stroke="currentColor" stroke-width="2"/>
+      </svg>`,
+        link: `<svg width="${size}" height="${size}" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 1v14M1 8h14"/>
+      </svg>`
+      };
+      return icons[name] || "";
+    }
+    window.DM.icons.svgIcon = svgIcon;
+    window.svgIcon = svgIcon;
+  })();
+
+  // assets/site/tags-and-pins.js
+  function initPinToggle() {
+    window.togglePin = function(rel) {
+      const pins = JSON.parse(localStorage.getItem("pins") || "[]");
+      const i = pins.indexOf(rel);
+      if (i >= 0) pins.splice(i, 1);
+      else pins.push(rel);
+      localStorage.setItem("pins", JSON.stringify(pins));
+      document.querySelectorAll("[data-pin]").forEach((el) => {
+        if (el.dataset.rel && el.dataset.rel !== rel) return;
+        if (window.svgIcon) {
+          el.innerHTML = pins.includes(rel) ? window.svgIcon("star-fill", 18) : window.svgIcon("star", 18);
         } else {
-          right.classList.remove("collapsed");
-          document.body.classList.remove("drawer-collapsed");
+          el.textContent = pins.includes(rel) ? "\u2605" : "\u2606";
+        }
+      });
+    };
+  }
+  var TAG_CLASS_MAP = {
+    pc: "tag-pc",
+    npc: "tag-npc",
+    location: "tag-location",
+    arc: "tag-arc",
+    planning: "tag-planning"
+  };
+  function initTagColorization() {
+    document.querySelectorAll(".tag").forEach((el) => {
+      for (const tag in TAG_CLASS_MAP) {
+        if (el.textContent && el.textContent.match(new RegExp(`#?${tag}\b`, "i"))) {
+          el.classList.add(TAG_CLASS_MAP[tag]);
         }
       }
-    }
-    if (pin) {
-      pin.addEventListener("click", () => {
-        pinned = !pinned;
-        localStorage.setItem(KEY_PINNED, JSON.stringify(pinned));
-        updateUI();
-      });
-    }
-    if (toggle) {
-      toggle.addEventListener("click", () => {
-        if (pinned) return;
-        open = !open;
-        localStorage.setItem(KEY_OPEN, JSON.stringify(open));
-        updateUI();
-      });
-    }
-    if (reveal) {
-      reveal.addEventListener("click", () => {
-        open = true;
-        localStorage.setItem(KEY_OPEN, "true");
-        updateUI();
-      });
-    }
-    updateUI();
-    window.initRightDrawer = initRightDrawer;
-  }
-  if (typeof window !== "undefined") {
-    window.initRightDrawer = initRightDrawer;
+    });
   }
 
   // assets/site/modals.js
-  (function () {
+  (function() {
     function initDelegatedModals() {
       if (window.__dmDelegatedModalsInit) return;
       window.__dmDelegatedModalsInit = true;
-      document.addEventListener("submit", async function (e) {
+      document.addEventListener("submit", async function(e) {
         const form = e.target;
         if (!(form instanceof HTMLFormElement)) return;
         if (form.id === "createPageForm") {
@@ -177,10 +177,10 @@
   // assets/site/shortcuts.js
   window.DM = window.DM || {};
   window.DM.shortcuts = window.DM.shortcuts || {};
-  window.DM.shortcuts.init = function () {
+  window.DM.shortcuts.init = function() {
     if (window.__dmShortcutsInit) return;
     window.__dmShortcutsInit = true;
-    document.addEventListener("keydown", function (e) {
+    document.addEventListener("keydown", function(e) {
       const active = document.activeElement;
       const isTyping = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable);
       if (e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey && e.key.toLowerCase() === "b") {
@@ -215,6 +215,97 @@
       }
     });
   };
+
+  // assets/site/topbar.js
+  function initTopbarButtons() {
+    const header = document.querySelector(".top");
+    if (!header) return;
+    const search = header.querySelector(".search");
+    if (!search) return;
+    let bookmarkBtn = document.getElementById("bookmarkPage");
+    if (!bookmarkBtn) {
+      bookmarkBtn = document.createElement("button");
+      bookmarkBtn.id = "bookmarkPage";
+      bookmarkBtn.className = "bookmark-btn";
+      bookmarkBtn.type = "button";
+      bookmarkBtn.title = "Bookmark this page";
+      bookmarkBtn.innerHTML = "\u2606";
+      bookmarkBtn.setAttribute("data-rel", decodeURIComponent(location.pathname.replace(/^\//, "")).replace(/\.html$/i, ".md"));
+      search.insertAdjacentElement("afterend", bookmarkBtn);
+    }
+    if (!bookmarkBtn.dataset.dmBound) {
+      bookmarkBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+        if (typeof window.addFavorite === "function") {
+          window.addFavorite();
+        }
+      });
+      bookmarkBtn.dataset.dmBound = "1";
+    }
+    let saveBtn = document.getElementById("saveSession");
+    if (!saveBtn) {
+      saveBtn = document.createElement("button");
+      saveBtn.id = "saveSession";
+      saveBtn.className = "save-session-btn";
+      saveBtn.type = "button";
+      saveBtn.title = "Save session notes snapshot";
+      saveBtn.innerHTML = "\u{1F4BE}";
+      bookmarkBtn.insertAdjacentElement("afterend", saveBtn);
+    }
+    if (!saveBtn.dataset.dmBound) {
+      saveBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+        if (typeof window.saveSessionSnapshot === "function") {
+          window.saveSessionSnapshot();
+        }
+      });
+      saveBtn.dataset.dmBound = "1";
+    }
+  }
+
+  // assets/site/hovercard.js
+  function initHovercard() {
+    if (window.__dmHovercardInit) return;
+    window.__dmHovercardInit = true;
+    let hover = document.getElementById("__hovercard");
+    if (!hover) {
+      hover = document.createElement("div");
+      hover.id = "__hovercard";
+      hover.className = "hovercard";
+      document.body.appendChild(hover);
+    }
+    document.body.addEventListener("mousemove", (e) => {
+      hover.style.left = e.pageX + 12 + "px";
+      hover.style.top = e.pageY + 12 + "px";
+    });
+    document.body.addEventListener("mouseover", (e) => {
+      const a = e.target.closest("a");
+      if (!a || !a.href || !a.pathname.endsWith(".html")) {
+        hover.style.display = "none";
+        return;
+      }
+      let parent = a.parentElement;
+      while (parent) {
+        if (parent.classList && parent.classList.contains("left")) {
+          hover.style.display = "none";
+          return;
+        }
+        parent = parent.parentElement;
+      }
+      const id = a.pathname.replace(/^\//, "").replace(/\.html$/i, ".md");
+      const notes = window.NOTES || window.getNotes && window.getNotes();
+      const n = notes && notes.find((n2) => n2.id === id);
+      if (n) {
+        hover.innerHTML = "<strong>" + n.title + '</strong><div class="meta">' + (n.tags || []).map((t) => "#" + t).join(" ") + "</div>";
+        hover.style.display = "block";
+      } else {
+        hover.style.display = "none";
+      }
+    });
+    document.body.addEventListener("mouseout", (e) => {
+      hover.style.display = "none";
+    });
+  }
 
   // assets/site/sidebar/split-click.js
   function bindSplitClickNavigation(leftRoot) {
@@ -341,11 +432,175 @@
     bindSectionMiniFilters(leftRoot);
     bindOnlySectionToggle(leftRoot);
   }
-  if (typeof window !== "undefined") {
-    document.addEventListener("DOMContentLoaded", () => {
-      const leftRoot = document.querySelector(".left, .sidebar, #leftDrawer");
-      if (leftRoot) initSidebar(leftRoot);
-    });
+
+  // assets/site/right-drawer.js
+  function initRightDrawer() {
+    const right = document.querySelector(".right");
+    const toggle = document.getElementById("drawerToggle");
+    const pin = document.getElementById("drawerPin");
+    const reveal = document.getElementById("drawerReveal");
+    const KEY_PINNED = "drawerPinned";
+    const KEY_OPEN = "drawerOpen";
+    let pinned = JSON.parse(localStorage.getItem(KEY_PINNED) || "false");
+    let open = JSON.parse(localStorage.getItem(KEY_OPEN) || "true");
+    function updateUI() {
+      if (!right) return;
+      if (pinned) {
+        right.classList.remove("collapsed");
+        document.body.classList.remove("drawer-collapsed");
+        pin.setAttribute("aria-pressed", "true");
+        localStorage.setItem(KEY_OPEN, "true");
+        open = true;
+      } else {
+        pin.setAttribute("aria-pressed", "false");
+        if (!open) {
+          right.classList.add("collapsed");
+          document.body.classList.add("drawer-collapsed");
+        } else {
+          right.classList.remove("collapsed");
+          document.body.classList.remove("drawer-collapsed");
+        }
+      }
+    }
+    if (pin) {
+      pin.addEventListener("click", () => {
+        pinned = !pinned;
+        localStorage.setItem(KEY_PINNED, JSON.stringify(pinned));
+        updateUI();
+      });
+    }
+    if (toggle) {
+      toggle.addEventListener("click", () => {
+        if (pinned) return;
+        open = !open;
+        localStorage.setItem(KEY_OPEN, JSON.stringify(open));
+        updateUI();
+      });
+    }
+    if (reveal) {
+      reveal.addEventListener("click", () => {
+        open = true;
+        localStorage.setItem(KEY_OPEN, "true");
+        updateUI();
+      });
+    }
+    updateUI();
+    window.initRightDrawer = initRightDrawer;
   }
+  if (typeof window !== "undefined") {
+    window.initRightDrawer = initRightDrawer;
+  }
+
+  // assets/site/panels.js
+  function initPanelResizers() {
+    const container = document.querySelector(".right-split");
+    const res = document.querySelector(".pane-resizer-h");
+    const KEY_SPLIT = "rightPaneSplit";
+    if (!container || !res) return;
+    const saved = localStorage.getItem(KEY_SPLIT);
+    function initSplit() {
+      const rect = container.getBoundingClientRect();
+      const minPx = 120;
+      const maxPx = Math.max(minPx, rect.height - 120);
+      let val = "30%";
+      if (saved && /^(\d+)(px|%)$/.test(saved)) {
+        if (saved.endsWith("%")) {
+          const pct = parseFloat(saved);
+          let px = rect.height * ((isNaN(pct) ? 50 : pct) / 100);
+          if (px < minPx) px = Math.min(rect.height / 2, minPx);
+          if (px > maxPx) px = Math.max(rect.height / 2, maxPx);
+          val = px + "px";
+        } else {
+          let px = parseFloat(saved);
+          if (isNaN(px)) px = rect.height / 2;
+          if (px < minPx) px = Math.min(rect.height / 2, minPx);
+          if (px > maxPx) px = Math.max(rect.height / 2, maxPx);
+          val = px + "px";
+        }
+      }
+      container.style.setProperty("--pane-top-h", val);
+    }
+    initSplit();
+    function onDown(e) {
+      e.preventDefault();
+      const rect = container.getBoundingClientRect();
+      const startY = e.clientY;
+      const cur = getComputedStyle(container).getPropertyValue("--pane-top-h").trim();
+      const startPx = cur.endsWith("%") ? rect.height * parseFloat(cur) / 100 : parseFloat(cur) || rect.height / 2;
+      function onMove(ev) {
+        const dy = ev.clientY - startY;
+        let h = startPx + dy;
+        const min = 120;
+        const max = rect.height - 120;
+        if (h < min) h = min;
+        if (h > max) h = max;
+        const val = h + "px";
+        container.style.setProperty("--pane-top-h", val);
+        try {
+          localStorage.setItem(KEY_SPLIT, val);
+        } catch (e2) {
+        }
+      }
+      function onUp() {
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+      }
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+    }
+    res.addEventListener("mousedown", onDown);
+  }
+  try {
+    window.initPanelResizers = initPanelResizers;
+  } catch (e) {
+  }
+
+  // assets/site/binders.js
+  function bindHeader() {
+    const header = document.querySelector(".top");
+    if (!header) return;
+    header.dataset.dmBound = "1";
+    initTopbarButtons();
+    initHovercard();
+  }
+  function bindSidebar() {
+    const leftRoot = document.querySelector(".left, .sidebar, #leftDrawer");
+    if (!leftRoot) return;
+    leftRoot.dataset.dmBound = "1";
+    initSidebar(leftRoot);
+  }
+  function bindRightPanel() {
+    const rightRoot = document.querySelector("aside.right, .right");
+    if (!rightRoot) return;
+    rightRoot.dataset.dmBound = "1";
+    initRightDrawer();
+    if (typeof initPanelResizers === "function") initPanelResizers();
+  }
+
+  // assets/site/entry.js
+  window.DM = window.DM || {};
+  function boot() {
+    const g = globalThis;
+    if (g.__dm_booted) return;
+    g.__dm_booted = true;
+    g.__dm_boot = boot;
+    g.__dm_entry_version = "boot-01d";
+    console.log("[dm] boot ran", g.__dm_entry_version);
+    initPinToggle();
+    window.addEventListener("dm-header-injected", bindHeader);
+    window.addEventListener("dm-nav-inited", bindSidebar);
+    window.addEventListener("dm-right-panel-injected", bindRightPanel);
+    const fallbackBind = () => {
+      bindHeader();
+      bindSidebar();
+      bindRightPanel();
+    };
+    if (document.readyState !== "loading") {
+      fallbackBind();
+    } else {
+      document.addEventListener("DOMContentLoaded", fallbackBind, { once: true });
+    }
+  }
+  boot();
 })();
 //# sourceMappingURL=site.js.map

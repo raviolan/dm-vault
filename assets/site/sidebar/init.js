@@ -13,10 +13,4 @@ export function initSidebar(leftRoot) {
   bindOnlySectionToggle(leftRoot);
 }
 
-// Auto-init on DOMContentLoaded for classic non-injected pages
-if (typeof window !== 'undefined') {
-  document.addEventListener('DOMContentLoaded', () => {
-    const leftRoot = document.querySelector('.left, .sidebar, #leftDrawer');
-    if (leftRoot) initSidebar(leftRoot);
-  });
-}
+

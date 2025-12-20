@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "rebuild:html": "node scripts/rebuild-from-partials.js && npm run audit:html",
     "build": "npm run bundle-sitejs && node scripts/rebuild-from-partials.js && node scripts/sync-landing-images.js",
     "verify": "node scripts/tools/verify-protected-paths.cjs",
     "patch": "node scripts/tools/patch-entity-images.js",
